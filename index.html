@@ -171,6 +171,8 @@
     -webkit-overflow-scrolling: touch;
   }
   .chip-row::-webkit-scrollbar{ display: none; }
+  .chip-row{ cursor: grab; }
+  .chip-row.dragging{ cursor: grabbing; user-select: none; }
   .chip{
     font-family:'Plus Jakarta Sans', sans-serif;
     font-size: 0.82rem;
@@ -1350,6 +1352,39 @@ function renderChips(){
 }
 
 /* ============================================================
+   Drag-to-scroll (mouse) for the horizontally-scrolling chip row.
+   Native touch/trackpad scroll already works; this adds click-and-drag
+   for mouse users, since the scrollbar itself is hidden.
+   ============================================================ */
+function setupChipDragScroll(){
+  const wrap = document.getElementById("typeChips");
+  let isDown = false, startX = 0, startScroll = 0, moved = false;
+
+  wrap.addEventListener("mousedown", e=>{
+    isDown = true; moved = false;
+    startX = e.pageX;
+    startScroll = wrap.scrollLeft;
+    wrap.classList.add("dragging");
+  });
+  window.addEventListener("mousemove", e=>{
+    if(!isDown) return;
+    const dx = e.pageX - startX;
+    if(Math.abs(dx) > 4) moved = true;
+    wrap.scrollLeft = startScroll - dx;
+  });
+  window.addEventListener("mouseup", ()=>{
+    isDown = false;
+    wrap.classList.remove("dragging");
+  });
+  wrap.addEventListener("mouseleave", ()=>{ isDown = false; wrap.classList.remove("dragging"); });
+  // suppress the chip's click if the mouse actually dragged, so releasing
+  // over a chip after panning doesn't also toggle the filter
+  wrap.addEventListener("click", e=>{
+    if(moved){ e.stopPropagation(); e.preventDefault(); }
+  }, true);
+}
+
+/* ============================================================
    RENDER: card grid
    ============================================================ */
 function filteredList(){
@@ -2334,6 +2369,7 @@ document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeatures
 (async function init(){
   await loadState();
   renderChips();
+  setupChipDragScroll();
   renderGrid();
   updateTrackerBadge();
   updateHistoryBadge();
