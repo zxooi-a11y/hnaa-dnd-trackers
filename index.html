@@ -1,0 +1,2973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Codex — Creature Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F3EBE0;
+    --surface: #FBF6EF;
+    --surface-soft: #F2E7D8;
+    --surface-sunken: #EADCC7;
+    --border: #E0CDB2;
+    --border-soft: #EAD9C1;
+    --text: #4A3728;
+    --text-soft: #8A7259;
+    --text-faint: #B4A088;
+    --accent: #A97A54;
+    --accent-soft: #EEDFC9;
+    --accent-ink: #8C6040;
+    --amber: #AD7F42;
+    --amber-soft: #F1E1C4;
+    --tag-humanoid: #8C6F9C;
+    --tag-monstrosity: #7E8F63;
+    --tag-dragon: #B57A47;
+    --tag-beast: #6E8B7C;
+    --tag-undead: #746C82;
+    --tag-fey: #A68F52;
+    --tag-fiend: #A6584D;
+    --best: #74875C;
+    --best-soft: #E7EDD9;
+    --worst: #AD6249;
+    --radius-lg: 22px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --radius-pill: 999px;
+    --shadow-sm: 0 1px 2px rgba(74,55,40,0.05), 0 1px 1px rgba(74,55,40,0.04);
+    --shadow-md: 0 8px 24px -8px rgba(74,55,40,0.16);
+    --shadow-lg: 0 18px 44px -14px rgba(74,55,40,0.26);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono{ font-family: 'IBM Plex Mono', monospace; }
+
+  /* ---------- layout shell ---------- */
+  .shell{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 100px;
+  }
+
+  header.masthead{
+    display:flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+    padding-bottom: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .masthead h1{
+    font-size: 2.1rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .masthead .subtitle{
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    margin-top: 4px;
+  }
+  .masthead .count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-faint);
+    text-align:right;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 7px 14px;
+  }
+  .masthead .count strong{ color: var(--text); font-weight:700; }
+
+  /* ---------- mode switch ---------- */
+  .mode-switch{
+    display:inline-flex;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+    margin-bottom: 20px;
+    gap: 2px;
+  }
+  .mode-switch button{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding: 9px 20px;
+    background: transparent;
+    border: none;
+    color: var(--text-soft);
+    cursor: pointer;
+    border-radius: var(--radius-pill);
+    transition: background .15s ease, color .15s ease;
+  }
+  .mode-switch button.active{
+    background: var(--text);
+    color: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+  .mode-switch button .badge{
+    display:inline-block;
+    margin-left: 6px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: var(--radius-pill);
+    padding: 1px 7px;
+    font-size: 0.7rem;
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .mode-switch button.active .badge{ background: var(--accent); color: #fff; }
+
+  /* ---------- controls bar ---------- */
+  .controls{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .controls input[type="search"]{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    min-width: 200px;
+    flex: 1 1 200px;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+  }
+  .controls input[type="search"]::placeholder{ color: var(--text-faint); }
+  .controls input[type="search"]:focus, .chip:focus-visible, .mode-switch button:focus-visible, .row:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .chip-row{
+    display:flex;
+    gap:6px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    flex: 1 1 240px;
+    min-width: 0;
+    padding-bottom: 2px;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+  }
+  .chip{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-soft);
+    cursor: pointer;
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+  .chip.active{ background: var(--accent); border-color: var(--accent); color: #fff; }
+  .controls select{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ---------- list of entries (lines, not boxes) ---------- */
+  .grid{
+    display:flex;
+    flex-direction: column;
+  }
+
+  .section-header{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 26px 20px 10px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .grid > .section-header:first-child{ padding-top: 6px; }
+  .section-header-label{
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: capitalize;
+    color: var(--text);
+    letter-spacing: 0.01em;
+    position: relative;
+    padding-left: 16px;
+  }
+  .section-header-label::before{
+    content:"";
+    position: absolute;
+    left:0; top:50%;
+    transform: translateY(-50%);
+    width:8px; height:8px;
+    border-radius: 50%;
+    background: var(--tag-color, var(--accent));
+  }
+  .section-header-count{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-faint);
+  }
+
+  .card{
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    padding: 0;
+  }
+
+  .card-head{
+    padding: 14px 20px 14px 20px;
+    cursor: pointer;
+    display:flex;
+    align-items: center;
+    gap: 16px;
+    border-radius: var(--radius-md);
+    transition: background .15s ease;
+  }
+  .card-head:hover{ background: var(--surface-soft); }
+  .card-head::before{
+    /* type-colored line */
+    content:"";
+    flex: 0 0 auto;
+    align-self: stretch;
+    width:4px;
+    border-radius: var(--radius-pill);
+    background: var(--tag-color, var(--accent));
+    margin: 2px 0;
+  }
+  .card-title-col{
+    flex: 1 1 auto;
+    min-width: 0;
+    display:flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .card-title-row{
+    display:flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .card-name{
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .card-meta{
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+  .stat-strip{
+    display:flex;
+    gap: 16px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+  }
+  .stat-strip span b{ color: var(--text-faint); font-weight:500; margin-right:4px; font-family:'Plus Jakarta Sans',sans-serif; }
+
+  .cr-badge{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--amber);
+    background: var(--amber-soft);
+    padding: 4px 10px;
+    white-space: nowrap;
+    border-radius: var(--radius-pill);
+    flex: 0 0 auto;
+  }
+
+  .card-actions{
+    flex: 0 0 auto;
+    display:flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.78rem;
+  }
+  .expand-hint{ color: var(--text-faint); font-weight: 600; white-space: nowrap; }
+  .add-tracker-btn{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    border: none;
+    padding: 6px 13px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .add-tracker-btn:hover{ background: var(--accent); color: #fff; }
+
+  /* ---------- combat tracker ---------- */
+  .tracker-wrap{ display:none; }
+  .tracker-wrap.show{ display:block; }
+  #trackerControls{ justify-content: flex-end; flex-wrap: wrap; }
+  .xp-total-badge{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 8px 16px;
+    margin-right: auto;
+    box-shadow: var(--shadow-sm);
+  }
+  .xp-total-badge strong{ color: var(--amber); font-weight: 700; margin-left: 4px; }
+  .encounter-name-input{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 9px 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-sm);
+    min-width: 200px;
+    flex: 1 1 200px;
+  }
+  .encounter-name-input::placeholder{ color: var(--text-faint); }
+  .save-log-btn{ background: var(--accent); border-color: var(--accent); color: #fff; }
+  .save-log-btn:hover{ background: var(--accent-ink); border-color: var(--accent-ink); }
+
+  .log-wrap{
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+  .log-header{
+    display:flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 4px 12px;
+  }
+  .log-header-label{ font-size: 0.9rem; font-weight: 800; color: var(--text); }
+  .log-header-count{ font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-faint); }
+
+  /* live activity feed inside Tracker tab */
+  .activity-list{
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 6px 4px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+  .activity-row{
+    display:flex;
+    gap: 12px;
+    padding: 7px 14px;
+    font-size: 0.82rem;
+    color: var(--text);
+    align-items: baseline;
+  }
+  .activity-row:not(:last-child){ border-bottom: 1px solid var(--border-soft); }
+  .activity-time{
+    flex: 0 0 auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+  .activity-text{ flex: 1 1 auto; }
+
+  /* ---------- players tab ---------- */
+  .players-wrap{ display:none; }
+  .players-wrap.show{ display:block; }
+  .players-wrap .controls{ justify-content: flex-end; margin-bottom: 4px; }
+
+  /* ---------- history tab ---------- */
+  .history-wrap{ display:none; }
+  .history-wrap.show{ display:block; }
+  .history-entry{
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .history-head{
+    display:flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+  }
+  .history-title-col{ flex: 1 1 auto; min-width: 0; }
+  .history-name{ font-size: 1rem; font-weight: 700; color: var(--text); }
+  .history-meta{ font-family:'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-faint); margin-top: 2px; }
+  .history-xp{
+    flex: 0 0 auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--amber);
+    background: var(--amber-soft);
+    border-radius: var(--radius-pill);
+    padding: 4px 12px;
+    white-space: nowrap;
+  }
+  .history-expand-hint{ flex: 0 0 auto; color: var(--text-faint); font-weight: 600; font-size: 0.78rem; white-space: nowrap; }
+  .history-remove{
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+  }
+  .history-remove:hover{ color: var(--worst); }
+  .history-detail{
+    display:none;
+    padding: 4px 18px 18px;
+  }
+  .history-detail.open{ display:block; }
+  .history-section-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    display: inline-block;
+    margin: 10px 0 8px;
+  }
+  .history-creature-row{
+    display:flex;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.85rem;
+    padding: 6px 4px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .history-creature-row:last-child{ border-bottom: none; }
+  .history-creature-hp{ font-family:'IBM Plex Mono', monospace; color: var(--text-soft); white-space: nowrap; }
+
+  .tracker-row{
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 12px;
+    overflow: hidden;
+    border-bottom: none !important;
+  }
+  .tracker-row:first-child{ border-top:none; }
+  .tracker-head{
+    display:flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px 14px 6px;
+    cursor: pointer;
+  }
+  .tracker-head::before{ display:none; }
+  .init-badge{
+    flex: 0 0 auto;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--surface-sunken);
+    display:flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content:center;
+    line-height:1;
+  }
+  .init-badge input{
+    width: 34px;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    background: transparent;
+    border: none;
+    -moz-appearance: textfield;
+  }
+  .init-badge input::-webkit-outer-spin-button, .init-badge input::-webkit-inner-spin-button{
+    -webkit-appearance: none; margin:0;
+  }
+  .init-badge .init-lbl{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+  }
+  .tracker-line{
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--tag-color, var(--accent));
+    margin: 2px 0;
+  }
+  .tracker-title-col{ flex: 1 1 auto; min-width: 0; }
+  .tracker-name-row{
+    display:flex;
+    align-items: baseline;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .tracker-name{ font-size: 1.02rem; font-weight: 700; }
+  .tracker-meta{ font-size: 0.78rem; color: var(--text-faint); }
+
+  .hp-block{ flex: 0 0 auto; width: 190px; }
+  .hp-numbers{
+    display:flex;
+    justify-content: space-between;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+  }
+  .hp-bar-track{
+    width:100%;
+    height: 9px;
+    background: var(--surface-sunken);
+    border-radius: var(--radius-pill);
+    overflow:hidden;
+  }
+  .hp-bar-fill{
+    height:100%;
+    border-radius: var(--radius-pill);
+    background: var(--best);
+    transition: width .2s ease, background .2s ease;
+  }
+  .hp-bar-fill.mid{ background: var(--amber); }
+  .hp-bar-fill.low{ background: var(--worst); }
+
+  .tracker-remove{
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    line-height:1;
+  }
+  .tracker-remove:hover{ color: var(--worst); }
+
+  .tracker-conditions-row{
+    display:flex;
+    align-items:center;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 2px 18px 0 64px;
+  }
+  .condition-pills{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .condition-pill{
+    display:inline-flex;
+    align-items:center;
+    gap: 4px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--worst);
+    background: var(--amber-soft);
+    padding: 3px 4px 3px 10px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .condition-pill.dead{ color: #fff; background: var(--worst); }
+  .condition-remove{
+    background: none;
+    border: none;
+    color: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+    opacity: 0.7;
+  }
+  .condition-remove:hover{ opacity: 1; }
+  .condition-select{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px 10px;
+    cursor: pointer;
+  }
+
+  .death-save-widget{
+    display:flex;
+    align-items:center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 18px 0 64px;
+  }
+  .ds-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.64rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--best);
+  }
+  .ds-label.fail{ color: var(--worst); margin-left: 6px; }
+  .ds-pips{ display:flex; gap: 5px; }
+  .ds-pip{
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    background: var(--surface-soft);
+  }
+  .ds-pip.success.filled{ background: var(--best); border-color: var(--best); }
+  .ds-pip.fail.filled{ background: var(--worst); border-color: var(--worst); }
+
+  .tracker-foot{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 0 18px 14px 64px;
+    flex-wrap: wrap;
+  }
+  .hp-log-input{
+    width: 70px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    border-radius: var(--radius-pill);
+    color: var(--text);
+  }
+  .hp-log-btn{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    border: none;
+    padding: 7px 14px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .hp-log-btn.dmg{ background: var(--amber-soft); color: var(--worst); }
+  .hp-log-btn.dmg:hover{ background: var(--worst); color:#fff; }
+  .hp-log-btn.heal{ background: var(--best-soft); color: var(--best); }
+  .hp-log-btn.heal:hover{ background: var(--best); color:#fff; }
+  .tracker-expand-hint{ color: var(--text-faint); font-weight:600; font-size: 0.78rem; margin-left:auto; }
+
+  .tracker-detail{
+    display:none;
+    margin: 0 18px 16px 64px;
+    padding: 16px 20px;
+    background: var(--surface-soft);
+    border-radius: var(--radius-md);
+  }
+  .tracker-detail.open{ display:block; }
+
+  /* ---------- expanded stat block ---------- */
+  .detail{
+    display:none;
+    margin: 0 6px 16px 20px;
+    padding: 18px 22px;
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+  .detail.open{ display:block; }
+  .abilities-table{
+    display:grid;
+    grid-template-columns: repeat(6,1fr);
+    gap: 8px;
+    margin: 12px 0 14px;
+  }
+  .ability{
+    text-align:center;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-soft);
+    border-radius: var(--radius-sm);
+    padding: 8px 2px;
+  }
+  .ability .lbl{ font-family:'IBM Plex Mono', monospace; font-size:0.63rem; color:var(--text-faint); letter-spacing:0.05em; }
+  .ability .val{ font-family:'IBM Plex Mono', monospace; font-size:0.86rem; font-weight:700; margin-top:2px; }
+
+  .prop-line{
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 0.87rem;
+    margin: 5px 0;
+    color: var(--text);
+  }
+  .prop-line b{
+    flex: 0 0 150px;
+    width: 150px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .prop-line .prop-value{
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .section-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px;
+    border-radius: var(--radius-pill);
+    display: inline-block;
+    margin: 16px 0 8px;
+  }
+  .entry{ margin: 8px 0; font-size: 0.89rem; }
+  .entry b{ font-weight:700; }
+
+  hr.rule{
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 14px 0;
+  }
+
+  .empty-state{
+    padding: 70px 20px;
+    text-align:center;
+    color: var(--text-faint);
+    font-size: 0.9rem;
+  }
+
+  /* ---------- homebrew modal ---------- */
+  .modal-overlay{
+    display:none;
+    position: fixed;
+    inset: 0;
+    background: rgba(74,55,40,0.45);
+    z-index: 50;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-box{
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 640px;
+    max-height: 88vh;
+    display:flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-header{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    flex: 0 0 auto;
+  }
+  .modal-title{ font-size: 1rem; font-weight: 800; color: var(--text); }
+  .modal-close{
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: var(--text-faint);
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+  }
+  .modal-close:hover{ color: var(--worst); }
+  .modal-body{
+    padding: 18px 22px;
+    overflow-y: auto;
+    flex: 1 1 auto;
+  }
+  .modal-footer{
+    display:flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 16px 22px;
+    border-top: 1px solid var(--border);
+    flex: 0 0 auto;
+  }
+  .hb-form-error{
+    background: var(--amber-soft);
+    color: var(--worst);
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+  }
+  .hb-form-grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 14px;
+  }
+  .hb-field{
+    display:flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .hb-field input, .hb-field select{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text);
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    border-radius: var(--radius-sm);
+  }
+  .hb-span-2{ grid-column: span 2; }
+  .hb-ability-grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+  }
+  .hb-ability-grid .hb-field input{ text-align: center; padding: 9px 4px; }
+
+  .hb-repeat-section{ margin-top: 22px; }
+  .hb-repeat-header{
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .hb-repeat-header span{ font-size: 0.85rem; font-weight: 700; color: var(--text); }
+  .hb-dynamic-row{
+    display:grid;
+    grid-template-columns: 1fr 2fr auto;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: start;
+  }
+  .hb-dynamic-row input, .hb-dynamic-row textarea{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    border-radius: var(--radius-sm);
+    resize: vertical;
+  }
+  .hb-dynamic-row textarea{ min-height: 38px; }
+  .hb-row-remove{
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 6px;
+  }
+  .hb-row-remove:hover{ color: var(--worst); }
+
+  .homebrew-badge{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: var(--accent-ink);
+    background: var(--accent-soft);
+    padding: 3px 9px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .homebrew-delete{
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .homebrew-delete:hover{ color: var(--worst); }
+
+  /* ---------- generic empty state (reused across tabs) ---------- */
+  .compare-empty{
+    padding: 80px 20px;
+    text-align:center;
+    color: var(--text-faint);
+    font-size: 0.9rem;
+  }
+
+  footer.note{
+    margin-top: 40px;
+    font-size: 0.8rem;
+    color: var(--text-faint);
+    padding-top: 16px;
+  }
+
+  @media (max-width: 620px){
+    .masthead h1{ font-size: 1.7rem; }
+    .abilities-table{ grid-template-columns: repeat(3,1fr); }
+    .card-head{ flex-wrap: wrap; }
+    .card-actions{ flex-wrap: wrap; margin-left: 44px; }
+    .stat-strip{ gap:10px; }
+    .prop-line b{ flex-basis: 118px; width: 118px; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="masthead">
+    <div>
+      <h1>Field Codex</h1>
+      <div class="subtitle">CREATURE REFERENCE &amp; COMPARISON — v0.1</div>
+    </div>
+    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:6px;">
+      <div class="count"><strong id="visibleCount">0</strong> / <span id="totalCount">0</span> entries shown</div>
+      <div id="syncStatus" class="mono" data-status="idle" style="font-size:0.7rem; color: var(--text-faint);"></div>
+    </div>
+  </header>
+
+  <div class="mode-switch">
+    <button id="btnBrowse" class="active">BROWSE</button>
+    <button id="btnPlayers">PLAYERS <span class="badge" id="playersBadge">0</span></button>
+    <button id="btnTracker">TRACKER <span class="badge" id="trackerBadge">0</span></button>
+    <button id="btnHistory">HISTORY <span class="badge" id="historyBadge">0</span></button>
+  </div>
+
+  <!-- BROWSE MODE -->
+  <div id="browseWrap">
+    <div class="controls">
+      <input type="search" id="search" placeholder="search by name…">
+      <div class="chip-row" id="typeChips"></div>
+      <select id="sortBy">
+        <option value="cr-asc">CR — low to high</option>
+        <option value="cr-desc">CR — high to low</option>
+        <option value="name-asc">Name — A to Z</option>
+        <option value="hp-desc">HP — high to low</option>
+        <option value="ac-desc">AC — high to low</option>
+      </select>
+      <button id="addHomebrewBtn" class="chip save-log-btn">+ add creature</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="empty-state" id="emptyState" style="display:none;">No creatures match that search.</div>
+  </div>
+
+  <!-- TRACKER MODE -->
+  <div id="trackerWrap" class="tracker-wrap">
+    <div id="trackerEmpty" class="compare-empty">Add creatures to the tracker from Browse mode ("+ tracker") to build your initiative order.</div>
+    <div id="trackerControls" class="controls" style="display:none;">
+      <div class="xp-total-badge">Total XP <strong id="trackerTotalXP">0</strong></div>
+      <input type="text" id="encounterNameInput" class="encounter-name-input" placeholder="Name this encounter…">
+      <button id="trackerSaveLog" class="chip save-log-btn">save encounter</button>
+      <button id="trackerSort" class="chip">re-sort by initiative</button>
+      <button id="trackerClearAll" class="chip">clear encounter</button>
+    </div>
+    <div class="grid" id="trackerList"></div>
+
+    <div id="activityWrap" class="log-wrap" style="display:none;">
+      <div class="log-header">
+        <span class="log-header-label">Activity Log</span>
+        <span class="log-header-count" id="activityCount">0 events</span>
+      </div>
+      <div id="activityList" class="activity-list"></div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODE -->
+  <div id="historyWrap" class="history-wrap">
+    <div id="historyEmpty" class="compare-empty">Save an encounter from the Tracker tab to start building your history.</div>
+    <div id="historyList"></div>
+  </div>
+
+  <!-- PLAYERS MODE -->
+  <div id="playersWrap" class="players-wrap">
+    <div class="controls">
+      <button id="addPlayerBtn" class="chip save-log-btn">+ add character</button>
+    </div>
+    <div id="playersEmpty" class="compare-empty">Add your party's character sheets here so you can drop them straight into the Tracker.</div>
+    <div class="grid" id="playersList"></div>
+  </div>
+
+  <footer class="note">
+    Data lives in a plain JS array at the top of this file (id, stats, actions) — duplicate an entry's object to add a new creature; no build step required.
+  </footer>
+</div>
+
+<div class="modal-overlay" id="homebrewModalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Add a Homebrew Creature</span>
+      <button class="modal-close" id="homebrewModalClose" title="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="hbFormError" class="hb-form-error" style="display:none;"></div>
+
+      <div class="hb-form-grid">
+        <label class="hb-field hb-span-2">Name<input type="text" id="hbName" placeholder="e.g. Bog Wretch"></label>
+        <label class="hb-field">Size
+          <select id="hbSize">
+            <option>Tiny</option><option>Small</option><option selected>Medium</option>
+            <option>Large</option><option>Huge</option><option>Gargantuan</option>
+          </select>
+        </label>
+        <label class="hb-field">Type<input type="text" id="hbType" placeholder="e.g. humanoid (goblinoid)"></label>
+        <label class="hb-field">Alignment<input type="text" id="hbAlignment" placeholder="e.g. chaotic evil"></label>
+        <label class="hb-field">Category (for color/section)
+          <select id="hbTag">
+            <option value="humanoid">humanoid</option>
+            <option value="beast">beast</option>
+            <option value="undead">undead</option>
+            <option value="monstrosity">monstrosity</option>
+            <option value="dragon">dragon</option>
+            <option value="fey">fey</option>
+            <option value="fiend">fiend</option>
+            <option value="__custom">other (type below)…</option>
+          </select>
+        </label>
+        <label class="hb-field" id="hbTagCustomWrap" style="display:none;">Custom category<input type="text" id="hbTagCustom" placeholder="e.g. construct"></label>
+
+        <label class="hb-field">Armor Class<input type="number" id="hbAC" placeholder="15"></label>
+        <label class="hb-field">AC Note (optional)<input type="text" id="hbACNote" placeholder="e.g. natural armor"></label>
+        <label class="hb-field">Hit Points<input type="number" id="hbHP" placeholder="22"></label>
+        <label class="hb-field">HP Formula<input type="text" id="hbHPFormula" placeholder="e.g. 4d8 + 4"></label>
+        <label class="hb-field hb-span-2">Speed<input type="text" id="hbSpeed" placeholder="e.g. 30 ft., fly 60 ft."></label>
+
+        <div class="hb-span-2 hb-ability-grid">
+          <label class="hb-field">STR<input type="number" id="hbStr" value="10"></label>
+          <label class="hb-field">DEX<input type="number" id="hbDex" value="10"></label>
+          <label class="hb-field">CON<input type="number" id="hbCon" value="10"></label>
+          <label class="hb-field">INT<input type="number" id="hbInt" value="10"></label>
+          <label class="hb-field">WIS<input type="number" id="hbWis" value="10"></label>
+          <label class="hb-field">CHA<input type="number" id="hbCha" value="10"></label>
+        </div>
+
+        <label class="hb-field hb-span-2">Saving Throws (optional)<input type="text" id="hbSavingThrows" placeholder="e.g. Dex +4, Wis +2"></label>
+        <label class="hb-field hb-span-2">Skills (optional)<input type="text" id="hbSkills" placeholder="e.g. Perception +4, Stealth +3"></label>
+        <label class="hb-field">Damage Vulnerabilities (optional)<input type="text" id="hbVulnerabilities"></label>
+        <label class="hb-field">Damage Resistances (optional)<input type="text" id="hbResistances"></label>
+        <label class="hb-field">Damage Immunities (optional)<input type="text" id="hbImmunities"></label>
+        <label class="hb-field">Condition Immunities (optional)<input type="text" id="hbConditionImmunities"></label>
+        <label class="hb-field hb-span-2">Senses<input type="text" id="hbSenses" placeholder="e.g. darkvision 60 ft., passive Perception 12"></label>
+        <label class="hb-field hb-span-2">Languages<input type="text" id="hbLanguages" placeholder="e.g. Common, Goblin"></label>
+        <label class="hb-field">Challenge Rating<input type="text" id="hbCR" placeholder="e.g. 1/4, 2, 5"></label>
+        <label class="hb-field">XP<input type="number" id="hbXP" placeholder="auto-fills from CR"></label>
+      </div>
+
+      <div class="hb-repeat-section">
+        <div class="hb-repeat-header"><span>Traits (optional)</span><button class="chip" id="hbAddTrait" type="button">+ add trait</button></div>
+        <div id="hbTraitsList"></div>
+      </div>
+      <div class="hb-repeat-section">
+        <div class="hb-repeat-header"><span>Actions</span><button class="chip" id="hbAddAction" type="button">+ add action</button></div>
+        <div id="hbActionsList"></div>
+      </div>
+      <div class="hb-repeat-section">
+        <div class="hb-repeat-header"><span>Reactions (optional)</span><button class="chip" id="hbAddReaction" type="button">+ add reaction</button></div>
+        <div id="hbReactionsList"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="chip" id="hbCancelBtn">Cancel</button>
+      <button class="chip save-log-btn" id="hbSaveBtn">Save Creature</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="playerModalOverlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Add a Player Character</span>
+      <button class="modal-close" id="playerModalClose" title="Close">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="pcFormError" class="hb-form-error" style="display:none;"></div>
+
+      <div class="hb-form-grid">
+        <label class="hb-field hb-span-2">Character Name<input type="text" id="pcName" placeholder="e.g. Kaelith Brightblade"></label>
+        <label class="hb-field">Player Name (optional)<input type="text" id="pcPlayerName" placeholder="e.g. Sam"></label>
+        <label class="hb-field">Class &amp; Level (optional)<input type="text" id="pcClassLevel" placeholder="e.g. Level 5 Paladin (Half-Elf)"></label>
+
+        <label class="hb-field">Armor Class<input type="number" id="pcAC" placeholder="17"></label>
+        <label class="hb-field">Hit Points (max)<input type="number" id="pcHP" placeholder="45"></label>
+        <label class="hb-field hb-span-2">Speed<input type="text" id="pcSpeed" placeholder="e.g. 30 ft."></label>
+
+        <div class="hb-span-2 hb-ability-grid">
+          <label class="hb-field">STR<input type="number" id="pcStr" value="10"></label>
+          <label class="hb-field">DEX<input type="number" id="pcDex" value="10"></label>
+          <label class="hb-field">CON<input type="number" id="pcCon" value="10"></label>
+          <label class="hb-field">INT<input type="number" id="pcInt" value="10"></label>
+          <label class="hb-field">WIS<input type="number" id="pcWis" value="10"></label>
+          <label class="hb-field">CHA<input type="number" id="pcCha" value="10"></label>
+        </div>
+
+        <label class="hb-field hb-span-2">Saving Throws (optional)<input type="text" id="pcSavingThrows" placeholder="e.g. Str +6, Con +5"></label>
+        <label class="hb-field hb-span-2">Skills (optional)<input type="text" id="pcSkills" placeholder="e.g. Athletics +6, Persuasion +5"></label>
+        <label class="hb-field hb-span-2">Senses (optional)<input type="text" id="pcSenses" placeholder="e.g. passive Perception 13"></label>
+        <label class="hb-field hb-span-2">Languages (optional)<input type="text" id="pcLanguages" placeholder="e.g. Common, Elvish"></label>
+        <label class="hb-field hb-span-2">Notes (optional)<input type="text" id="pcNotes" placeholder="e.g. Spell save DC 15, Lay on Hands pool 25"></label>
+      </div>
+
+      <div class="hb-repeat-section">
+        <div class="hb-repeat-header"><span>Features / Actions (optional)</span><button class="chip" id="pcAddFeature" type="button">+ add feature</button></div>
+        <div id="pcFeaturesList"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="chip" id="pcCancelBtn">Cancel</button>
+      <button class="chip save-log-btn" id="pcSaveBtn">Save Character</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   DATA — one object per creature. Add more by copying an entry.
+   ============================================================ */
+const MONSTERS = [
+  {
+    id:"goblin", name:"Goblin", size:"Small", type:"humanoid (goblinoid)", alignment:"neutral evil",
+    tag:"humanoid",
+    ac:15, acNote:"leather armor, shield", hp:7, hpFormula:"2d6", speed:"30 ft.",
+    abilities:{str:[8,-1], dex:[14,2], con:[10,0], int:[10,0], wis:[8,-1], cha:[8,-1]},
+    skills:"Stealth +6",
+    senses:"darkvision 60 ft., passive Perception 9",
+    languages:"Common, Goblin",
+    cr:"1/4", crNum:0.25, xp:50,
+    traits:[
+      {name:"Nimble Escape", text:"The goblin can take the Disengage or Hide action as a bonus action on each of its turns."}
+    ],
+    actions:[
+      {name:"Scimitar", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage."},
+      {name:"Shortbow", text:"Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage."}
+    ]
+  },
+  {
+    id:"goblin-boss", name:"Goblin Boss", size:"Small", type:"humanoid (goblinoid)", alignment:"neutral evil",
+    tag:"humanoid",
+    ac:17, acNote:"chain shirt, shield", hp:21, hpFormula:"6d6", speed:"30 ft.",
+    abilities:{str:[10,0], dex:[14,2], con:[10,0], int:[10,0], wis:[8,-1], cha:[10,0]},
+    skills:"Stealth +6",
+    senses:"darkvision 60 ft., passive Perception 9",
+    languages:"Common, Goblin",
+    cr:"1", crNum:1, xp:200,
+    traits:[
+      {name:"Nimble Escape", text:"The goblin can take the Disengage or Hide action as a bonus action on each of its turns."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The goblin makes two scimitar attacks. The second attack has disadvantage."},
+      {name:"Scimitar", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) slashing damage."},
+      {name:"Javelin", text:"Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 30/120 ft., one target. Hit: 5 (1d6 + 2) piercing damage."}
+    ],
+    reactions:[
+      {name:"Redirect Attack", text:"When a creature the goblin can see targets it with an attack, the goblin chooses another goblin within 5 feet of it. The two goblins swap places, and the chosen goblin becomes the target instead."}
+    ]
+  },
+  {
+    id:"owlbear", name:"Owlbear", size:"Large", type:"monstrosity", alignment:"unaligned",
+    tag:"monstrosity",
+    ac:13, acNote:"natural armor", hp:59, hpFormula:"7d10 + 21", speed:"40 ft.",
+    abilities:{str:[20,5], dex:[12,1], con:[17,3], int:[3,-4], wis:[12,1], cha:[7,-2]},
+    skills:"Perception +3",
+    senses:"darkvision 60 ft., passive Perception 13",
+    languages:"—",
+    cr:"3", crNum:3, xp:700,
+    traits:[
+      {name:"Keen Sight and Smell", text:"The owlbear has advantage on Wisdom (Perception) checks that rely on sight or smell."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The owlbear makes two attacks: one with its beak and one with its claws."},
+      {name:"Beak", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one creature. Hit: 10 (1d10 + 5) piercing damage."},
+      {name:"Claws", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) slashing damage."}
+    ]
+  },
+  {
+    id:"ancient-white-dragon", name:"Ancient White Dragon", size:"Gargantuan", type:"dragon", alignment:"chaotic evil",
+    tag:"dragon",
+    ac:20, acNote:"natural armor", hp:333, hpFormula:"18d20 + 144", speed:"40 ft., burrow 40 ft., fly 80 ft., swim 40 ft.",
+    abilities:{str:[26,8], dex:[10,0], con:[26,8], int:[10,0], wis:[13,1], cha:[14,2]},
+    savingThrows:"Dex +6, Con +14, Wis +7, Cha +8",
+    skills:"Perception +13, Stealth +6",
+    damageImmunities:"cold",
+    senses:"blindsight 60 ft., darkvision 120 ft., passive Perception 23",
+    languages:"Common, Draconic",
+    cr:"20", crNum:20, xp:24500,
+    traits:[
+      {name:"Ice Walk", text:"The dragon can move across and climb icy surfaces without needing to make an ability check. Difficult terrain composed of ice or snow doesn't cost it extra movement."},
+      {name:"Legendary Resistance (3/Day)", text:"If the dragon fails a saving throw, it can choose to succeed instead."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The dragon can use its Frightful Presence. It then makes three attacks: one with its bite and two with its claws."},
+      {name:"Bite", text:"Melee Weapon Attack: +14 to hit, reach 15 ft., one target. Hit: 19 (2d10 + 8) piercing damage plus 9 (2d8) cold damage."},
+      {name:"Claw", text:"Melee Weapon Attack: +14 to hit, reach 10 ft., one target. Hit: 15 (2d6 + 8) slashing damage."},
+      {name:"Tail", text:"Melee Weapon Attack: +14 to hit, reach 20 ft., one target. Hit: 17 (2d8 + 8) bludgeoning damage."},
+      {name:"Frightful Presence", text:"Each creature of the dragon's choice within 120 feet and aware of it must succeed on a DC 16 Wisdom saving throw or become frightened for 1 minute. A frightened creature can repeat the save at the end of each of its turns."},
+      {name:"Cold Breath (Recharge 5–6)", text:"The dragon exhales an icy blast in a 90-foot cone. Each creature in the area must make a DC 22 Constitution saving throw, taking 72 (16d8) cold damage on a failed save, or half as much on a success."}
+    ],
+    legendary:{
+      intro:"The dragon can take 3 legendary actions, choosing from the options below. Only one option can be used at a time and only at the end of another creature's turn. Spent actions are regained at the start of its turn.",
+      actions:[
+        {name:"Detect", text:"The dragon makes a Wisdom (Perception) check."},
+        {name:"Tail Attack", text:"The dragon makes a tail attack."},
+        {name:"Wing Attack (Costs 2 Actions)", text:"Each creature within 15 feet of the dragon must succeed on a DC 22 Dexterity saving throw or take 15 (2d6 + 8) bludgeoning damage and be knocked prone. The dragon can then fly up to half its flying speed."}
+      ]
+    }
+  },
+
+  /* ---- humanoid NPCs ---- */
+  {
+    id:"bandit", name:"Bandit", size:"Medium", type:"humanoid (any race)", alignment:"any non-lawful alignment",
+    tag:"humanoid",
+    ac:12, acNote:"leather armor", hp:11, hpFormula:"2d8 + 2", speed:"30 ft.",
+    abilities:{str:[11,0], dex:[12,1], con:[12,1], int:[10,0], wis:[10,0], cha:[10,0]},
+    senses:"passive Perception 10",
+    languages:"any one language (usually Common)",
+    cr:"1/8", crNum:0.125, xp:25,
+    actions:[
+      {name:"Scimitar", text:"Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) slashing damage."},
+      {name:"Light Crossbow", text:"Ranged Weapon Attack: +3 to hit, range 80/320 ft., one target. Hit: 5 (1d8 + 1) piercing damage."}
+    ]
+  },
+  {
+    id:"bandit-captain", name:"Bandit Captain", size:"Medium", type:"humanoid (any race)", alignment:"any non-lawful alignment",
+    tag:"humanoid",
+    ac:15, acNote:"studded leather", hp:65, hpFormula:"10d8 + 20", speed:"30 ft.",
+    abilities:{str:[15,2], dex:[16,3], con:[14,2], int:[14,2], wis:[11,0], cha:[14,2]},
+    savingThrows:"Str +4, Dex +5, Wis +2",
+    skills:"Athletics +4, Deception +4",
+    senses:"passive Perception 10",
+    languages:"any two languages",
+    cr:"2", crNum:2, xp:450,
+    actions:[
+      {name:"Multiattack", text:"The captain makes three melee attacks: two with its scimitar and one with its dagger. Or the captain makes two ranged attacks with its daggers."},
+      {name:"Scimitar", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) slashing damage."},
+      {name:"Dagger", text:"Melee or Ranged Weapon Attack: +5 to hit, reach 5 ft. or range 20/60 ft., one target. Hit: 5 (1d4 + 3) piercing damage."}
+    ],
+    reactions:[
+      {name:"Parry", text:"The captain adds 2 to its AC against one melee attack that would hit it. To do so, the captain must see the attacker and be wielding a melee weapon."}
+    ]
+  },
+  {
+    id:"veteran", name:"Veteran", size:"Medium", type:"humanoid (any race)", alignment:"any alignment",
+    tag:"humanoid",
+    ac:17, acNote:"splint", hp:58, hpFormula:"9d8 + 18", speed:"30 ft.",
+    abilities:{str:[16,3], dex:[13,1], con:[14,2], int:[10,0], wis:[11,0], cha:[10,0]},
+    skills:"Athletics +5, Perception +2",
+    senses:"passive Perception 12",
+    languages:"any one language (usually Common)",
+    cr:"3", crNum:3, xp:700,
+    actions:[
+      {name:"Multiattack", text:"The veteran makes two longsword attacks. If it has a shortsword drawn, it can also make a shortsword attack."},
+      {name:"Longsword", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 3) slashing damage, or 8 (1d10 + 3) slashing damage if used with two hands."},
+      {name:"Shortsword", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage."},
+      {name:"Heavy Crossbow", text:"Ranged Weapon Attack: +3 to hit, range 100/400 ft., one target. Hit: 5 (1d10) piercing damage."}
+    ]
+  },
+  {
+    id:"assassin", name:"Assassin", size:"Medium", type:"humanoid (any race)", alignment:"any non-good alignment",
+    tag:"humanoid",
+    ac:15, acNote:"studded leather", hp:78, hpFormula:"12d8 + 24", speed:"30 ft.",
+    abilities:{str:[11,0], dex:[16,3], con:[14,2], int:[13,1], wis:[11,0], cha:[10,0]},
+    savingThrows:"Dex +7, Int +5",
+    skills:"Acrobatics +7, Deception +4, Perception +4, Stealth +11",
+    damageResistances:"poison",
+    senses:"passive Perception 14",
+    languages:"Thieves' Cant plus any two languages",
+    cr:"8", crNum:8, xp:3900,
+    traits:[
+      {name:"Assassinate", text:"During its first turn, the assassin has advantage on attack rolls against any creature that hasn't taken a turn. Any hit the assassin scores against a surprised creature is a critical hit."},
+      {name:"Evasion", text:"If the assassin is subjected to an effect that allows it to make a Dexterity saving throw to take only half damage, it instead takes no damage on a success, and only half damage if it fails."},
+      {name:"Sneak Attack (1/Turn)", text:"The assassin deals an extra 13 (4d6) damage when it hits a target with a weapon attack and has advantage on the roll, or when the target is within 5 feet of an ally of the assassin that isn't incapacitated and the assassin doesn't have disadvantage on the attack roll."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The assassin makes two shortsword attacks."},
+      {name:"Shortsword", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 6 (1d6 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much on a success."},
+      {name:"Light Crossbow", text:"Ranged Weapon Attack: +7 to hit, range 80/320 ft., one target. Hit: 7 (1d8 + 3) piercing damage, and the target must make a DC 15 Constitution saving throw, taking 24 (7d6) poison damage on a failed save, or half as much on a success."}
+    ]
+  },
+  {
+    id:"gladiator", name:"Gladiator", size:"Medium", type:"humanoid (any race)", alignment:"any alignment",
+    tag:"humanoid",
+    ac:16, acNote:"studded leather, shield", hp:112, hpFormula:"15d8 + 45", speed:"30 ft.",
+    abilities:{str:[18,4], dex:[15,2], con:[16,3], int:[10,0], wis:[12,1], cha:[15,2]},
+    savingThrows:"Str +7, Dex +5, Con +6",
+    skills:"Athletics +10, Intimidation +5",
+    senses:"passive Perception 11",
+    languages:"any one language (usually Common)",
+    cr:"5", crNum:5, xp:1800,
+    traits:[
+      {name:"Brave", text:"The gladiator has advantage on saving throws against being frightened."},
+      {name:"Brute", text:"A melee weapon deals one extra die of its damage when the gladiator hits with it (included in the attack)."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The gladiator makes three melee attacks or two ranged attacks."},
+      {name:"Spear", text:"Melee or Ranged Weapon Attack: +7 to hit, reach 5 ft. and range 20/60 ft., one target. Hit: 11 (2d6 + 4) piercing damage, or 13 (2d8 + 4) if used with two hands to make a melee attack."},
+      {name:"Shield Bash", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one creature. Hit: 9 (2d4 + 4) bludgeoning damage. If the target is a Medium or smaller creature, it must succeed on a DC 15 Strength saving throw or be knocked prone."}
+    ],
+    reactions:[
+      {name:"Parry", text:"The gladiator adds 3 to its AC against one melee attack that would hit it. To do so, the gladiator must see the attacker and be wielding a melee weapon."}
+    ]
+  },
+  {
+    id:"berserker", name:"Berserker", size:"Medium", type:"humanoid (any race)", alignment:"any chaotic alignment",
+    tag:"humanoid",
+    ac:13, acNote:"hide armor", hp:67, hpFormula:"9d8 + 27", speed:"30 ft.",
+    abilities:{str:[16,3], dex:[12,1], con:[17,3], int:[9,-1], wis:[11,0], cha:[9,-1]},
+    senses:"passive Perception 10",
+    languages:"any one language (usually Common)",
+    cr:"2", crNum:2, xp:450,
+    traits:[
+      {name:"Reckless", text:"At the start of its turn, the berserker can gain advantage on all melee weapon attack rolls during that turn, but attack rolls against it have advantage until the start of its next turn."}
+    ],
+    actions:[
+      {name:"Greataxe", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 9 (1d12 + 3) slashing damage."}
+    ]
+  },
+  {
+    id:"cultist", name:"Cultist", size:"Medium", type:"humanoid (any race)", alignment:"any non-good alignment",
+    tag:"humanoid",
+    ac:12, acNote:"leather armor", hp:9, hpFormula:"2d8", speed:"30 ft.",
+    abilities:{str:[11,0], dex:[12,1], con:[10,0], int:[10,0], wis:[11,0], cha:[10,0]},
+    skills:"Deception +2, Religion +2",
+    senses:"passive Perception 10",
+    languages:"any one language (usually Common)",
+    cr:"1/8", crNum:0.125, xp:25,
+    traits:[
+      {name:"Dark Devotion", text:"The cultist has advantage on saving throws against being charmed or frightened."}
+    ],
+    actions:[
+      {name:"Scimitar", text:"Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 4 (1d6 + 1) slashing damage."}
+    ]
+  },
+  {
+    id:"cult-fanatic", name:"Cult Fanatic", size:"Medium", type:"humanoid (any race)", alignment:"any non-good alignment",
+    tag:"humanoid",
+    ac:13, acNote:"leather armor", hp:33, hpFormula:"6d8 + 6", speed:"30 ft.",
+    abilities:{str:[11,0], dex:[14,2], con:[12,1], int:[10,0], wis:[13,1], cha:[14,2]},
+    skills:"Deception +4, Persuasion +4, Religion +2",
+    senses:"passive Perception 10",
+    languages:"any one language (usually Common)",
+    cr:"2", crNum:2, xp:450,
+    traits:[
+      {name:"Dark Devotion", text:"The fanatic has advantage on saving throws against being charmed or frightened."},
+      {name:"Spellcasting", text:"The fanatic is a 4th-level spellcaster (spell save DC 11, +3 to hit with spell attacks). Prepared cleric spells — cantrips (at will): light, sacred flame, thaumaturgy; 1st level (4 slots): command, inflict wounds, shield of faith; 2nd level (3 slots): hold person, spiritual weapon."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The fanatic makes two melee attacks."},
+      {name:"Dagger", text:"Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 4 (1d4 + 2) piercing damage."}
+    ]
+  },
+
+  /* ---- beasts ---- */
+  {
+    id:"aurochs", name:"Aurochs", size:"Large", type:"beast (cattle)", alignment:"unaligned",
+    tag:"beast",
+    ac:11, acNote:"natural armor", hp:38, hpFormula:"4d10 + 16", speed:"50 ft.",
+    abilities:{str:[20,5], dex:[10,0], con:[19,4], int:[2,-4], wis:[12,1], cha:[5,-3]},
+    senses:"passive Perception 11",
+    languages:"—",
+    cr:"2", crNum:2, xp:450,
+    traits:[
+      {name:"Charge", text:"If the aurochs moves at least 20 feet straight toward a target and then hits it with a gore attack on the same turn, the target takes an extra 9 (2d8) piercing damage. If the target is a creature, it must succeed on a DC 15 Strength saving throw or be knocked prone."}
+    ],
+    actions:[
+      {name:"Gore", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 14 (2d8 + 5) piercing damage."}
+    ]
+  },
+  {
+    id:"giant-scorpion", name:"Giant Scorpion", size:"Large", type:"beast", alignment:"unaligned",
+    tag:"beast",
+    ac:15, acNote:"natural armor", hp:52, hpFormula:"7d10 + 14", speed:"40 ft.",
+    abilities:{str:[15,2], dex:[13,1], con:[15,2], int:[1,-5], wis:[9,-1], cha:[3,-4]},
+    senses:"blindsight 60 ft., passive Perception 9",
+    languages:"—",
+    cr:"3", crNum:3, xp:700,
+    actions:[
+      {name:"Multiattack", text:"The scorpion makes three attacks: two with its claws and one with its sting."},
+      {name:"Claw", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) bludgeoning damage, and the target is grappled (escape DC 12). The scorpion has two claws, each of which can grapple only one target."},
+      {name:"Sting", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (1d10 + 2) piercing damage, and the target must make a DC 12 Constitution saving throw, taking 22 (4d10) poison damage on a failed save, or half as much on a success."}
+    ]
+  },
+  {
+    id:"giant-poisonous-snake", name:"Giant Poisonous Snake", size:"Medium", type:"beast", alignment:"unaligned",
+    tag:"beast",
+    ac:14, hp:11, hpFormula:"2d8 + 2", speed:"30 ft., swim 30 ft.",
+    abilities:{str:[10,0], dex:[18,4], con:[13,1], int:[2,-4], wis:[10,0], cha:[3,-4]},
+    skills:"Perception +2",
+    senses:"blindsight 10 ft., passive Perception 12",
+    languages:"—",
+    cr:"1/4", crNum:0.25, xp:50,
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +6 to hit, reach 10 ft., one target. Hit: 6 (1d4 + 4) piercing damage, and the target must make a DC 11 Constitution saving throw, taking 10 (3d6) poison damage on a failed save, or half as much on a success."}
+    ]
+  },
+  {
+    id:"giant-centipede", name:"Giant Centipede", size:"Small", type:"beast", alignment:"unaligned",
+    tag:"beast",
+    ac:13, acNote:"natural armor", hp:4, hpFormula:"1d6 + 1", speed:"30 ft., climb 30 ft.",
+    abilities:{str:[5,-3], dex:[14,2], con:[12,1], int:[1,-5], wis:[7,-2], cha:[3,-4]},
+    senses:"blindsight 30 ft., passive Perception 8",
+    languages:"—",
+    cr:"1/4", crNum:0.25, xp:50,
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 4 (1d4 + 2) piercing damage, and the target must succeed on a DC 11 Constitution saving throw or take 10 (3d6) poison damage. If reduced to 0 hit points by this poison, the target is stable but poisoned for 1 hour and paralyzed while poisoned this way."}
+    ]
+  },
+  {
+    id:"jackal", name:"Jackal", size:"Small", type:"beast", alignment:"unaligned",
+    tag:"beast",
+    ac:12, hp:3, hpFormula:"1d6", speed:"40 ft.",
+    abilities:{str:[8,-1], dex:[15,2], con:[11,0], int:[3,-4], wis:[12,1], cha:[6,-2]},
+    skills:"Perception +3",
+    senses:"passive Perception 13",
+    languages:"—",
+    cr:"0", crNum:0, xp:10,
+    traits:[
+      {name:"Keen Hearing and Smell", text:"The jackal has advantage on Wisdom (Perception) checks that rely on hearing or smell."},
+      {name:"Pack Tactics", text:"The jackal has advantage on an attack roll against a creature if at least one of the jackal's allies is within 5 feet of the creature and the ally isn't incapacitated."}
+    ],
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +1 to hit, reach 5 ft., one target. Hit: 1 (1d4 - 1) piercing damage."}
+    ]
+  },
+  {
+    id:"wolf", name:"Wolf", size:"Medium", type:"beast", alignment:"unaligned",
+    tag:"beast",
+    ac:13, acNote:"natural armor", hp:11, hpFormula:"2d8 + 2", speed:"40 ft.",
+    abilities:{str:[12,1], dex:[15,2], con:[12,1], int:[3,-4], wis:[12,1], cha:[6,-2]},
+    skills:"Perception +3, Stealth +4",
+    senses:"passive Perception 13",
+    languages:"—",
+    cr:"1/4", crNum:0.25, xp:50,
+    traits:[
+      {name:"Keen Hearing and Smell", text:"The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."},
+      {name:"Pack Tactics", text:"The wolf has advantage on attack rolls against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally isn't incapacitated."}
+    ],
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) piercing damage. If the target is a creature, it must succeed on a DC 11 Strength saving throw or be knocked prone."}
+    ]
+  },
+  {
+    id:"dire-wolf", name:"Dire Wolf", size:"Large", type:"beast", alignment:"unaligned",
+    tag:"beast",
+    ac:14, acNote:"natural armor", hp:37, hpFormula:"5d10 + 10", speed:"50 ft.",
+    abilities:{str:[17,3], dex:[15,2], con:[15,2], int:[3,-4], wis:[12,1], cha:[7,-2]},
+    skills:"Perception +3, Stealth +4",
+    senses:"passive Perception 13",
+    languages:"—",
+    cr:"1", crNum:1, xp:200,
+    traits:[
+      {name:"Keen Hearing and Smell", text:"The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."},
+      {name:"Pack Tactics", text:"The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 feet of the creature and the ally isn't incapacitated."}
+    ],
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) piercing damage. If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."}
+    ]
+  },
+
+  /* ---- undead ---- */
+  {
+    id:"skeleton", name:"Skeleton", size:"Medium", type:"undead", alignment:"lawful evil",
+    tag:"undead",
+    ac:13, acNote:"armor scraps", hp:13, hpFormula:"2d8 + 4", speed:"30 ft.",
+    abilities:{str:[10,0], dex:[14,2], con:[15,2], int:[6,-2], wis:[8,-1], cha:[5,-3]},
+    damageVulnerabilities:"bludgeoning",
+    damageImmunities:"poison",
+    conditionImmunities:"exhaustion, poisoned",
+    senses:"darkvision 60 ft., passive Perception 9",
+    languages:"understands all languages it knew in life but can't speak",
+    cr:"1/4", crNum:0.25, xp:50,
+    actions:[
+      {name:"Shortsword", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing damage."},
+      {name:"Shortbow", text:"Ranged Weapon Attack: +4 to hit, range 80/320 ft., one target. Hit: 5 (1d6 + 2) piercing damage."}
+    ]
+  },
+  {
+    id:"zombie", name:"Zombie", size:"Medium", type:"undead", alignment:"neutral evil",
+    tag:"undead",
+    ac:8, hp:22, hpFormula:"3d8 + 9", speed:"20 ft.",
+    abilities:{str:[13,1], dex:[6,-2], con:[16,3], int:[3,-4], wis:[6,-2], cha:[5,-3]},
+    savingThrows:"Wis +0",
+    damageImmunities:"poison",
+    conditionImmunities:"poisoned",
+    senses:"darkvision 60 ft., passive Perception 8",
+    languages:"understands the languages it knew in life but can't speak",
+    cr:"1/4", crNum:0.25, xp:50,
+    traits:[
+      {name:"Undead Fortitude", text:"If damage reduces the zombie to 0 hit points, it must make a Constitution saving throw with a DC of 5 + the damage taken, unless the damage is radiant or from a critical hit. On a success, the zombie drops to 1 hit point instead."}
+    ],
+    actions:[
+      {name:"Slam", text:"Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 4 (1d6 + 1) bludgeoning damage."}
+    ]
+  },
+  {
+    id:"ghoul", name:"Ghoul", size:"Medium", type:"undead", alignment:"chaotic evil",
+    tag:"undead",
+    ac:12, hp:22, hpFormula:"5d8", speed:"30 ft.",
+    abilities:{str:[13,1], dex:[15,2], con:[10,0], int:[7,-2], wis:[10,0], cha:[6,-2]},
+    damageImmunities:"poison",
+    conditionImmunities:"charmed, exhaustion, poisoned",
+    senses:"darkvision 60 ft., passive Perception 10",
+    languages:"Common",
+    cr:"1", crNum:1, xp:200,
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +2 to hit, reach 5 ft., one creature. Hit: 9 (2d6 + 2) piercing damage."},
+      {name:"Claws", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the target is a creature other than an elf or undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. It can repeat the save at the end of each of its turns."}
+    ]
+  },
+  {
+    id:"ghast", name:"Ghast", size:"Medium", type:"undead", alignment:"chaotic evil",
+    tag:"undead",
+    ac:13, hp:36, hpFormula:"8d8", speed:"30 ft.",
+    abilities:{str:[16,3], dex:[17,3], con:[10,0], int:[11,0], wis:[10,0], cha:[8,-1]},
+    damageResistances:"necrotic",
+    damageImmunities:"poison",
+    conditionImmunities:"charmed, exhaustion, poisoned",
+    senses:"darkvision 60 ft., passive Perception 10",
+    languages:"Common",
+    cr:"2", crNum:2, xp:450,
+    traits:[
+      {name:"Stench", text:"Any creature that starts its turn within 5 feet of the ghast must succeed on a DC 10 Constitution saving throw or be poisoned until the start of its next turn. On a success, the creature is immune to the ghast's Stench for 24 hours."},
+      {name:"Turning Defiance", text:"The ghast and any ghouls within 30 feet of it have advantage on saving throws against effects that turn undead."}
+    ],
+    actions:[
+      {name:"Bite", text:"Melee Weapon Attack: +3 to hit, reach 5 ft., one creature. Hit: 12 (2d8 + 3) piercing damage."},
+      {name:"Claws", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) slashing damage. If the target is a creature other than an undead, it must succeed on a DC 10 Constitution saving throw or be paralyzed for 1 minute. It can repeat the save at the end of each of its turns."}
+    ]
+  },
+  {
+    id:"wight", name:"Wight", size:"Medium", type:"undead", alignment:"neutral evil",
+    tag:"undead",
+    ac:14, acNote:"studded leather", hp:45, hpFormula:"6d8 + 18", speed:"30 ft.",
+    abilities:{str:[15,2], dex:[14,2], con:[16,3], int:[10,0], wis:[13,1], cha:[15,2]},
+    skills:"Perception +3, Stealth +4",
+    damageResistances:"necrotic; bludgeoning, piercing, and slashing from nonmagical weapons that aren't silvered",
+    damageImmunities:"poison",
+    conditionImmunities:"exhaustion, poisoned",
+    senses:"darkvision 60 ft., passive Perception 13",
+    languages:"the languages it knew in life",
+    cr:"3", crNum:3, xp:700,
+    traits:[
+      {name:"Sunlight Sensitivity", text:"While in sunlight, the wight has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The wight makes two longsword attacks or two longbow attacks. It can use its Life Drain in place of one longsword attack."},
+      {name:"Life Drain", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 5 (1d6 + 2) necrotic damage. The target must succeed on a DC 13 Constitution saving throw or its hit point maximum is reduced by an amount equal to the damage taken, until it finishes a long rest. A humanoid slain by this attack rises 24 hours later as a zombie under the wight's control."},
+      {name:"Longsword", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) slashing damage, or 7 (1d10 + 2) if used with two hands."},
+      {name:"Longbow", text:"Ranged Weapon Attack: +4 to hit, range 150/600 ft., one target. Hit: 6 (1d8 + 2) piercing damage."}
+    ]
+  },
+  {
+    id:"ghost", name:"Ghost", size:"Medium", type:"undead", alignment:"any alignment",
+    tag:"undead",
+    ac:11, hp:45, hpFormula:"10d8", speed:"0 ft., fly 40 ft.",
+    abilities:{str:[7,-2], dex:[13,1], con:[10,0], int:[10,0], wis:[12,1], cha:[17,3]},
+    damageResistances:"acid, fire, lightning, thunder; bludgeoning, piercing, and slashing from nonmagical weapons",
+    damageImmunities:"cold, necrotic, poison",
+    conditionImmunities:"charmed, exhaustion, frightened, grappled, paralyzed, petrified, poisoned, prone, restrained",
+    senses:"darkvision 60 ft., passive Perception 11",
+    languages:"any languages it knew in life",
+    cr:"4", crNum:4, xp:1100,
+    traits:[
+      {name:"Ethereal Sight", text:"The ghost can see 60 feet into the Ethereal Plane when it is on the Material Plane, and vice versa."},
+      {name:"Incorporeal Movement", text:"The ghost can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."}
+    ],
+    actions:[
+      {name:"Withering Touch", text:"Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 17 (4d6 + 3) necrotic damage."},
+      {name:"Etherealness", text:"The ghost enters the Ethereal Plane from the Material Plane, or vice versa. It is visible on the Material Plane while it is in the Border Ethereal, and vice versa, yet can't affect or be affected by anything on the other plane."},
+      {name:"Horrifying Visage", text:"Each non-undead creature within 60 feet of the ghost that can see it must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute. On a failure by 5 or more, the target also ages 1d4 × 10 years. A frightened target can repeat the save at the end of each of its turns."},
+      {name:"Possession (Recharge 6)", text:"One humanoid the ghost can see within 5 feet of it must succeed on a DC 13 Charisma saving throw or be possessed, becoming incapacitated and losing control of its body. The possession lasts until the body drops to 0 hit points, the ghost ends it as a bonus action, or the ghost is turned or forced out."}
+    ]
+  },
+  {
+    id:"wraith", name:"Wraith", size:"Medium", type:"undead", alignment:"neutral evil",
+    tag:"undead",
+    ac:13, hp:67, hpFormula:"9d8 + 27", speed:"0 ft., fly 60 ft. (hover)",
+    abilities:{str:[6,-2], dex:[16,3], con:[16,3], int:[12,1], wis:[14,2], cha:[15,2]},
+    damageResistances:"acid, cold, fire, lightning, thunder; bludgeoning, piercing, and slashing from nonmagical weapons that aren't silvered",
+    damageImmunities:"necrotic, poison",
+    conditionImmunities:"charmed, exhaustion, grappled, paralyzed, petrified, poisoned, prone, restrained",
+    senses:"darkvision 60 ft., passive Perception 12",
+    languages:"the languages it knew in life",
+    cr:"5", crNum:5, xp:1800,
+    traits:[
+      {name:"Incorporeal Movement", text:"The wraith can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."},
+      {name:"Sunlight Sensitivity", text:"While in sunlight, the wraith has disadvantage on attack rolls, as well as on Wisdom (Perception) checks that rely on sight."}
+    ],
+    actions:[
+      {name:"Life Drain", text:"Melee Weapon Attack: +6 to hit, reach 5 ft., one creature. Hit: 21 (4d8 + 3) necrotic damage. The target must succeed on a DC 14 Constitution saving throw or its hit point maximum is reduced by an amount equal to the damage taken, until it finishes a long rest. The target dies if this reduces its hit point maximum to 0."},
+      {name:"Create Specter", text:"The wraith targets a humanoid within 10 feet of it that has been dead no longer than 1 minute and died violently. The target's spirit rises as a specter under the wraith's control. The wraith can have no more than seven specters under its control at one time."}
+    ]
+  },
+  {
+    id:"banshee", name:"Banshee", size:"Medium", type:"undead", alignment:"chaotic evil",
+    tag:"undead",
+    ac:12, hp:58, hpFormula:"13d8", speed:"0 ft., fly 40 ft. (hover)",
+    abilities:{str:[1,-5], dex:[14,2], con:[10,0], int:[12,1], wis:[11,0], cha:[17,3]},
+    savingThrows:"Wis +2, Cha +4",
+    damageResistances:"acid, fire, lightning, thunder; bludgeoning, piercing, and slashing from nonmagical weapons",
+    damageImmunities:"cold, necrotic, poison",
+    conditionImmunities:"charmed, exhaustion, frightened, grappled, paralyzed, petrified, poisoned, prone, restrained",
+    senses:"darkvision 60 ft., passive Perception 10",
+    languages:"Common, Elvish",
+    cr:"4", crNum:4, xp:1100,
+    traits:[
+      {name:"Detect Life", text:"The banshee can magically sense the presence of living creatures up to 5 miles away. She knows the general direction they're in but not their exact locations."},
+      {name:"Incorporeal Movement", text:"The banshee can move through other creatures and objects as if they were difficult terrain. She takes 5 (1d10) force damage if she ends her turn inside an object."}
+    ],
+    actions:[
+      {name:"Corrupting Touch", text:"Melee Spell Attack: +4 to hit, reach 5 ft., one target. Hit: 12 (3d6 + 2) necrotic damage."},
+      {name:"Horrifying Visage", text:"Each non-undead creature within 60 feet of the banshee that can see her must succeed on a DC 13 Wisdom saving throw or be frightened for 1 minute, with disadvantage on repeat saves made within her line of sight."},
+      {name:"Wail (1/Day)", text:"The banshee releases a mournful wail, provided she isn't in sunlight. All creatures within 30 feet of her that can hear her must make a DC 13 Constitution saving throw. On a failure, a creature drops to 0 hit points; on a success, it takes 10 (3d6) psychic damage."}
+    ]
+  },
+  {
+    id:"will-o-wisp", name:"Will-o'-Wisp", size:"Tiny", type:"undead", alignment:"chaotic evil",
+    tag:"undead",
+    ac:19, hp:22, hpFormula:"9d4", speed:"0 ft., fly 50 ft. (hover)",
+    abilities:{str:[1,-5], dex:[28,9], con:[10,0], int:[13,1], wis:[14,2], cha:[11,0]},
+    damageResistances:"acid, cold, fire, necrotic, thunder; bludgeoning, piercing, and slashing from nonmagical weapons",
+    damageImmunities:"lightning, poison",
+    conditionImmunities:"exhaustion, grappled, paralyzed, poisoned, prone, restrained, unconscious",
+    senses:"darkvision 120 ft., passive Perception 12",
+    languages:"the languages it knew in life",
+    cr:"2", crNum:2, xp:450,
+    traits:[
+      {name:"Consume Life", text:"As a bonus action, the will-o'-wisp can target one creature it can see within 5 feet of it that has 0 hit points and is still alive. The target must succeed on a DC 10 Constitution saving throw against this magic or die. If it dies, the will-o'-wisp regains 10 (3d6) hit points."},
+      {name:"Incorporeal Movement", text:"The will-o'-wisp can move through other creatures and objects as if they were difficult terrain. It takes 5 (1d10) force damage if it ends its turn inside an object."},
+      {name:"Variable Illumination", text:"The will-o'-wisp sheds bright light in a 5- to 20-foot radius and dim light for an additional equal radius. It can alter the radius as a bonus action."}
+    ],
+    actions:[
+      {name:"Shock", text:"Melee Spell Attack: +4 to hit, reach 5 ft., one creature. Hit: 9 (2d8) lightning damage."},
+      {name:"Invisibility", text:"The will-o'-wisp and its light magically become invisible until it attacks or uses its Consume Life, or until its concentration ends."}
+    ]
+  },
+
+  /* ---- shapechangers & fey/fiends ---- */
+  {
+    id:"doppelganger", name:"Doppelganger", size:"Medium", type:"monstrosity (shapechanger)", alignment:"neutral",
+    tag:"monstrosity",
+    ac:14, hp:52, hpFormula:"8d8 + 16", speed:"30 ft.",
+    abilities:{str:[11,0], dex:[18,4], con:[14,2], int:[11,0], wis:[12,1], cha:[14,2]},
+    skills:"Deception +6, Insight +3",
+    conditionImmunities:"charmed",
+    senses:"darkvision 60 ft., passive Perception 11",
+    languages:"Common",
+    cr:"3", crNum:3, xp:700,
+    traits:[
+      {name:"Shapechanger", text:"The doppelganger can use its action to polymorph into a Small or Medium humanoid it has seen, or back into its true form. Its statistics, other than its size, are the same in each form. It reverts to its true form if it dies."},
+      {name:"Ambusher", text:"The doppelganger has advantage on attack rolls against any creature it has surprised."},
+      {name:"Surprise Attack", text:"If the doppelganger surprises a creature and hits it with an attack during the first round of combat, the target takes an extra 10 (3d6) damage."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"The doppelganger makes two melee attacks."},
+      {name:"Slam", text:"Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 7 (1d6 + 4) bludgeoning damage."},
+      {name:"Read Thoughts", text:"The doppelganger magically reads the surface thoughts of one creature within 60 feet of it, as long as its concentration isn't broken. While reading the target's mind, it has advantage on Wisdom (Insight) and Charisma (Deception, Intimidation, and Persuasion) checks against the target."}
+    ]
+  },
+  {
+    id:"werewolf", name:"Werewolf", size:"Medium", type:"humanoid (human, shapechanger)", alignment:"chaotic evil",
+    tag:"humanoid",
+    ac:11, acNote:"12 (natural armor) in wolf or hybrid form", hp:58, hpFormula:"9d8 + 18", speed:"30 ft. (40 ft. in wolf form)",
+    abilities:{str:[15,2], dex:[13,1], con:[14,2], int:[10,0], wis:[11,0], cha:[10,0]},
+    skills:"Perception +4, Stealth +3",
+    damageImmunities:"bludgeoning, piercing, and slashing damage from nonmagical weapons that aren't silvered",
+    senses:"passive Perception 14",
+    languages:"Common (can't speak in wolf form)",
+    cr:"3", crNum:3, xp:700,
+    traits:[
+      {name:"Shapechanger", text:"The werewolf can use its action to polymorph into a wolf-humanoid hybrid or into a wolf, or back into its true form, which is humanoid. It reverts to its true form if it dies."},
+      {name:"Keen Hearing and Smell", text:"The werewolf has advantage on Wisdom (Perception) checks that rely on hearing or smell."}
+    ],
+    actions:[
+      {name:"Multiattack (Humanoid or Hybrid Form Only)", text:"The werewolf makes two attacks: one with its bite and one with its claws or spear."},
+      {name:"Bite (Wolf or Hybrid Form Only)", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 6 (1d8 + 2) piercing damage. If the target is a humanoid, it must succeed on a DC 12 Constitution saving throw or be cursed with werewolf lycanthropy."},
+      {name:"Claws (Hybrid Form Only)", text:"Melee Weapon Attack: +4 to hit, reach 5 ft., one creature. Hit: 7 (2d4 + 2) slashing damage."},
+      {name:"Spear (Humanoid Form Only)", text:"Melee or Ranged Weapon Attack: +4 to hit, reach 5 ft. or range 20/60 ft., one creature. Hit: 5 (1d6 + 2) piercing damage, or 6 (1d8 + 2) if used with two hands to make a melee attack."}
+    ]
+  },
+  {
+    id:"werebear", name:"Werebear", size:"Medium", type:"humanoid (human, shapechanger)", alignment:"neutral good",
+    tag:"humanoid",
+    ac:10, acNote:"11 (natural armor) in bear or hybrid form", hp:135, hpFormula:"18d8 + 54", speed:"30 ft. (40 ft., climb 30 ft. in bear or hybrid form)",
+    abilities:{str:[19,4], dex:[10,0], con:[17,3], int:[11,0], wis:[12,1], cha:[12,1]},
+    skills:"Perception +7",
+    damageImmunities:"bludgeoning, piercing, and slashing damage from nonmagical weapons that aren't silvered",
+    senses:"passive Perception 17",
+    languages:"Common (can't speak in bear form)",
+    cr:"5", crNum:5, xp:1800,
+    traits:[
+      {name:"Shapechanger", text:"The werebear can use its action to polymorph into a Large bear-humanoid hybrid or into a Large bear, or back into its true form, which is humanoid. It reverts to its true form if it dies."},
+      {name:"Keen Smell", text:"The werebear has advantage on Wisdom (Perception) checks that rely on smell."}
+    ],
+    actions:[
+      {name:"Multiattack", text:"In bear form, the werebear makes two claw attacks. In humanoid form, it makes two greataxe attacks. In hybrid form, it can attack like a bear or a humanoid."},
+      {name:"Bite (Bear or Hybrid Form Only)", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 15 (2d10 + 4) piercing damage. If the target is a humanoid, it must succeed on a DC 14 Constitution saving throw or be cursed with werebear lycanthropy."},
+      {name:"Claw (Bear or Hybrid Form Only)", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage."},
+      {name:"Greataxe (Humanoid or Hybrid Form Only)", text:"Melee Weapon Attack: +7 to hit, reach 5 ft., one target. Hit: 10 (1d12 + 4) slashing damage."}
+    ]
+  },
+  {
+    id:"green-hag", name:"Green Hag", size:"Medium", type:"fey", alignment:"neutral evil",
+    tag:"fey",
+    ac:17, acNote:"natural armor", hp:82, hpFormula:"11d8 + 33", speed:"30 ft.",
+    abilities:{str:[18,4], dex:[12,1], con:[16,3], int:[13,1], wis:[14,2], cha:[14,2]},
+    skills:"Arcana +3, Deception +4, Perception +4, Stealth +3",
+    senses:"darkvision 60 ft., passive Perception 14",
+    languages:"Common, Draconic, Sylvan",
+    cr:"3", crNum:3, xp:700,
+    traits:[
+      {name:"Amphibious", text:"The hag can breathe air and water."},
+      {name:"Innate Spellcasting", text:"The hag's innate spellcasting ability is Charisma (spell save DC 12), requiring no material components — at will: dancing lights, minor illusion, vicious mockery."},
+      {name:"Mimicry", text:"The hag can mimic animal sounds and humanoid voices. A creature that hears the sounds can tell they are imitations with a successful DC 14 Wisdom (Insight) check."}
+    ],
+    actions:[
+      {name:"Claws", text:"Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage."},
+      {name:"Illusory Appearance", text:"The hag covers herself and anything she is wearing or carrying with a magical illusion that makes her look like another creature of her general size and humanoid shape, until she takes a bonus action to end it or dies. A creature must take an action and succeed on a DC 20 Intelligence (Investigation) check to discern the illusion."},
+      {name:"Invisible Passage", text:"The hag magically turns invisible until she attacks or casts a spell, or until her concentration ends. While invisible, she leaves no physical evidence of her passage."}
+    ]
+  },
+  {
+    id:"night-hag", name:"Night Hag", size:"Medium", type:"fiend", alignment:"neutral evil",
+    tag:"fiend",
+    ac:17, acNote:"natural armor", hp:112, hpFormula:"15d8 + 45", speed:"30 ft.",
+    abilities:{str:[18,4], dex:[15,2], con:[16,3], int:[16,3], wis:[14,2], cha:[16,3]},
+    skills:"Deception +7, Insight +6, Perception +6, Stealth +6",
+    damageResistances:"cold, fire; bludgeoning, piercing, and slashing from nonmagical weapons that aren't silvered",
+    conditionImmunities:"charmed",
+    senses:"darkvision 120 ft., passive Perception 16",
+    languages:"Abyssal, Common, Infernal, Primordial",
+    cr:"5", crNum:5, xp:1800,
+    traits:[
+      {name:"Innate Spellcasting", text:"The hag's innate spellcasting ability is Charisma (spell save DC 13, +5 to hit with spell attacks), requiring no material components — at will: detect magic, magic missile; 2/day each: plane shift (self only), ray of enfeeblement, sleep."},
+      {name:"Magic Resistance", text:"The hag has advantage on saving throws against spells and other magical effects."}
+    ],
+    actions:[
+      {name:"Claws (Hag Form Only)", text:"Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) slashing damage."},
+      {name:"Change Shape", text:"The hag magically polymorphs into a Small or Medium female humanoid, or back into her true form. Her statistics are the same in each form. She reverts to her true form if she dies."},
+      {name:"Etherealness", text:"The hag magically enters the Ethereal Plane from the Material Plane, or vice versa. To do so, she must have a heartstone in her possession."},
+      {name:"Nightmare Haunting (1/Day)", text:"While on the Ethereal Plane, the hag magically touches a sleeping humanoid on the Material Plane, giving it dreadful visions. If sustained for at least 1 hour, the target gains no benefit from its rest and its hit point maximum is reduced by 5 (1d10)."}
+    ]
+  }
+];
+
+/* ============================================================
+   PERSISTENT STORAGE
+   Saves the tracker, activity log, and encounter history so they
+   survive a reload AND sync across devices (iPad/iPhone/desktop).
+
+   Primary store: Supabase (a single shared row in `tracker_state`,
+   open read/write via the anon key — see SUPABASE_URL/KEY below).
+   Fallback / offline cache: the browser's own localStorage, used
+   when Supabase can't be reached (offline, or the keys aren't
+   configured), and also kept in sync as a local cache so the app
+   still opens instantly and works offline.
+   ============================================================ */
+const STORAGE_KEY = "bestiary-tracker-state";
+
+const SUPABASE_URL = "https://kesfnfaubegtviqjijvq.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_OGpAVID6R3jHD3q8YiUgJg_Xt9_Sqhx";
+const SUPABASE_ROW_ID = "main";
+const SUPABASE_TABLE = "tracker_state";
+
+let cloudSyncStatus = "idle"; // idle | syncing | synced | error | offline
+
+function setSyncStatus(status){
+  cloudSyncStatus = status;
+  const el = document.getElementById("syncStatus");
+  if(!el) return;
+  const label = {
+    idle: "",
+    syncing: "Syncing…",
+    synced: "Synced",
+    error: "Sync error — saved locally",
+    offline: "Offline — saved locally"
+  }[status] || "";
+  el.textContent = label;
+  el.setAttribute("data-status", status);
+}
+
+async function supabaseFetchState(){
+  const url = `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${SUPABASE_ROW_ID}&select=data`;
+  const res = await fetch(url, {
+    headers:{
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+    }
+  });
+  if(!res.ok) throw new Error("Supabase fetch failed: " + res.status);
+  const rows = await res.json();
+  if(rows && rows.length && rows[0].data) return rows[0].data;
+  return null;
+}
+
+async function supabaseSaveState(value){
+  const url = `${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers:{
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
+      "Content-Type": "application/json",
+      "Prefer": "resolution=merge-duplicates,return=minimal"
+    },
+    body: JSON.stringify({ id: SUPABASE_ROW_ID, data: value, updated_at: new Date().toISOString() })
+  });
+  if(!res.ok) throw new Error("Supabase save failed: " + res.status);
+}
+
+async function storageGet(key){
+  // Try the cloud first so multiple devices see the same state.
+  try{
+    setSyncStatus("syncing");
+    const cloud = await supabaseFetchState();
+    if(cloud){
+      try{ localStorage.setItem(key, JSON.stringify(cloud)); }catch(e){}
+      setSyncStatus("synced");
+      return cloud;
+    }
+    setSyncStatus("synced");
+  }catch(e){
+    setSyncStatus(navigator.onLine ? "error" : "offline");
+  }
+  // Fall back to whatever was last cached locally.
+  try{
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+let saveDebounceTimer = null;
+async function storageSet(key, value){
+  const json = JSON.stringify(value);
+  try{ localStorage.setItem(key, json); }catch(e){}
+
+  // Debounce cloud writes slightly so rapid UI updates (e.g. dragging
+  // HP) don't fire a network request per keystroke.
+  clearTimeout(saveDebounceTimer);
+  return new Promise((resolve)=>{
+    saveDebounceTimer = setTimeout(async ()=>{
+      try{
+        setSyncStatus("syncing");
+        await supabaseSaveState(value);
+        setSyncStatus("synced");
+      }catch(e){
+        setSyncStatus(navigator.onLine ? "error" : "offline");
+      }
+      resolve(true);
+    }, 400);
+  });
+}
+
+function persistState(){
+  storageSet(STORAGE_KEY, {
+    trackerList, trackerCounter,
+    actionLog, actionLogCounter,
+    historyLog, historyCounter,
+    homebrew, homebrewCounter,
+    players, playerCounter
+  });
+}
+
+async function loadState(){
+  const saved = await storageGet(STORAGE_KEY);
+  if(saved){
+    trackerList = saved.trackerList || [];
+    trackerCounter = saved.trackerCounter || 0;
+    actionLog = saved.actionLog || [];
+    actionLogCounter = saved.actionLogCounter || 0;
+    historyLog = saved.historyLog || [];
+    historyCounter = saved.historyCounter || 0;
+    homebrew = saved.homebrew || [];
+    homebrewCounter = saved.homebrewCounter || 0;
+    players = saved.players || [];
+    playerCounter = saved.playerCounter || 0;
+    // backfill fields for tracker entries saved before status tracking existed
+    trackerList.forEach(e=>{
+      if(!e.conditions) e.conditions = [];
+      if(!e.deathSaves) e.deathSaves = {success:0, fail:0};
+    });
+  }
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let expandedSet = new Set();
+let activeType = "all";
+let searchTerm = "";
+let sortMode = "cr-asc";
+let trackerList = [];
+let trackerCounter = 0;
+let trackerExpandedSet = new Set();
+let actionLog = [];
+let actionLogCounter = 0;
+let historyLog = [];
+let historyCounter = 0;
+let historyExpandedSet = new Set();
+let homebrew = [];
+let homebrewCounter = 0;
+let players = [];
+let playerCounter = 0;
+
+function allMonsters(){ return MONSTERS.concat(homebrew); }
+function findCreature(id){
+  return MONSTERS.find(x=>x.id===id) || homebrew.find(x=>x.id===id) || players.find(x=>x.id===id);
+}
+
+const tagLabel = { humanoid:"humanoid", monstrosity:"monstrosity", dragon:"dragon", beast:"beast", undead:"undead", fey:"fey", fiend:"fiend" };
+
+function abilityMod(v){ return v>=0 ? "+"+v : v; }
+function crToNum(m){ return m.crNum; }
+
+/* ============================================================
+   RENDER: type filter chips
+   ============================================================ */
+function renderChips(){
+  const types = ["all", ...new Set(allMonsters().map(m=>m.tag))];
+  const wrap = document.getElementById("typeChips");
+  wrap.innerHTML = "";
+  types.forEach(t=>{
+    const b = document.createElement("button");
+    b.className = "chip" + (activeType===t ? " active":"");
+    b.textContent = t==="all" ? "all types" : tagLabel[t] || t;
+    b.onclick = ()=>{ activeType = t; renderChips(); renderGrid(); };
+    wrap.appendChild(b);
+  });
+}
+
+/* ============================================================
+   RENDER: card grid
+   ============================================================ */
+function filteredList(){
+  return allMonsters().filter(m=>{
+    const matchesType = activeType==="all" || m.tag===activeType;
+    const matchesSearch = m.name.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesType && matchesSearch;
+  });
+}
+
+function sortItems(items){
+  const list = [...items];
+  switch(sortMode){
+    case "cr-asc": list.sort((a,b)=>crToNum(a)-crToNum(b)); break;
+    case "cr-desc": list.sort((a,b)=>crToNum(b)-crToNum(a)); break;
+    case "name-asc": list.sort((a,b)=>a.name.localeCompare(b.name)); break;
+    case "hp-desc": list.sort((a,b)=>b.hp-a.hp); break;
+    case "ac-desc": list.sort((a,b)=>b.ac-a.ac); break;
+  }
+  return list;
+}
+
+function statBlockHTML(m){
+  const abOrder = ["str","dex","con","int","wis","cha"];
+  const abilitiesHTML = abOrder.map(k=>{
+    const [score,mod] = m.abilities[k];
+    return `<div class="ability"><div class="lbl">${k.toUpperCase()}</div><div class="val">${score} (${abilityMod(mod)})</div></div>`;
+  }).join("");
+
+  let props = "";
+  if(m.classLevel) props += `<div class="prop-line"><b>Class &amp; Level</b><span class="prop-value">${m.classLevel}</span></div>`;
+  if(m.playerName) props += `<div class="prop-line"><b>Player</b><span class="prop-value">${m.playerName}</span></div>`;
+  if(m.savingThrows) props += `<div class="prop-line"><b>Saving Throws</b><span class="prop-value">${m.savingThrows}</span></div>`;
+  if(m.skills) props += `<div class="prop-line"><b>Skills</b><span class="prop-value">${m.skills}</span></div>`;
+  if(m.damageVulnerabilities) props += `<div class="prop-line"><b>Damage Vulnerabilities</b><span class="prop-value">${m.damageVulnerabilities}</span></div>`;
+  if(m.damageResistances) props += `<div class="prop-line"><b>Damage Resistances</b><span class="prop-value">${m.damageResistances}</span></div>`;
+  if(m.damageImmunities) props += `<div class="prop-line"><b>Damage Immunities</b><span class="prop-value">${m.damageImmunities}</span></div>`;
+  if(m.conditionImmunities) props += `<div class="prop-line"><b>Condition Immunities</b><span class="prop-value">${m.conditionImmunities}</span></div>`;
+  if(m.senses) props += `<div class="prop-line"><b>Senses</b><span class="prop-value">${m.senses}</span></div>`;
+  if(m.languages) props += `<div class="prop-line"><b>Languages</b><span class="prop-value">${m.languages}</span></div>`;
+  if(!m.isPlayer) props += `<div class="prop-line"><b>Challenge</b><span class="prop-value">${m.cr} (${(m.xp||0).toLocaleString()} XP)</span></div>`;
+  if(m.notes) props += `<div class="prop-line"><b>Notes</b><span class="prop-value">${m.notes}</span></div>`;
+
+  const traitsHTML = (m.traits||[]).map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("");
+  const actionsHTML = (m.actions||[]).map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("");
+  const reactionsHTML = (m.reactions||[]).map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("");
+  const legendaryHTML = m.legendary ? `
+    <div class="section-label">LEGENDARY ACTIONS</div>
+    <div class="entry">${m.legendary.intro}</div>
+    ${m.legendary.actions.map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("")}
+  ` : "";
+
+  return `
+    <div class="prop-line"><b>Armor Class</b><span class="prop-value">${m.ac}${m.acNote ? " ("+m.acNote+")":""}</span></div>
+    <div class="prop-line"><b>Hit Points</b><span class="prop-value">${m.hp}${m.hpFormula ? " ("+m.hpFormula+")" : ""}</span></div>
+    <div class="prop-line"><b>Speed</b><span class="prop-value">${m.speed}</span></div>
+    <div class="abilities-table">${abilitiesHTML}</div>
+    ${props}
+    <hr class="rule">
+    ${traitsHTML}
+    ${actionsHTML ? `<div class="section-label">ACTIONS</div>${actionsHTML}` : ""}
+    ${reactionsHTML ? `<div class="section-label">REACTIONS</div>${reactionsHTML}` : ""}
+    ${legendaryHTML}
+  `;
+}
+
+function renderGrid(){
+  const filtered = filteredList();
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  document.getElementById("emptyState").style.display = filtered.length ? "none" : "block";
+  document.getElementById("visibleCount").textContent = filtered.length;
+  document.getElementById("totalCount").textContent = allMonsters().length;
+
+  const tagColor = { humanoid:"var(--tag-humanoid)", monstrosity:"var(--tag-monstrosity)", dragon:"var(--tag-dragon)", beast:"var(--tag-beast)", undead:"var(--tag-undead)", fey:"var(--tag-fey)", fiend:"var(--tag-fiend)" };
+  const knownTagOrder = Object.keys(tagLabel);
+  const extraTags = Array.from(new Set(filtered.map(m=>m.tag))).filter(t=>!knownTagOrder.includes(t));
+  const tagOrder = [...knownTagOrder, ...extraTags];
+
+  tagOrder.forEach(tag=>{
+    const items = sortItems(filtered.filter(m=>m.tag===tag));
+    if(items.length === 0) return;
+
+    const header = document.createElement("div");
+    header.className = "section-header";
+    header.style.setProperty("--tag-color", tagColor[tag] || "var(--accent)");
+    header.innerHTML = `
+      <span class="section-header-label">${tagLabel[tag] || tag}</span>
+      <span class="section-header-count">${items.length} ${items.length === 1 ? "entry" : "entries"}</span>
+    `;
+    grid.appendChild(header);
+
+    items.forEach(m=>{
+      const card = document.createElement("div");
+      card.className = "card";
+      card.style.setProperty("--tag-color", tagColor[m.tag] || "var(--forest)");
+
+      const isOpen = expandedSet.has(m.id);
+
+      card.innerHTML = `
+        <div class="card-head" data-id="${m.id}">
+          <div class="card-title-col">
+            <div class="card-title-row">
+              <div class="card-name">${m.name}</div>
+              <div class="card-meta">${m.size} ${m.type}, ${m.alignment}</div>
+            </div>
+            <div class="stat-strip mono">
+              <span><b>AC</b>${m.ac}</span>
+              <span><b>HP</b>${m.hp}</span>
+              <span><b>SPD</b>${m.speed.split(",")[0]}</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <div class="cr-badge">CR ${m.cr}</div>
+            ${m.homebrew ? '<span class="homebrew-badge">homebrew</span>' : ""}
+            <button class="add-tracker-btn" data-add-tracker="${m.id}">+ tracker</button>
+            ${m.homebrew ? `<button class="homebrew-delete" data-delete-homebrew="${m.id}">delete</button>` : ""}
+            <span class="expand-hint">${isOpen ? "▲ collapse" : "▼ full stat block"}</span>
+          </div>
+        </div>
+        <div class="detail ${isOpen ? "open":""}">${statBlockHTML(m)}</div>
+      `;
+
+      card.querySelector(".card-head").addEventListener("click", ()=>{
+        if(expandedSet.has(m.id)) expandedSet.delete(m.id); else expandedSet.add(m.id);
+        renderGrid();
+      });
+      card.querySelector("[data-add-tracker]").addEventListener("click", (e)=>{
+        e.stopPropagation();
+        addToTracker(m.id);
+      });
+      const deleteBtn = card.querySelector("[data-delete-homebrew]");
+      if(deleteBtn){
+        deleteBtn.addEventListener("click", (e)=>{
+          e.stopPropagation();
+          deleteHomebrew(m.id);
+        });
+      }
+
+      grid.appendChild(card);
+    });
+  });
+}
+
+/* ============================================================
+   HOMEBREW CREATURES
+   ============================================================ */
+const CR_XP_TABLE = {
+  "0":10, "1/8":25, "1/4":50, "1/2":100,
+  "1":200, "2":450, "3":700, "4":1100, "5":1800, "6":2300, "7":2900,
+  "8":3900, "9":5000, "10":5900, "11":7200, "12":8400, "13":10000,
+  "14":11500, "15":13000, "16":15000, "17":18000, "18":20000, "19":22000,
+  "20":25000, "21":33000, "22":41000, "23":50000, "24":62000, "25":75000,
+  "26":90000, "27":105000, "28":120000, "29":135000, "30":155000
+};
+
+function crStringToNum(cr){
+  const clean = (cr || "").trim();
+  if(clean.includes("/")){
+    const [n, d] = clean.split("/").map(Number);
+    return d ? n / d : 0;
+  }
+  const v = parseFloat(clean);
+  return isNaN(v) ? 0 : v;
+}
+
+function abilityScoreMod(score){ return Math.floor((score - 10) / 2); }
+
+function addDynamicRow(containerId, name = "", text = ""){
+  const container = document.getElementById(containerId);
+  const row = document.createElement("div");
+  row.className = "hb-dynamic-row";
+  row.innerHTML = `
+    <input type="text" class="hb-row-name" placeholder="Name (e.g. Bite)" value="${name}">
+    <textarea class="hb-row-text" placeholder="Description / attack text">${text}</textarea>
+    <button type="button" class="hb-row-remove" title="Remove">&times;</button>
+  `;
+  row.querySelector(".hb-row-remove").addEventListener("click", ()=> row.remove());
+  container.appendChild(row);
+}
+
+function collectDynamicRows(containerId){
+  const rows = document.querySelectorAll(`#${containerId} .hb-dynamic-row`);
+  const result = [];
+  rows.forEach(row=>{
+    const name = row.querySelector(".hb-row-name").value.trim();
+    const text = row.querySelector(".hb-row-text").value.trim();
+    if(name || text) result.push({name: name || "Untitled", text});
+  });
+  return result;
+}
+
+function resetHomebrewForm(){
+  document.getElementById("hbFormError").style.display = "none";
+  ["hbName","hbType","hbAlignment","hbACNote","hbHPFormula","hbSpeed",
+   "hbSavingThrows","hbSkills","hbVulnerabilities","hbResistances",
+   "hbImmunities","hbConditionImmunities","hbSenses","hbLanguages","hbCR"].forEach(id=>{
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("hbAC").value = "";
+  document.getElementById("hbHP").value = "";
+  document.getElementById("hbXP").value = "";
+  document.getElementById("hbSize").value = "Medium";
+  document.getElementById("hbTag").value = "humanoid";
+  document.getElementById("hbTagCustom").value = "";
+  document.getElementById("hbTagCustomWrap").style.display = "none";
+  ["hbStr","hbDex","hbCon","hbInt","hbWis","hbCha"].forEach(id=>{
+    document.getElementById(id).value = "10";
+  });
+  document.getElementById("hbTraitsList").innerHTML = "";
+  document.getElementById("hbActionsList").innerHTML = "";
+  document.getElementById("hbReactionsList").innerHTML = "";
+  addDynamicRow("hbActionsList");
+}
+
+function openHomebrewModal(){
+  resetHomebrewForm();
+  document.getElementById("homebrewModalOverlay").classList.add("show");
+}
+
+function closeHomebrewModal(){
+  document.getElementById("homebrewModalOverlay").classList.remove("show");
+}
+
+function showHbError(msg){
+  const el = document.getElementById("hbFormError");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+function saveHomebrewCreature(){
+  const name = document.getElementById("hbName").value.trim();
+  const ac = parseInt(document.getElementById("hbAC").value, 10);
+  const hp = parseInt(document.getElementById("hbHP").value, 10);
+  const speed = document.getElementById("hbSpeed").value.trim();
+  const cr = document.getElementById("hbCR").value.trim();
+
+  if(!name){ showHbError("Give this creature a name."); return; }
+  if(!ac || ac <= 0){ showHbError("Enter a valid Armor Class."); return; }
+  if(!hp || hp <= 0){ showHbError("Enter valid Hit Points."); return; }
+  if(!speed){ showHbError("Enter a speed, e.g. \"30 ft.\""); return; }
+  if(!cr){ showHbError("Enter a Challenge Rating, e.g. \"1/4\" or \"3\"."); return; }
+
+  let tag = document.getElementById("hbTag").value;
+  if(tag === "__custom"){
+    const custom = document.getElementById("hbTagCustom").value.trim().toLowerCase();
+    if(!custom){ showHbError("Enter a custom category name, or pick one from the list."); return; }
+    tag = custom;
+  }
+
+  const crNum = crStringToNum(cr);
+  let xp = parseInt(document.getElementById("hbXP").value, 10);
+  if(!xp) xp = CR_XP_TABLE[cr] || 0;
+
+  const abilities = {
+    str: [parseInt(document.getElementById("hbStr").value,10) || 10, 0],
+    dex: [parseInt(document.getElementById("hbDex").value,10) || 10, 0],
+    con: [parseInt(document.getElementById("hbCon").value,10) || 10, 0],
+    int: [parseInt(document.getElementById("hbInt").value,10) || 10, 0],
+    wis: [parseInt(document.getElementById("hbWis").value,10) || 10, 0],
+    cha: [parseInt(document.getElementById("hbCha").value,10) || 10, 0]
+  };
+  Object.keys(abilities).forEach(k=>{ abilities[k][1] = abilityScoreMod(abilities[k][0]); });
+
+  const actions = collectDynamicRows("hbActionsList");
+  if(actions.length === 0){ showHbError("Add at least one action."); return; }
+
+  homebrewCounter++;
+  const id = "homebrew-" + homebrewCounter + "-" + name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+
+  const monster = {
+    id, name,
+    size: document.getElementById("hbSize").value,
+    type: document.getElementById("hbType").value.trim() || tag,
+    alignment: document.getElementById("hbAlignment").value.trim() || "unaligned",
+    tag,
+    homebrew: true,
+    ac, acNote: document.getElementById("hbACNote").value.trim() || undefined,
+    hp, hpFormula: document.getElementById("hbHPFormula").value.trim() || `${hp} hp`,
+    speed,
+    abilities,
+    savingThrows: document.getElementById("hbSavingThrows").value.trim() || undefined,
+    skills: document.getElementById("hbSkills").value.trim() || undefined,
+    damageVulnerabilities: document.getElementById("hbVulnerabilities").value.trim() || undefined,
+    damageResistances: document.getElementById("hbResistances").value.trim() || undefined,
+    damageImmunities: document.getElementById("hbImmunities").value.trim() || undefined,
+    conditionImmunities: document.getElementById("hbConditionImmunities").value.trim() || undefined,
+    senses: document.getElementById("hbSenses").value.trim() || "passive Perception 10",
+    languages: document.getElementById("hbLanguages").value.trim() || "—",
+    cr, crNum, xp,
+    traits: collectDynamicRows("hbTraitsList"),
+    actions,
+    reactions: collectDynamicRows("hbReactionsList")
+  };
+
+  homebrew.push(monster);
+  persistState();
+  closeHomebrewModal();
+  renderChips();
+  renderGrid();
+}
+
+function deleteHomebrew(id){
+  homebrew = homebrew.filter(m=>m.id!==id);
+  expandedSet.delete(id);
+  persistState();
+  renderChips();
+  renderGrid();
+}
+
+/* ============================================================
+   PLAYER CHARACTERS
+   ============================================================ */
+let playerExpandedSet = new Set();
+
+function resetPlayerForm(){
+  document.getElementById("pcFormError").style.display = "none";
+  ["pcName","pcPlayerName","pcClassLevel","pcSpeed","pcSavingThrows",
+   "pcSkills","pcSenses","pcLanguages","pcNotes"].forEach(id=>{
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("pcAC").value = "";
+  document.getElementById("pcHP").value = "";
+  ["pcStr","pcDex","pcCon","pcInt","pcWis","pcCha"].forEach(id=>{
+    document.getElementById(id).value = "10";
+  });
+  document.getElementById("pcFeaturesList").innerHTML = "";
+}
+
+function openPlayerModal(){
+  resetPlayerForm();
+  document.getElementById("playerModalOverlay").classList.add("show");
+}
+
+function closePlayerModal(){
+  document.getElementById("playerModalOverlay").classList.remove("show");
+}
+
+function showPcError(msg){
+  const el = document.getElementById("pcFormError");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+
+function savePlayerCharacter(){
+  const name = document.getElementById("pcName").value.trim();
+  const ac = parseInt(document.getElementById("pcAC").value, 10);
+  const hp = parseInt(document.getElementById("pcHP").value, 10);
+  const speed = document.getElementById("pcSpeed").value.trim();
+
+  if(!name){ showPcError("Give this character a name."); return; }
+  if(!ac || ac <= 0){ showPcError("Enter a valid Armor Class."); return; }
+  if(!hp || hp <= 0){ showPcError("Enter valid max Hit Points."); return; }
+  if(!speed){ showPcError("Enter a speed, e.g. \"30 ft.\""); return; }
+
+  const abilities = {
+    str: [parseInt(document.getElementById("pcStr").value,10) || 10, 0],
+    dex: [parseInt(document.getElementById("pcDex").value,10) || 10, 0],
+    con: [parseInt(document.getElementById("pcCon").value,10) || 10, 0],
+    int: [parseInt(document.getElementById("pcInt").value,10) || 10, 0],
+    wis: [parseInt(document.getElementById("pcWis").value,10) || 10, 0],
+    cha: [parseInt(document.getElementById("pcCha").value,10) || 10, 0]
+  };
+  Object.keys(abilities).forEach(k=>{ abilities[k][1] = abilityScoreMod(abilities[k][0]); });
+
+  playerCounter++;
+  const id = "player-" + playerCounter + "-" + name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+
+  const pc = {
+    id, name,
+    isPlayer: true,
+    playerName: document.getElementById("pcPlayerName").value.trim() || undefined,
+    classLevel: document.getElementById("pcClassLevel").value.trim() || undefined,
+    size: "Medium", type: "player character", alignment: "",
+    tag: "player",
+    ac, hp, hpFormula: "",
+    speed,
+    abilities,
+    savingThrows: document.getElementById("pcSavingThrows").value.trim() || undefined,
+    skills: document.getElementById("pcSkills").value.trim() || undefined,
+    senses: document.getElementById("pcSenses").value.trim() || undefined,
+    languages: document.getElementById("pcLanguages").value.trim() || undefined,
+    notes: document.getElementById("pcNotes").value.trim() || undefined,
+    cr: undefined, xp: 0,
+    traits: [],
+    actions: collectDynamicRows("pcFeaturesList"),
+    reactions: []
+  };
+
+  players.push(pc);
+  persistState();
+  closePlayerModal();
+  updatePlayersBadge();
+  renderPlayers();
+}
+
+function deletePlayer(id){
+  players = players.filter(p=>p.id!==id);
+  playerExpandedSet.delete(id);
+  trackerList = trackerList.filter(e=>e.monsterId!==id);
+  persistState();
+  updatePlayersBadge();
+  renderPlayers();
+  updateTrackerBadge();
+}
+
+function updatePlayersBadge(){
+  document.getElementById("playersBadge").textContent = players.length;
+}
+
+function renderPlayers(){
+  const empty = document.getElementById("playersEmpty");
+  const list = document.getElementById("playersList");
+  list.innerHTML = "";
+
+  if(players.length === 0){
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+
+  players.forEach(m=>{
+    const card = document.createElement("div");
+    card.className = "card";
+    card.style.setProperty("--tag-color", "var(--accent)");
+
+    const isOpen = playerExpandedSet.has(m.id);
+
+    card.innerHTML = `
+      <div class="card-head" data-id="${m.id}">
+        <div class="card-title-col">
+          <div class="card-title-row">
+            <div class="card-name">${m.name}</div>
+            <div class="card-meta">${m.classLevel || "Player Character"}${m.playerName ? " · " + m.playerName : ""}</div>
+          </div>
+          <div class="stat-strip mono">
+            <span><b>AC</b>${m.ac}</span>
+            <span><b>HP</b>${m.hp}</span>
+            <span><b>SPD</b>${m.speed.split(",")[0]}</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <button class="add-tracker-btn" data-add-tracker="${m.id}">+ tracker</button>
+          <button class="homebrew-delete" data-delete-player="${m.id}">delete</button>
+          <span class="expand-hint">${isOpen ? "▲ collapse" : "▼ full sheet"}</span>
+        </div>
+      </div>
+      <div class="detail ${isOpen ? "open":""}">${statBlockHTML(m)}</div>
+    `;
+
+    card.querySelector(".card-head").addEventListener("click", ()=>{
+      if(playerExpandedSet.has(m.id)) playerExpandedSet.delete(m.id); else playerExpandedSet.add(m.id);
+      renderPlayers();
+    });
+    card.querySelector("[data-add-tracker]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      addToTracker(m.id);
+    });
+    card.querySelector("[data-delete-player]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      deletePlayer(m.id);
+    });
+
+    list.appendChild(card);
+  });
+}
+
+
+/* ============================================================
+   COMBAT TRACKER
+   ============================================================ */
+const tagColorMap = { humanoid:"var(--tag-humanoid)", monstrosity:"var(--tag-monstrosity)", dragon:"var(--tag-dragon)", beast:"var(--tag-beast)", undead:"var(--tag-undead)", fey:"var(--tag-fey)", fiend:"var(--tag-fiend)" };
+
+function logAction(text){
+  actionLogCounter++;
+  actionLog.push({
+    id: "act" + actionLogCounter,
+    time: new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"}),
+    text: text
+  });
+  renderActivityLog();
+  persistState();
+}
+
+function entryDisplayName(entry){
+  const m = findCreature(entry.monsterId);
+  const name = m ? m.name : entry.monsterId;
+  const dupeN = trackerDupeLabel(entry);
+  return dupeN ? `${name} (${dupeN})` : name;
+}
+
+function addToTracker(monsterId){
+  const m = findCreature(monsterId);
+  if(!m) return;
+  trackerCounter++;
+  const entry = {
+    instanceId: "t"+trackerCounter,
+    monsterId: monsterId,
+    initiative: 10,
+    currentHp: m.hp,
+    maxHp: m.hp,
+    conditions: [],
+    deathSaves: {success:0, fail:0}
+  };
+  trackerList.push(entry);
+  logAction(`Added ${entryDisplayName(entry)} to the encounter (init 10, ${m.hp}/${m.hp} HP).`);
+  updateTrackerBadge();
+  renderTracker();
+}
+
+function removeFromTracker(instanceId){
+  const entry = trackerList.find(e=>e.instanceId===instanceId);
+  if(entry) logAction(`Removed ${entryDisplayName(entry)} from the encounter.`);
+  trackerList = trackerList.filter(e=>e.instanceId!==instanceId);
+  trackerExpandedSet.delete(instanceId);
+  updateTrackerBadge();
+  renderTracker();
+}
+
+function updateTrackerBadge(){
+  document.getElementById("trackerBadge").textContent = trackerList.length;
+}
+
+function sortedTracker(){
+  return [...trackerList].sort((a,b)=> b.initiative - a.initiative);
+}
+
+function trackerDupeLabel(entry){
+  const sameMonster = trackerList.filter(e=>e.monsterId===entry.monsterId);
+  if(sameMonster.length < 2) return null;
+  return sameMonster.indexOf(entry) + 1;
+}
+
+const CONDITIONS = ["Blinded","Charmed","Deafened","Exhaustion","Frightened","Grappled","Incapacitated","Invisible","Paralyzed","Petrified","Poisoned","Prone","Restrained","Stunned","Unconscious","Dead"];
+
+function addCondition(entry, name){
+  if(entry.conditions.includes(name)) return;
+  entry.conditions.push(name);
+  logAction(`${entryDisplayName(entry)} is now ${name}.`);
+  renderTracker();
+}
+
+function removeCondition(entry, name){
+  entry.conditions = entry.conditions.filter(c=>c!==name);
+  logAction(`${entryDisplayName(entry)} is no longer ${name}.`);
+  renderTracker();
+}
+
+function clickDeathPip(entry, type, index){
+  const current = entry.deathSaves[type];
+  let next = (current === index + 1) ? index : index + 1;
+  entry.deathSaves[type] = Math.max(0, Math.min(3, next));
+
+  if(entry.deathSaves.fail >= 3 && !entry.conditions.includes("Dead")){
+    entry.conditions.push("Dead");
+    logAction(`${entryDisplayName(entry)} has died (3 death save failures).`);
+  } else if(entry.deathSaves.success >= 3 && !entry.conditions.includes("Stable") && !entry.conditions.includes("Dead")){
+    entry.conditions.push("Stable");
+    logAction(`${entryDisplayName(entry)} is stable (3 death save successes).`);
+  } else {
+    logAction(`${entryDisplayName(entry)} death saves: ${entry.deathSaves.success} success, ${entry.deathSaves.fail} failure.`);
+  }
+  renderTracker();
+}
+
+function renderTracker(){
+  const empty = document.getElementById("trackerEmpty");
+  const controls = document.getElementById("trackerControls");
+  const list = document.getElementById("trackerList");
+  list.innerHTML = "";
+
+  if(trackerList.length === 0){
+    empty.style.display = "block";
+    controls.style.display = "none";
+    updateTotalXP();
+    return;
+  }
+  empty.style.display = "none";
+  controls.style.display = "flex";
+  updateTotalXP();
+
+  const ordered = sortedTracker();
+
+  ordered.forEach(entry=>{
+    const m = findCreature(entry.monsterId);
+    if(!m) return;
+    const dupeN = trackerDupeLabel(entry);
+    const displayName = dupeN ? `${m.name} (${dupeN})` : m.name;
+
+    const pct = Math.max(0, Math.min(100, Math.round((entry.currentHp / entry.maxHp) * 100)));
+    let barClass = "";
+    if(pct <= 25) barClass = "low"; else if(pct <= 50) barClass = "mid";
+
+    const isOpen = trackerExpandedSet.has(entry.instanceId);
+
+    const pillsHTML = entry.conditions.map(c=>
+      `<span class="condition-pill ${c==="Dead" ? "dead" : ""}">${c} <button class="condition-remove" data-remove-condition="${entry.instanceId}" data-condition-name="${c}" title="Remove">&times;</button></span>`
+    ).join("");
+    const availableConditions = CONDITIONS.filter(c=>!entry.conditions.includes(c));
+    const conditionOptionsHTML = availableConditions.map(c=>`<option value="${c}">${c}</option>`).join("");
+
+    const showDeathSaves = m.isPlayer && entry.currentHp === 0 && !entry.conditions.includes("Dead");
+    const deathSaveHTML = showDeathSaves ? `
+      <div class="death-save-widget">
+        <span class="ds-label">DEATH SAVES — SUCCESS</span>
+        <span class="ds-pips">
+          ${[0,1,2].map(i=>`<span class="ds-pip success ${entry.deathSaves.success>i?"filled":""}" data-ds="${entry.instanceId}" data-ds-type="success" data-ds-index="${i}"></span>`).join("")}
+        </span>
+        <span class="ds-label fail">FAIL</span>
+        <span class="ds-pips">
+          ${[0,1,2].map(i=>`<span class="ds-pip fail ${entry.deathSaves.fail>i?"filled":""}" data-ds="${entry.instanceId}" data-ds-type="fail" data-ds-index="${i}"></span>`).join("")}
+        </span>
+      </div>
+    ` : "";
+
+    const row = document.createElement("div");
+    row.className = "tracker-row";
+    row.style.setProperty("--tag-color", tagColorMap[m.tag] || "var(--accent)");
+
+    row.innerHTML = `
+      <div class="tracker-head" data-tracker-toggle="${entry.instanceId}">
+        <div class="init-badge">
+          <input type="number" class="mono" data-init="${entry.instanceId}" value="${entry.initiative}">
+          <div class="init-lbl">INIT</div>
+        </div>
+        <div class="tracker-line"></div>
+        <div class="tracker-title-col">
+          <div class="tracker-name-row">
+            <div class="tracker-name">${displayName}</div>
+            <div class="tracker-meta">${m.isPlayer ? (m.classLevel || "Player Character") : `${m.size} ${m.type} · CR ${m.cr}`}</div>
+          </div>
+        </div>
+        <div class="hp-block">
+          <div class="hp-numbers"><span>${entry.currentHp} / ${entry.maxHp} HP</span><span>${pct}%</span></div>
+          <div class="hp-bar-track"><div class="hp-bar-fill ${barClass}" style="width:${pct}%"></div></div>
+        </div>
+        <button class="tracker-remove" data-remove-tracker="${entry.instanceId}" title="Remove from tracker">&times;</button>
+      </div>
+      <div class="tracker-conditions-row">
+        <div class="condition-pills">${pillsHTML}</div>
+        <select class="condition-select" data-condition-select="${entry.instanceId}">
+          <option value="">+ condition…</option>
+          ${conditionOptionsHTML}
+        </select>
+      </div>
+      ${deathSaveHTML}
+      <div class="tracker-foot">
+        <input type="number" class="hp-log-input" placeholder="amount" min="0" data-hp-amount="${entry.instanceId}">
+        <button class="hp-log-btn dmg" data-damage="${entry.instanceId}">− damage</button>
+        <button class="hp-log-btn heal" data-heal="${entry.instanceId}">+ heal</button>
+        <span class="tracker-expand-hint" data-tracker-toggle="${entry.instanceId}">${isOpen ? "▲ collapse" : "▼ full stat block"}</span>
+      </div>
+      <div class="tracker-detail ${isOpen ? "open":""}">${statBlockHTML(m)}</div>
+    `;
+
+    row.querySelectorAll("[data-tracker-toggle]").forEach(el=>{
+      el.addEventListener("click", ()=>{
+        if(trackerExpandedSet.has(entry.instanceId)) trackerExpandedSet.delete(entry.instanceId);
+        else trackerExpandedSet.add(entry.instanceId);
+        renderTracker();
+      });
+    });
+
+    row.querySelector("[data-remove-tracker]").addEventListener("click",(e)=>{
+      e.stopPropagation();
+      removeFromTracker(entry.instanceId);
+    });
+
+    const initInput = row.querySelector("[data-init]");
+    initInput.addEventListener("click", e=>e.stopPropagation());
+    initInput.addEventListener("change", e=>{
+      const v = parseInt(e.target.value,10);
+      entry.initiative = isNaN(v) ? 0 : v;
+      logAction(`Set ${entryDisplayName(entry)} initiative to ${entry.initiative}.`);
+      renderTracker();
+    });
+
+    const amountInput = row.querySelector("[data-hp-amount]");
+    amountInput.addEventListener("click", e=>e.stopPropagation());
+    amountInput.addEventListener("keydown", e=>e.stopPropagation());
+
+    row.querySelector("[data-damage]").addEventListener("click", e=>{
+      e.stopPropagation();
+      const amt = parseInt(amountInput.value,10);
+      if(!amt || amt<0) return;
+      const wasAtZero = entry.currentHp === 0;
+      entry.currentHp = Math.max(0, entry.currentHp - amt);
+      amountInput.value = "";
+      logAction(`${entryDisplayName(entry)} took ${amt} damage (now ${entry.currentHp}/${entry.maxHp} HP).`);
+      if(entry.currentHp === 0 && !entry.conditions.includes("Dead")){
+        if(m.isPlayer){
+          if(wasAtZero){
+            entry.deathSaves.fail = Math.min(3, entry.deathSaves.fail + 1);
+            logAction(`${entryDisplayName(entry)} automatically fails a death save (damaged while at 0 HP).`);
+            if(entry.deathSaves.fail >= 3 && !entry.conditions.includes("Dead")){
+              entry.conditions.push("Dead");
+              logAction(`${entryDisplayName(entry)} has died (3 death save failures).`);
+            }
+          } else if(!entry.conditions.includes("Unconscious")){
+            entry.conditions.push("Unconscious");
+          }
+        } else if(!entry.conditions.includes("Dead")){
+          entry.conditions.push("Dead");
+          logAction(`${entryDisplayName(entry)} has died.`);
+        }
+      }
+      renderTracker();
+    });
+    row.querySelector("[data-heal]").addEventListener("click", e=>{
+      e.stopPropagation();
+      const amt = parseInt(amountInput.value,10);
+      if(!amt || amt<0) return;
+      const wasAtZero = entry.currentHp === 0;
+      entry.currentHp = Math.min(entry.maxHp, entry.currentHp + amt);
+      amountInput.value = "";
+      logAction(`${entryDisplayName(entry)} healed ${amt} HP (now ${entry.currentHp}/${entry.maxHp} HP).`);
+      if(wasAtZero && entry.currentHp > 0){
+        entry.deathSaves = {success:0, fail:0};
+        entry.conditions = entry.conditions.filter(c=>c!=="Unconscious" && c!=="Stable");
+      }
+      renderTracker();
+    });
+
+    row.querySelectorAll("[data-remove-condition]").forEach(btn=>{
+      btn.addEventListener("click", e=>{
+        e.stopPropagation();
+        removeCondition(entry, btn.dataset.conditionName);
+      });
+    });
+    const conditionSelect = row.querySelector("[data-condition-select]");
+    if(conditionSelect){
+      conditionSelect.addEventListener("click", e=>e.stopPropagation());
+      conditionSelect.addEventListener("change", e=>{
+        if(e.target.value) addCondition(entry, e.target.value);
+      });
+    }
+    row.querySelectorAll("[data-ds]").forEach(pip=>{
+      pip.addEventListener("click", e=>{
+        e.stopPropagation();
+        clickDeathPip(entry, pip.dataset.dsType, parseInt(pip.dataset.dsIndex,10));
+      });
+    });
+
+    list.appendChild(row);
+  });
+}
+
+/* ---- XP total ---- */
+function calcTotalXP(){
+  return trackerList.reduce((sum, e)=>{
+    const m = findCreature(e.monsterId);
+    return sum + (m ? (m.xp || 0) : 0);
+  }, 0);
+}
+
+function updateTotalXP(){
+  const el = document.getElementById("trackerTotalXP");
+  if(el) el.textContent = calcTotalXP().toLocaleString();
+}
+
+function encounterSummary(list){
+  const counts = [];
+  const seen = {};
+  list.forEach(e=>{
+    if(!(e.monsterId in seen)){
+      seen[e.monsterId] = counts.length;
+      counts.push({monsterId: e.monsterId, count: 0});
+    }
+    counts[seen[e.monsterId]].count++;
+  });
+  return counts.map(c=>{
+    const m = findCreature(c.monsterId);
+    const name = m ? m.name : c.monsterId;
+    return c.count > 1 ? `${c.count}× ${name}` : name;
+  }).join(", ") || "No creatures";
+}
+
+/* ---- live activity feed (current encounter) ---- */
+function renderActivityLog(){
+  const wrap = document.getElementById("activityWrap");
+  const list = document.getElementById("activityList");
+  const count = document.getElementById("activityCount");
+  if(!wrap) return;
+
+  if(actionLog.length === 0){
+    wrap.style.display = "none";
+    return;
+  }
+  wrap.style.display = "block";
+  count.textContent = actionLog.length + (actionLog.length === 1 ? " event" : " events");
+  list.innerHTML = "";
+  // newest first
+  [...actionLog].reverse().forEach(evt=>{
+    const row = document.createElement("div");
+    row.className = "activity-row";
+    row.innerHTML = `<span class="activity-time mono">${evt.time}</span><span class="activity-text">${evt.text}</span>`;
+    list.appendChild(row);
+  });
+  list.scrollTop = 0;
+}
+
+/* ---- save encounter to History ---- */
+function saveEncounterLog(){
+  if(trackerList.length === 0) return;
+  historyCounter++;
+  const nameInput = document.getElementById("encounterNameInput");
+  const rawName = nameInput ? nameInput.value.trim() : "";
+  const name = rawName || `Encounter ${historyCounter}`;
+
+  historyLog.unshift({
+    id: "hist" + historyCounter,
+    name: name,
+    savedAt: new Date().toLocaleString([], {dateStyle:"medium", timeStyle:"short"}),
+    totalXP: calcTotalXP(),
+    creatures: trackerList.map(e=>({
+      name: entryDisplayName(e),
+      initiative: e.initiative,
+      currentHp: e.currentHp,
+      maxHp: e.maxHp,
+      conditions: e.conditions || []
+    })),
+    summary: encounterSummary(trackerList),
+    events: [...actionLog]
+  });
+
+  logAction(`Saved encounter as "${name}" (${calcTotalXP().toLocaleString()} XP).`);
+  if(nameInput) nameInput.value = "";
+  updateHistoryBadge();
+  renderHistory();
+}
+
+function updateHistoryBadge(){
+  document.getElementById("historyBadge").textContent = historyLog.length;
+}
+
+function removeHistoryEntry(id){
+  historyLog = historyLog.filter(h=>h.id!==id);
+  historyExpandedSet.delete(id);
+  updateHistoryBadge();
+  renderHistory();
+  persistState();
+}
+
+function renderHistory(){
+  const empty = document.getElementById("historyEmpty");
+  const list = document.getElementById("historyList");
+  list.innerHTML = "";
+
+  if(historyLog.length === 0){
+    empty.style.display = "block";
+    return;
+  }
+  empty.style.display = "none";
+
+  historyLog.forEach(h=>{
+    const isOpen = historyExpandedSet.has(h.id);
+    const entry = document.createElement("div");
+    entry.className = "history-entry";
+
+    const creaturesHTML = h.creatures.map(c=>
+      `<div class="history-creature-row"><span>${c.name} <span style="color:var(--text-faint)">· init ${c.initiative}</span>${c.conditions && c.conditions.length ? ` <span style="color:var(--worst)">[${c.conditions.join(", ")}]</span>` : ""}</span><span class="history-creature-hp">${c.currentHp}/${c.maxHp} HP</span></div>`
+    ).join("");
+
+    const eventsHTML = h.events.length
+      ? h.events.map(e=>`<div class="activity-row"><span class="activity-time mono">${e.time}</span><span class="activity-text">${e.text}</span></div>`).join("")
+      : `<div class="activity-row"><span class="activity-text" style="color:var(--text-faint)">No recorded events.</span></div>`;
+
+    entry.innerHTML = `
+      <div class="history-head" data-history-toggle="${h.id}">
+        <div class="history-title-col">
+          <div class="history-name">${h.name}</div>
+          <div class="history-meta">${h.summary} · saved ${h.savedAt}</div>
+        </div>
+        <div class="history-xp mono">${h.totalXP.toLocaleString()} XP</div>
+        <span class="history-expand-hint">${isOpen ? "▲ collapse" : "▼ details"}</span>
+        <button class="history-remove" data-remove-history="${h.id}" title="Delete this record">&times;</button>
+      </div>
+      <div class="history-detail ${isOpen ? "open":""}">
+        <div class="history-section-label">CREATURES</div>
+        ${creaturesHTML}
+        <div class="history-section-label">ACTIVITY LOG</div>
+        <div class="activity-list">${eventsHTML}</div>
+      </div>
+    `;
+
+    entry.querySelector("[data-history-toggle]").addEventListener("click", (e)=>{
+      if(e.target.closest("[data-remove-history]")) return;
+      if(historyExpandedSet.has(h.id)) historyExpandedSet.delete(h.id);
+      else historyExpandedSet.add(h.id);
+      renderHistory();
+    });
+    entry.querySelector("[data-remove-history]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      removeHistoryEntry(h.id);
+    });
+
+    list.appendChild(entry);
+  });
+}
+
+
+/* ============================================================
+   MODE SWITCHING
+   ============================================================ */
+function setMode(mode){
+  const browse = document.getElementById("browseWrap");
+  const tracker = document.getElementById("trackerWrap");
+  const history = document.getElementById("historyWrap");
+  const playersTab = document.getElementById("playersWrap");
+  document.getElementById("btnBrowse").classList.toggle("active", mode==="browse");
+  document.getElementById("btnPlayers").classList.toggle("active", mode==="players");
+  document.getElementById("btnTracker").classList.toggle("active", mode==="tracker");
+  document.getElementById("btnHistory").classList.toggle("active", mode==="history");
+  browse.style.display = mode==="browse" ? "block" : "none";
+  playersTab.classList.toggle("show", mode==="players");
+  tracker.classList.toggle("show", mode==="tracker");
+  history.classList.toggle("show", mode==="history");
+  if(mode==="players") renderPlayers();
+  if(mode==="tracker") renderTracker();
+  if(mode==="history") renderHistory();
+}
+
+document.getElementById("btnBrowse").onclick = ()=>setMode("browse");
+document.getElementById("btnPlayers").onclick = ()=>setMode("players");
+document.getElementById("btnTracker").onclick = ()=>setMode("tracker");
+document.getElementById("btnHistory").onclick = ()=>setMode("history");
+document.getElementById("trackerSort").onclick = ()=>renderTracker();
+document.getElementById("trackerSaveLog").onclick = ()=>saveEncounterLog();
+document.getElementById("trackerClearAll").onclick = ()=>{
+  trackerList = [];
+  trackerExpandedSet.clear();
+  actionLog = [];
+  updateTrackerBadge();
+  renderActivityLog();
+  renderTracker();
+  persistState();
+};
+
+document.getElementById("search").addEventListener("input", (e)=>{
+  searchTerm = e.target.value;
+  renderGrid();
+});
+document.getElementById("sortBy").addEventListener("change", (e)=>{
+  sortMode = e.target.value;
+  renderGrid();
+});
+
+/* ---- homebrew modal wiring ---- */
+document.getElementById("addHomebrewBtn").onclick = ()=> openHomebrewModal();
+document.getElementById("homebrewModalClose").onclick = ()=> closeHomebrewModal();
+document.getElementById("hbCancelBtn").onclick = ()=> closeHomebrewModal();
+document.getElementById("hbSaveBtn").onclick = ()=> saveHomebrewCreature();
+document.getElementById("homebrewModalOverlay").addEventListener("click", (e)=>{
+  if(e.target.id === "homebrewModalOverlay") closeHomebrewModal();
+});
+document.getElementById("hbTag").addEventListener("change", (e)=>{
+  document.getElementById("hbTagCustomWrap").style.display = e.target.value === "__custom" ? "flex" : "none";
+});
+document.getElementById("hbCR").addEventListener("blur", (e)=>{
+  const xpField = document.getElementById("hbXP");
+  if(!xpField.value && CR_XP_TABLE[e.target.value.trim()] !== undefined){
+    xpField.value = CR_XP_TABLE[e.target.value.trim()];
+  }
+});
+document.getElementById("hbAddTrait").onclick = ()=> addDynamicRow("hbTraitsList");
+document.getElementById("hbAddAction").onclick = ()=> addDynamicRow("hbActionsList");
+document.getElementById("hbAddReaction").onclick = ()=> addDynamicRow("hbReactionsList");
+
+/* ---- player modal wiring ---- */
+document.getElementById("addPlayerBtn").onclick = ()=> openPlayerModal();
+document.getElementById("playerModalClose").onclick = ()=> closePlayerModal();
+document.getElementById("pcCancelBtn").onclick = ()=> closePlayerModal();
+document.getElementById("pcSaveBtn").onclick = ()=> savePlayerCharacter();
+document.getElementById("playerModalOverlay").addEventListener("click", (e)=>{
+  if(e.target.id === "playerModalOverlay") closePlayerModal();
+});
+document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeaturesList");
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async function init(){
+  await loadState();
+  renderChips();
+  renderGrid();
+  updateTrackerBadge();
+  updateHistoryBadge();
+  updatePlayersBadge();
+  renderActivityLog();
+  renderHistory();
+  renderPlayers();
+})();
+</script>
+</body>
+</html>
