@@ -139,8 +139,9 @@
     gap: 10px;
     flex-wrap: wrap;
     align-items: center;
-    margin-bottom: 18px;
+    margin-bottom: 10px;
   }
+  #browseWrap .chip-row{ margin-bottom: 18px; }
   .controls input[type="search"]{
     font-family:'Plus Jakarta Sans', sans-serif;
     font-size: 0.9rem;
@@ -163,12 +164,13 @@
     gap:6px;
     flex-wrap: nowrap;
     overflow-x: auto;
-    flex: 1 1 240px;
+    width: 100%;
     min-width: 0;
     padding-bottom: 2px;
-    scrollbar-width: thin;
+    scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
+  .chip-row::-webkit-scrollbar{ display: none; }
   .chip{
     font-family:'Plus Jakarta Sans', sans-serif;
     font-size: 0.82rem;
@@ -978,7 +980,6 @@
   <div id="browseWrap">
     <div class="controls">
       <input type="search" id="search" placeholder="search by name…">
-      <div class="chip-row" id="typeChips"></div>
       <select id="sortBy">
         <option value="cr-asc">CR — low to high</option>
         <option value="cr-desc">CR — high to low</option>
@@ -988,6 +989,7 @@
       </select>
       <button id="addHomebrewBtn" class="chip save-log-btn">+ add creature</button>
     </div>
+    <div class="chip-row" id="typeChips"></div>
     <div class="grid" id="grid"></div>
     <div class="empty-state" id="emptyState" style="display:none;">No creatures match that search.</div>
   </div>
