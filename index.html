@@ -1001,10 +1001,11 @@
   .pc-collapsible .pc-prof-grid, .pc-collapsible .pc-equip-grid{ background: none; padding: 0; border-radius: 0; }
   .pc-feature-level{
     display:flex;
-    gap: 10px;
-    padding: 5px 0;
-    font-size: 0.83rem;
+    gap: 12px;
+    padding: 8px 0;
+    font-size: 0.85rem;
     border-bottom: 1px solid var(--border-soft);
+    min-width: 0;
   }
   .pc-feature-level:last-child{ border-bottom: none; }
   .pc-feature-level-num{
@@ -1013,8 +1014,11 @@
     font-family:'IBM Plex Mono', monospace;
     font-weight: 700;
     color: var(--accent-ink);
+    padding-top: 1px;
   }
-  .pc-feature-level-text{ flex: 1 1 auto; color: var(--text); }
+  .pc-feature-level-items{ flex: 1 1 auto; min-width: 0; color: var(--text); }
+  .pc-feature-level-items .entry{ margin: 0 0 6px; font-size: 0.85rem; }
+  .pc-feature-level-items .entry:last-child{ margin-bottom: 0; }
   .pc-feature-level.future{ opacity: 0.45; }
   .pc-feature-level.future .pc-feature-level-num{ color: var(--text-faint); }
   .pc-feature-hint{ font-size: 0.82rem; color: var(--text-faint); padding: 6px 0; }
@@ -1367,17 +1371,6 @@
         <label class="hb-field">Subclass (optional)<input type="text" id="pcSubclass" placeholder="e.g. Oath of Devotion"></label>
         <label class="hb-field">Level<input type="number" id="pcLevel" min="1" max="20" value="1"></label>
 
-        <div class="hb-span-2 pc-collapsible open" id="pcFeaturesSection">
-          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcFeaturesSection">
-            <span class="pc-section-label">Class Features</span>
-            <span class="pc-collapsible-summary" id="pcFeaturesSummary">Enter a class above</span>
-            <span class="pc-collapsible-chevron">▾</span>
-          </button>
-          <div class="pc-collapsible-body">
-            <div id="pcFeaturesReference"></div>
-          </div>
-        </div>
-
         <label class="hb-field">Armor Class<input type="number" id="pcAC" placeholder="17"></label>
         <label class="hb-field">Hit Points (max)<input type="number" id="pcHP" placeholder="45"></label>
         <label class="hb-field hb-span-2">Speed<input type="text" id="pcSpeed" placeholder="e.g. 30 ft."></label>
@@ -1434,6 +1427,17 @@
       <div class="hb-repeat-section">
         <div class="hb-repeat-header"><span>Features / Actions (optional)</span><button class="chip" id="pcAddFeature" type="button">+ add feature</button></div>
         <div id="pcFeaturesList"></div>
+      </div>
+
+      <div class="hb-repeat-section pc-collapsible" id="pcFeaturesSection">
+        <button type="button" class="pc-collapsible-header" data-pc-toggle="pcFeaturesSection">
+          <span class="pc-section-label">Class Features Reference</span>
+          <span class="pc-collapsible-summary" id="pcFeaturesSummary">Enter a class above</span>
+          <span class="pc-collapsible-chevron">▾</span>
+        </button>
+        <div class="pc-collapsible-body">
+          <div id="pcFeaturesReference"></div>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -2098,153 +2102,429 @@ function proficiencyBonus(level){ return Math.floor((Math.max(1, level||1) - 1) 
 
 /* ============================================================
    CLASS FEATURES REFERENCE (5e PHB) — base class progressions for all
-   12 core classes, plus one seeded PHB subclass per class. This is a
-   summary reference (feature names, not full rules text) shown live as
-   the Class/Subclass/Level fields are filled in. Not every subclass is
-   covered yet -- add more entries to SUBCLASS_FEATURES following the
-   same "classname|subclassname" key pattern to extend it.
+   12 core classes, plus a few seeded subclasses. Each level lists one or
+   more {name, text} features with a short mechanical summary (not full
+   rules text), shown live as the Class/Subclass/Level fields are filled
+   in. Not every subclass is covered yet -- add more entries to
+   SUBCLASS_FEATURES following the same "classname|subclassname" key
+   pattern to extend it. A subclass-choice level's own description notes
+   which further levels that subclass grants features at, even when we
+   don't have that subclass's specific text yet.
    ============================================================ */
+function f(name, text){ return {name, text}; }
 const CLASS_FEATURES = {
   barbarian: [
-    [1,"Rage, Unarmored Defense"], [2,"Reckless Attack, Danger Sense"], [3,"Primal Path (subclass)"],
-    [4,"Ability Score Improvement"], [5,"Extra Attack, Fast Movement"], [7,"Feral Instinct"],
-    [8,"Ability Score Improvement"], [9,"Brutal Critical (1 die)"], [11,"Relentless Rage"],
-    [12,"Ability Score Improvement"], [13,"Brutal Critical (2 dice)"], [15,"Persistent Rage"],
-    [16,"Ability Score Improvement"], [17,"Brutal Critical (3 dice)"], [18,"Indomitable Might"],
-    [19,"Ability Score Improvement"], [20,"Primal Champion"]
+    {level:1, features:[
+      f("Rage","Bonus action to enter a rage for extra melee damage, resistance to bludgeoning/piercing/slashing, and advantage on Strength checks/saves. Limited uses per long rest."),
+      f("Unarmored Defense","AC = 10 + Dex modifier + Con modifier when wearing no armor and no shield.")
+    ]},
+    {level:2, features:[
+      f("Reckless Attack","Gain advantage on melee Strength attacks this turn, but attacks against you also have advantage until your next turn."),
+      f("Danger Sense","Advantage on Dexterity saves against effects you can see, like traps and spells.")
+    ]},
+    {level:3, features:[f("Primal Path","Choose a Primal Path subclass, which grants further features at levels 3, 6, 10, and 14.")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[
+      f("Extra Attack","Attack twice, instead of once, whenever you take the Attack action."),
+      f("Fast Movement","Speed increases by 10 ft. while not wearing heavy armor.")
+    ]},
+    {level:7, features:[f("Feral Instinct","Advantage on initiative; can act normally when surprised if you enter your rage first.")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:9, features:[f("Brutal Critical (1 die)","Roll one additional weapon damage die on a critical hit.")]},
+    {level:11, features:[f("Relentless Rage","On dropping to 0 HP while raging, make a DC 10 Constitution save to drop to 1 HP instead.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:13, features:[f("Brutal Critical (2 dice)","Roll two additional weapon damage dice on a critical hit.")]},
+    {level:15, features:[f("Persistent Rage","Your rage only ends early if you fall unconscious or choose to end it.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:17, features:[f("Brutal Critical (3 dice)","Roll three additional weapon damage dice on a critical hit.")]},
+    {level:18, features:[f("Indomitable Might","If your Strength check total is less than your Strength score, use the score instead.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Primal Champion","Strength and Constitution scores each increase by 4, to a maximum of 24.")]}
   ],
   bard: [
-    [1,"Spellcasting, Bardic Inspiration (d6)"], [2,"Jack of All Trades, Song of Rest (d6)"],
-    [3,"Bard College (subclass), Expertise"], [4,"Ability Score Improvement"],
-    [5,"Bardic Inspiration (d8), Font of Inspiration"], [6,"Countercharm"], [8,"Ability Score Improvement"],
-    [9,"Song of Rest (d8)"], [10,"Bardic Inspiration (d10), Expertise, Magical Secrets"],
-    [12,"Ability Score Improvement"], [13,"Song of Rest (d10)"], [14,"Magical Secrets"],
-    [15,"Bardic Inspiration (d12)"], [16,"Ability Score Improvement"], [17,"Song of Rest (d12)"],
-    [18,"Magical Secrets"], [19,"Ability Score Improvement"], [20,"Superior Inspiration"]
+    {level:1, features:[
+      f("Spellcasting","Cast bard spells using Charisma; know a number of spells from the bard spell list."),
+      f("Bardic Inspiration (d6)","Bonus action: give a creature a d6 to add to one ability check, attack roll, or saving throw.")
+    ]},
+    {level:2, features:[
+      f("Jack of All Trades","Add half your proficiency bonus (rounded down) to ability checks you aren't already proficient in."),
+      f("Song of Rest (d6)","During a short rest, allies who hear you regain extra 1d6 hit points if they spend Hit Dice.")
+    ]},
+    {level:3, features:[
+      f("Bard College","Choose a Bard College subclass, which grants further features at levels 3, 6, and 14."),
+      f("Expertise","Double your proficiency bonus for two skills you're proficient in.")
+    ]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[
+      f("Bardic Inspiration (d8)","Your Bardic Inspiration die improves to a d8."),
+      f("Font of Inspiration","Regain all uses of Bardic Inspiration on a short or long rest.")
+    ]},
+    {level:6, features:[f("Countercharm","Action: you and nearby allies gain advantage on saves against being frightened or charmed.")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:9, features:[f("Song of Rest (d8)","Your Song of Rest die improves to a d8.")]},
+    {level:10, features:[
+      f("Bardic Inspiration (d10)","Your Bardic Inspiration die improves to a d10."),
+      f("Expertise","Choose two more skills to gain Expertise in."),
+      f("Magical Secrets","Learn two spells from any class's spell list.")
+    ]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:13, features:[f("Song of Rest (d10)","Your Song of Rest die improves to a d10.")]},
+    {level:14, features:[f("Magical Secrets","Learn two more spells from any class's spell list.")]},
+    {level:15, features:[f("Bardic Inspiration (d12)","Your Bardic Inspiration die improves to a d12.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:17, features:[f("Song of Rest (d12)","Your Song of Rest die improves to a d12.")]},
+    {level:18, features:[f("Magical Secrets","Learn two more spells from any class's spell list.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Superior Inspiration","When you roll initiative with no Bardic Inspiration uses left, regain one use.")]}
   ],
   cleric: [
-    [1,"Spellcasting, Divine Domain (subclass)"], [2,"Channel Divinity (1/rest), Domain feature"],
-    [4,"Ability Score Improvement"], [5,"Destroy Undead (CR 1/2)"], [6,"Channel Divinity (2/rest), Domain feature"],
-    [8,"Ability Score Improvement, Destroy Undead (CR 1), Domain feature"], [10,"Divine Intervention"],
-    [11,"Destroy Undead (CR 2)"], [12,"Ability Score Improvement"], [14,"Destroy Undead (CR 3)"],
-    [16,"Ability Score Improvement"], [17,"Destroy Undead (CR 4), Domain feature"], [18,"Channel Divinity (3/rest)"],
-    [19,"Ability Score Improvement"], [20,"Divine Intervention improves"]
+    {level:1, features:[
+      f("Spellcasting","Cast cleric spells using Wisdom; prepare spells from the full cleric list each day."),
+      f("Divine Domain","Choose a Divine Domain subclass, which grants further features at levels 1, 2, 6, 8, and 17.")
+    ]},
+    {level:2, features:[f("Channel Divinity (1/rest)","Channel divine energy for a special effect, once per short/long rest, including Turn Undead.")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[f("Destroy Undead (CR 1/2)","Undead of CR 1/2 or lower that fail their save against Turn Undead are destroyed instead.")]},
+    {level:6, features:[f("Channel Divinity (2/rest)","Use Channel Divinity twice between rests.")]},
+    {level:8, features:[
+      f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed)."),
+      f("Destroy Undead (CR 1)","Destroy Undead threshold rises to CR 1.")
+    ]},
+    {level:10, features:[f("Divine Intervention","Call on your deity for a miraculous effect; usable once, chance of success equal to your cleric level.")]},
+    {level:11, features:[f("Destroy Undead (CR 2)","Destroy Undead threshold rises to CR 2.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:14, features:[f("Destroy Undead (CR 3)","Destroy Undead threshold rises to CR 3.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:17, features:[f("Destroy Undead (CR 4)","Destroy Undead threshold rises to CR 4.")]},
+    {level:18, features:[f("Channel Divinity (3/rest)","Use Channel Divinity three times between rests.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Divine Intervention improves","Divine Intervention succeeds automatically.")]}
   ],
   druid: [
-    [1,"Druidic, Spellcasting"], [2,"Wild Shape, Druid Circle (subclass)"],
-    [4,"Wild Shape improves, Ability Score Improvement"], [6,"Circle feature"],
-    [8,"Wild Shape improves, Ability Score Improvement"], [10,"Circle feature"], [12,"Ability Score Improvement"],
-    [14,"Circle feature"], [16,"Ability Score Improvement"], [18,"Timeless Body, Beast Spells"],
-    [19,"Ability Score Improvement"], [20,"Archdruid"]
+    {level:1, features:[
+      f("Druidic","Know the secret language of druids; can leave hidden messages others can't detect."),
+      f("Spellcasting","Cast druid spells using Wisdom; prepare spells from the full druid list each day.")
+    ]},
+    {level:2, features:[
+      f("Wild Shape","Use an action to magically shift into a beast form, twice per short/long rest."),
+      f("Druid Circle","Choose a Druid Circle subclass, which grants further features at levels 2, 6, 10, and 14.")
+    ]},
+    {level:4, features:[
+      f("Wild Shape improves","Can transform into beasts with a swim speed."),
+      f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")
+    ]},
+    {level:8, features:[
+      f("Wild Shape improves","Can transform into beasts with a fly speed."),
+      f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")
+    ]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:18, features:[
+      f("Timeless Body","Age more slowly; suffer no ability score penalties from old age."),
+      f("Beast Spells","Cast druid spells while in Wild Shape form.")
+    ]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Archdruid","Unlimited Wild Shape uses.")]}
   ],
   fighter: [
-    [1,"Fighting Style, Second Wind"], [2,"Action Surge (1/rest)"], [3,"Martial Archetype (subclass)"],
-    [4,"Ability Score Improvement"], [5,"Extra Attack"], [6,"Ability Score Improvement"], [7,"Archetype feature"],
-    [8,"Ability Score Improvement"], [9,"Indomitable (1/rest)"], [10,"Archetype feature"],
-    [11,"Extra Attack (2)"], [12,"Ability Score Improvement"], [13,"Indomitable (2/rest)"],
-    [14,"Ability Score Improvement"], [15,"Archetype feature"], [16,"Ability Score Improvement"],
-    [17,"Action Surge (2/rest), Indomitable (3/rest)"], [18,"Archetype feature"],
-    [19,"Ability Score Improvement"], [20,"Extra Attack (3)"]
+    {level:1, features:[
+      f("Fighting Style","Choose a combat specialty (e.g. Archery, Defense, Dueling) for a permanent combat bonus."),
+      f("Second Wind","Bonus action: regain 1d10 + fighter level hit points, once per short/long rest.")
+    ]},
+    {level:2, features:[f("Action Surge (1/rest)","Take one additional action on your turn, once per short/long rest.")]},
+    {level:3, features:[f("Martial Archetype","Choose a Martial Archetype subclass, which grants further features at levels 3, 7, 10, 15, and 18.")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[f("Extra Attack","Attack twice, instead of once, whenever you take the Attack action.")]},
+    {level:6, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:9, features:[f("Indomitable (1/rest)","Reroll a failed saving throw, once per long rest.")]},
+    {level:11, features:[f("Extra Attack (2)","Attack three times whenever you take the Attack action.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:13, features:[f("Indomitable (2/rest)","Use Indomitable twice per long rest.")]},
+    {level:14, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:17, features:[
+      f("Action Surge (2/rest)","Use Action Surge twice per short/long rest."),
+      f("Indomitable (3/rest)","Use Indomitable three times per long rest.")
+    ]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Extra Attack (3)","Attack four times whenever you take the Attack action.")]}
   ],
   monk: [
-    [1,"Unarmored Defense, Martial Arts"], [2,"Ki, Unarmored Movement"],
-    [3,"Monastic Tradition (subclass), Deflect Missiles"], [4,"Ability Score Improvement, Slow Fall"],
-    [5,"Extra Attack, Stunning Strike"], [6,"Ki-Empowered Strikes, Tradition feature"],
-    [7,"Evasion, Stillness of Mind"], [8,"Ability Score Improvement"], [9,"Unarmored Movement improves"],
-    [10,"Purity of Body"], [11,"Tradition feature"], [12,"Ability Score Improvement"],
-    [13,"Tongue of the Sun and Moon"], [14,"Diamond Soul"], [15,"Timeless Body"],
-    [16,"Ability Score Improvement"], [17,"Tradition feature"], [18,"Empty Body"],
-    [19,"Ability Score Improvement"], [20,"Perfect Self"]
+    {level:1, features:[
+      f("Unarmored Defense","AC = 10 + Dex modifier + Wis modifier when wearing no armor and no shield."),
+      f("Martial Arts","Use Dexterity for unarmed strikes and monk weapons; extra unarmed strike; damage die scales with level.")
+    ]},
+    {level:2, features:[
+      f("Ki","Spend ki points to fuel Flurry of Blows, Patient Defense, or Step of the Wind."),
+      f("Unarmored Movement","Speed increases while not wearing armor or a shield.")
+    ]},
+    {level:3, features:[
+      f("Monastic Tradition","Choose a Monastic Tradition subclass, which grants further features at levels 3, 6, 11, and 17."),
+      f("Deflect Missiles","Reaction: reduce damage from a ranged weapon attack, and can catch and throw it back.")
+    ]},
+    {level:4, features:[
+      f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed)."),
+      f("Slow Fall","Reaction: reduce falling damage by five times your monk level.")
+    ]},
+    {level:5, features:[
+      f("Extra Attack","Attack twice, instead of once, whenever you take the Attack action."),
+      f("Stunning Strike","Spend a ki point when you hit to force a Constitution save or the target is stunned.")
+    ]},
+    {level:6, features:[f("Ki-Empowered Strikes","Your unarmed strikes count as magical for overcoming resistance/immunity.")]},
+    {level:7, features:[
+      f("Evasion","Take no damage on a successful Dexterity save (half only on a fail) against area effects."),
+      f("Stillness of Mind","Use an action to end one effect on yourself causing you to be charmed or frightened.")
+    ]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:9, features:[f("Unarmored Movement improves","Can move along vertical surfaces and across liquids without falling.")]},
+    {level:10, features:[f("Purity of Body","Immune to disease and poison.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:13, features:[f("Tongue of the Sun and Moon","Understand all spoken languages, and be understood by anyone who has one.")]},
+    {level:14, features:[f("Diamond Soul","Proficiency in all saving throws; spend a ki point to reroll a failed save.")]},
+    {level:15, features:[f("Timeless Body","Age more slowly; can't be aged magically; no need for food or water.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:18, features:[f("Empty Body","Spend ki to become invisible for 1 minute, or cast astral projection.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Perfect Self","Regain 4 ki points if you start your turn with none.")]}
   ],
   paladin: [
-    [1,"Divine Sense, Lay on Hands"], [2,"Fighting Style, Spellcasting, Divine Smite"],
-    [3,"Divine Health, Sacred Oath (subclass)"], [4,"Ability Score Improvement"], [5,"Extra Attack"],
-    [6,"Aura of Protection"], [7,"Oath feature"], [8,"Ability Score Improvement"], [10,"Aura of Courage"],
-    [11,"Improved Divine Smite"], [12,"Ability Score Improvement"], [14,"Cleansing Touch"],
-    [15,"Oath feature"], [16,"Ability Score Improvement"], [18,"Aura improvements"],
-    [19,"Ability Score Improvement"], [20,"Oath feature"]
+    {level:1, features:[
+      f("Divine Sense","Action: detect celestials, fiends, and undead within 60 ft, a few times per long rest."),
+      f("Lay on Hands","Pool of hit points (5 x paladin level) usable to heal by touch, or to cure a disease/poison.")
+    ]},
+    {level:2, features:[
+      f("Fighting Style","Choose a combat specialty for a permanent combat bonus."),
+      f("Spellcasting","Cast paladin spells using Charisma; prepare spells from the paladin list each day."),
+      f("Divine Smite","Expend a spell slot when you hit with a melee weapon to deal extra radiant damage.")
+    ]},
+    {level:3, features:[
+      f("Divine Health","Immune to disease."),
+      f("Sacred Oath","Choose a Sacred Oath subclass, which grants further features at levels 3, 7, 15, and 20.")
+    ]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[f("Extra Attack","Attack twice, instead of once, whenever you take the Attack action.")]},
+    {level:6, features:[f("Aura of Protection","You and nearby allies add your Charisma modifier to saving throws.")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:10, features:[f("Aura of Courage","You and nearby allies can't be frightened while you're conscious.")]},
+    {level:11, features:[f("Improved Divine Smite","All your melee weapon hits deal extra radiant damage.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:14, features:[f("Cleansing Touch","Use an action to end one spell on yourself or a willing creature, a few times per long rest.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:18, features:[f("Aura improvements","Aura of Protection and Aura of Courage extend to 30 feet.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]}
   ],
   ranger: [
-    [1,"Favored Enemy, Natural Explorer"], [2,"Fighting Style, Spellcasting"],
-    [3,"Ranger Archetype (subclass), Primeval Awareness"], [4,"Ability Score Improvement"],
-    [5,"Extra Attack"], [6,"Favored Enemy/Natural Explorer improve"], [7,"Archetype feature"],
-    [8,"Ability Score Improvement, Land's Stride"], [10,"Natural Explorer improves, Hide in Plain Sight"],
-    [11,"Archetype feature"], [12,"Ability Score Improvement"], [14,"Favored Enemy improves, Vanish"],
-    [15,"Archetype feature"], [16,"Ability Score Improvement"], [18,"Feral Senses"],
-    [19,"Ability Score Improvement"], [20,"Foe Slayer"]
+    {level:1, features:[
+      f("Favored Enemy","Choose an enemy type for bonuses tracking, recalling, and communicating about it."),
+      f("Natural Explorer","Choose a favored terrain for travel and exploration benefits there.")
+    ]},
+    {level:2, features:[
+      f("Fighting Style","Choose a combat specialty for a permanent combat bonus."),
+      f("Spellcasting","Cast ranger spells using Wisdom; know a number of spells from the ranger list.")
+    ]},
+    {level:3, features:[
+      f("Ranger Archetype","Choose a Ranger Archetype subclass, which grants further features at levels 3, 7, 11, and 15."),
+      f("Primeval Awareness","Expend a spell slot to sense certain creature types within a mile (further in favored terrain).")
+    ]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[f("Extra Attack","Attack twice, instead of once, whenever you take the Attack action.")]},
+    {level:6, features:[f("Favored Enemy/Natural Explorer improve","Choose an additional favored enemy and favored terrain.")]},
+    {level:8, features:[f("Land's Stride","Move through nonmagical difficult terrain at normal speed; advantage vs. magical plants.")]},
+    {level:10, features:[
+      f("Natural Explorer improves","Choose an additional favored terrain."),
+      f("Hide in Plain Sight","Spend a minute camouflaging to gain a big Stealth bonus while stationary.")
+    ]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:14, features:[
+      f("Favored Enemy improves","Choose an additional favored enemy."),
+      f("Vanish","Hide as a bonus action; can't be tracked by nonmagical means while not starving/fatigued.")
+    ]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:18, features:[f("Feral Senses","Fight blind or invisible attackers within 30 ft without disadvantage.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Foe Slayer","Add your Wisdom modifier to one attack or damage roll against a favored enemy each turn.")]}
   ],
   rogue: [
-    [1,"Expertise, Sneak Attack, Thieves' Cant"], [2,"Cunning Action"], [3,"Roguish Archetype (subclass)"],
-    [4,"Ability Score Improvement"], [5,"Uncanny Dodge"], [6,"Expertise"], [7,"Evasion"],
-    [8,"Ability Score Improvement"], [9,"Archetype feature"], [10,"Ability Score Improvement"],
-    [11,"Reliable Talent"], [12,"Ability Score Improvement"], [13,"Archetype feature"],
-    [14,"Blindsense"], [15,"Slippery Mind"], [16,"Ability Score Improvement"], [17,"Archetype feature"],
-    [18,"Elusive"], [19,"Ability Score Improvement"], [20,"Stroke of Luck"]
+    {level:1, features:[
+      f("Expertise","Double your proficiency bonus for two skills (or one skill and thieves' tools)."),
+      f("Sneak Attack","Extra damage once per turn when you have advantage or an ally is adjacent to the target."),
+      f("Thieves' Cant","Secret mix of dialect, jargon, and code understood only by other rogues.")
+    ]},
+    {level:2, features:[f("Cunning Action","Bonus action to Dash, Disengage, or Hide.")]},
+    {level:3, features:[f("Roguish Archetype","Choose a Roguish Archetype subclass, which grants further features at levels 3, 9, 13, and 17.")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:5, features:[f("Uncanny Dodge","Reaction: halve the damage from an attack that hits you.")]},
+    {level:6, features:[f("Expertise","Choose two more skills to gain Expertise in.")]},
+    {level:7, features:[f("Evasion","Take no damage on a successful Dexterity save (half only on a fail) against area effects.")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:10, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:11, features:[f("Reliable Talent","Treat any ability check d20 roll of 9 or lower as a 10, if proficient in the skill.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:14, features:[f("Blindsense","Aware of the location of hidden or invisible creatures within 10 ft that aren't hidden from you.")]},
+    {level:15, features:[f("Slippery Mind","Gain proficiency in Wisdom saving throws.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:18, features:[f("Elusive","No attack roll has advantage against you while you aren't incapacitated.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Stroke of Luck","Turn a missed attack into a hit, or a failed ability check into a 20; once per short/long rest.")]}
   ],
   sorcerer: [
-    [1,"Spellcasting, Sorcerous Origin (subclass)"], [2,"Font of Magic"], [3,"Metamagic"],
-    [4,"Ability Score Improvement"], [6,"Origin feature"], [8,"Ability Score Improvement"],
-    [10,"Metamagic"], [12,"Ability Score Improvement"], [14,"Origin feature"],
-    [16,"Ability Score Improvement"], [17,"Metamagic"], [18,"Origin feature"],
-    [19,"Ability Score Improvement"], [20,"Sorcerous Restoration"]
+    {level:1, features:[
+      f("Spellcasting","Cast sorcerer spells using Charisma, drawing on innate magic rather than study."),
+      f("Sorcerous Origin","Choose a Sorcerous Origin subclass, which grants further features at levels 1, 6, 14, and 18.")
+    ]},
+    {level:2, features:[f("Font of Magic","Gain sorcery points, convertible between spell slots and points for Metamagic.")]},
+    {level:3, features:[f("Metamagic","Choose two Metamagic options to modify your spells (e.g. Twin, Quicken).")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:10, features:[f("Metamagic","Choose one more Metamagic option.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:17, features:[f("Metamagic","Choose one more Metamagic option.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Sorcerous Restoration","Regain 4 sorcery points on a short rest.")]}
   ],
   warlock: [
-    [1,"Otherworldly Patron (subclass), Pact Magic"], [2,"Eldritch Invocations"], [3,"Pact Boon"],
-    [4,"Ability Score Improvement"], [6,"Patron feature"], [8,"Ability Score Improvement"],
-    [10,"Patron feature"], [11,"Mystic Arcanum (6th level)"], [12,"Ability Score Improvement"],
-    [13,"Mystic Arcanum (7th level)"], [14,"Patron feature"], [15,"Mystic Arcanum (8th level)"],
-    [16,"Ability Score Improvement"], [17,"Mystic Arcanum (9th level)"], [19,"Ability Score Improvement"],
-    [20,"Eldritch Master"]
+    {level:1, features:[
+      f("Otherworldly Patron","Choose a patron subclass, which grants further features at levels 1, 6, 10, and 14."),
+      f("Pact Magic","Cast warlock spells using Charisma from a small number of slots that recharge on a short rest.")
+    ]},
+    {level:2, features:[f("Eldritch Invocations","Learn eldritch invocations granting magical customizations and abilities.")]},
+    {level:3, features:[f("Pact Boon","Choose a Pact Boon: a familiar (Chain), a weapon (Blade), or a grimoire (Tome).")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:11, features:[f("Mystic Arcanum (6th level)","Learn one 6th-level spell, castable once per long rest without a slot.")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:13, features:[f("Mystic Arcanum (7th level)","Learn one 7th-level spell, castable once per long rest without a slot.")]},
+    {level:15, features:[f("Mystic Arcanum (8th level)","Learn one 8th-level spell, castable once per long rest without a slot.")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:17, features:[f("Mystic Arcanum (9th level)","Learn one 9th-level spell, castable once per long rest without a slot.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Eldritch Master","Persuade your patron to let you regain all expended Pact Magic slots, once per long rest.")]}
   ],
   wizard: [
-    [1,"Spellcasting, Arcane Recovery"], [2,"Arcane Tradition (subclass)"], [4,"Ability Score Improvement"],
-    [6,"Tradition feature"], [8,"Ability Score Improvement"], [10,"Tradition feature"],
-    [12,"Ability Score Improvement"], [14,"Tradition feature"], [16,"Ability Score Improvement"],
-    [18,"Spell Mastery"], [19,"Ability Score Improvement"], [20,"Signature Spells"]
+    {level:1, features:[
+      f("Spellcasting","Cast wizard spells using Intelligence, prepared from a spellbook you can add spells to."),
+      f("Arcane Recovery","Once per day on a short rest, recover expended spell slots totaling up to half your wizard level.")
+    ]},
+    {level:2, features:[f("Arcane Tradition","Choose an Arcane Tradition subclass, which grants further features at levels 2, 6, 10, and 14.")]},
+    {level:4, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:8, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:12, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:16, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:18, features:[f("Spell Mastery","Cast one 1st- and one 2nd-level spell you know at will, without using a spell slot.")]},
+    {level:19, features:[f("Ability Score Improvement","Increase one ability score by 2, or two scores by 1 each (or take a feat, if allowed).")]},
+    {level:20, features:[f("Signature Spells","Choose two 3rd-level spells to always have prepared, castable once each per rest for free.")]}
   ]
 };
 
-/* One seeded PHB subclass per class (the most iconic/commonly played
-   pick), merged into the level list alongside base class features. */
+/* Seeded subclasses (not exhaustive) merged into the level list alongside
+   base class features when the Subclass field matches one of these. */
 const SUBCLASS_FEATURES = {
   "barbarian|path of the berserker": [
-    [3,"Frenzy"], [6,"Mindless Rage"], [10,"Intimidating Presence"], [14,"Retaliation"]
+    {level:3, features:[f("Frenzy","While raging, make one extra melee weapon attack as a bonus action each turn, at the cost of exhaustion afterward.")]},
+    {level:6, features:[f("Mindless Rage","Can't be charmed or frightened while raging; ongoing charm/fright effects are suspended.")]},
+    {level:10, features:[f("Intimidating Presence","Action: frighten one creature within 30 ft unless it succeeds on a Wisdom save.")]},
+    {level:14, features:[f("Retaliation","Reaction: make a melee attack against a creature within 5 ft that just dealt damage to you.")]}
   ],
   "bard|college of lore": [
-    [3,"Bonus Proficiencies, Cutting Words"], [6,"Additional Magical Secrets"], [14,"Peerless Skill"]
+    {level:3, features:[
+      f("Bonus Proficiencies","Gain proficiency with three skills of your choice."),
+      f("Cutting Words","Reaction: expend a Bardic Inspiration die to subtract it from an enemy's roll.")
+    ]},
+    {level:6, features:[f("Additional Magical Secrets","Learn two spells from any class's spell list, which count as bard spells for you.")]},
+    {level:14, features:[f("Peerless Skill","Add a Bardic Inspiration die to your own ability checks.")]}
   ],
   "cleric|life domain": [
-    [1,"Bonus Proficiency, Disciple of Life"], [2,"Channel Divinity: Preserve Life"],
-    [6,"Blessed Healer"], [8,"Divine Strike"], [17,"Supreme Healing"]
+    {level:1, features:[
+      f("Bonus Proficiency","Gain proficiency with heavy armor."),
+      f("Disciple of Life","Your healing spells restore extra hit points.")
+    ]},
+    {level:2, features:[f("Channel Divinity: Preserve Life","Channel Divinity: restore a pool of hit points split among nearby creatures.")]},
+    {level:6, features:[f("Blessed Healer","When you cast a healing spell on another creature, you also regain some hit points.")]},
+    {level:8, features:[f("Divine Strike","Once per turn, deal extra radiant damage on a weapon hit.")]},
+    {level:17, features:[f("Supreme Healing","Instead of rolling healing dice, use the maximum possible result.")]}
   ],
   "druid|circle of the land": [
-    [2,"Bonus Cantrip, Natural Recovery, Circle Spells"], [6,"Land's Stride"],
-    [10,"Nature's Ward"], [14,"Nature's Sanctuary"]
+    {level:2, features:[
+      f("Bonus Cantrip","Learn one extra druid cantrip."),
+      f("Natural Recovery","Recover some expended spell slots once per day on a short rest."),
+      f("Circle Spells","Gain extra prepared spells tied to your chosen land type.")
+    ]},
+    {level:6, features:[f("Land's Stride","Move through nonmagical difficult terrain at normal speed; advantage vs. magical plants.")]},
+    {level:10, features:[f("Nature's Ward","Immune to poison and disease; can't be charmed or frightened by elementals or fey.")]},
+    {level:14, features:[f("Nature's Sanctuary","Beasts and plants must make a Wisdom save to attack you.")]}
   ],
   "fighter|champion": [
-    [3,"Improved Critical"], [7,"Remarkable Athlete"], [10,"Additional Fighting Style"],
-    [15,"Superior Critical"], [18,"Survivor"]
+    {level:3, features:[f("Improved Critical","Your weapon attacks score a critical hit on a roll of 19 or 20.")]},
+    {level:7, features:[f("Remarkable Athlete","Add half your proficiency bonus to Str/Dex/Con checks that don't already use it; better running jumps.")]},
+    {level:10, features:[f("Additional Fighting Style","Choose a second Fighting Style option.")]},
+    {level:15, features:[f("Superior Critical","Your weapon attacks score a critical hit on a roll of 18-20.")]},
+    {level:18, features:[f("Survivor","Regain hit points at the start of each turn if you're bloodied but not at 0 HP.")]}
   ],
   "monk|way of the open hand": [
-    [3,"Open Hand Technique"], [6,"Wholeness of Body"], [11,"Tranquility"], [17,"Quivering Palm"]
+    {level:3, features:[f("Open Hand Technique","When you hit with Flurry of Blows, add an extra effect: knock prone, push, or deny reactions.")]},
+    {level:6, features:[f("Wholeness of Body","Action: regain hit points equal to three times your martial arts die, once per long rest.")]},
+    {level:11, features:[f("Tranquility","Effectively under sanctuary between long rests unless you attack or cast a harmful spell.")]},
+    {level:17, features:[f("Quivering Palm","Spend ki to set up lethal vibrations; trigger later to force a Con save or drop the target to 0 HP.")]}
   ],
   "paladin|oath of devotion": [
-    [3,"Sacred Weapon, Turn the Unholy"], [7,"Aura of Devotion"], [15,"Purity of Spirit"], [20,"Holy Nimbus"]
+    {level:3, features:[
+      f("Sacred Weapon","Channel Divinity: your weapon becomes magical and adds your Charisma modifier to attack rolls."),
+      f("Turn the Unholy","Channel Divinity: force fiends and undead to flee.")
+    ]},
+    {level:7, features:[f("Aura of Devotion","You and nearby allies can't be charmed while you're conscious.")]},
+    {level:15, features:[f("Purity of Spirit","Permanently under the effect of protection from evil and good.")]},
+    {level:20, features:[f("Holy Nimbus","Emanate bright light that damages fiends/undead and gives advantage on saves vs. their spells.")]}
   ],
   "ranger|hunter": [
-    [3,"Hunter's Prey"], [7,"Defensive Tactics"], [11,"Multiattack"], [15,"Superior Hunter's Defense"]
+    {level:3, features:[f("Hunter's Prey","Choose a combat option: Colossus Slayer, Giant Killer, or Horde Breaker.")]},
+    {level:7, features:[f("Defensive Tactics","Choose a combat option: Escape the Horde, Multiattack Defense, or Steel Will.")]},
+    {level:11, features:[f("Multiattack","Choose a combat option: Volley (hit everyone in an area with a ranged attack) or Whirlwind Attack (melee).")]},
+    {level:15, features:[f("Superior Hunter's Defense","Choose a combat option: Evasion, Stand Against the Tide, or Uncanny Dodge.")]}
+  ],
+  "ranger|gloom stalker": [
+    {level:3, features:[
+      f("Dread Ambusher","Extra attack and a speed bonus on the first turn of combat; extra weapon damage on your first hit."),
+      f("Gloom Stalker Magic","Gain extra prepared spells: disguise self and rope trick, each usable without a slot once per day."),
+      f("Umbral Sight","Gain (or extend) darkvision to 60 ft; invisible to creatures relying on darkvision to see you in the dark.")
+    ]},
+    {level:7, features:[f("Iron Mind","Gain proficiency in Wisdom saving throws (or another save of your choice if already proficient).")]},
+    {level:11, features:[f("Stalker's Flurry","Once per turn when you miss with a weapon attack, make another attack against a different target.")]},
+    {level:15, features:[f("Shadowy Dodge","When a creature you can't see attacks you, it has disadvantage; reaction to impose disadvantage on a seen attacker instead.")]}
   ],
   "rogue|thief": [
-    [3,"Fast Hands, Second-Story Work"], [9,"Supreme Sneak"], [13,"Use Magic Device"], [17,"Thief's Reflexes"]
+    {level:3, features:[
+      f("Fast Hands","Use Cunning Action to make a Sleight of Hand check, use thieves' tools, or take the Use an Object action."),
+      f("Second-Story Work","Climbing no longer costs extra movement; running jump distance increases by your Dexterity modifier.")
+    ]},
+    {level:9, features:[f("Supreme Sneak","Advantage on Stealth checks if you move at half speed on the same turn.")]},
+    {level:13, features:[f("Use Magic Device","Ignore all class, race, and level requirements on the use of magic items.")]},
+    {level:17, features:[f("Thief's Reflexes","Take two turns during the first round of any combat you roll initiative for.")]}
   ],
   "sorcerer|draconic bloodline": [
-    [1,"Dragon Ancestor, Draconic Resilience"], [6,"Elemental Affinity"], [14,"Dragon Wings"], [18,"Draconic Presence"]
+    {level:1, features:[
+      f("Dragon Ancestor","Choose a dragon type; know Draconic and can communicate simple ideas with dragons of that type."),
+      f("Draconic Resilience","Extra hit points, and AC = 13 + Dex modifier when not wearing armor.")
+    ]},
+    {level:6, features:[f("Elemental Affinity","Add Charisma modifier to the damage of one spell matching your draconic type; spend sorcery points for resistance.")]},
+    {level:14, features:[f("Dragon Wings","Sprout dragon wings, granting a flying speed equal to your current speed.")]},
+    {level:18, features:[f("Draconic Presence","Spend sorcery points to exude an aura of awe or fear.")]}
   ],
   "warlock|the fiend": [
-    [1,"Dark One's Blessing"], [6,"Dark One's Own Luck"], [10,"Fiendish Resilience"], [14,"Hurl Through Hell"]
+    {level:1, features:[f("Dark One's Blessing","When you reduce a hostile creature to 0 HP, gain temporary hit points.")]},
+    {level:6, features:[f("Dark One's Own Luck","Add a d10 to an ability check or saving throw, a limited number of times per rest.")]},
+    {level:10, features:[f("Fiendish Resilience","Choose a damage type to resist, changeable after a rest.")]},
+    {level:14, features:[f("Hurl Through Hell","When you hit a creature with an attack, banish it briefly to a hellish plane for extra psychic damage.")]}
   ],
   "wizard|school of evocation": [
-    [2,"Evocation Savant, Sculpt Spells"], [6,"Potent Cantrip"], [10,"Empowered Evocation"], [14,"Overchannel"]
+    {level:2, features:[
+      f("Evocation Savant","Halve the gold and time cost to copy evocation spells into your spellbook."),
+      f("Sculpt Spells","Choose companions to automatically succeed their saves and take no damage from your evocation spells.")
+    ]},
+    {level:6, features:[f("Potent Cantrip","Creatures that succeed on a save against your cantrip still take half damage.")]},
+    {level:10, features:[f("Empowered Evocation","Add your Intelligence modifier to the damage of one evocation spell you cast.")]},
+    {level:14, features:[f("Overchannel","Maximize the damage of a lower-level spell, at the cost of taking damage yourself on repeated uses.")]}
   ]
 };
 function normClassKey(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
@@ -2322,17 +2602,28 @@ function renderClassFeatures(){
     return;
   }
 
-  const subFeatures = subclass ? SUBCLASS_FEATURES[classKey + "|" + normClassKey(subclass)] : null;
+  let subFeatures = subclass ? SUBCLASS_FEATURES[classKey + "|" + normClassKey(subclass)] : null;
+  if(subclass && !subFeatures){
+    // fallback: tolerate spacing differences, e.g. "Gloomstalker" vs "Gloom Stalker"
+    const noSpace = normClassKey(subclass).replace(/\s+/g,"");
+    const matchKey = Object.keys(SUBCLASS_FEATURES).find(k=>{
+      const [kc, ks] = k.split("|");
+      return kc === classKey && ks.replace(/\s+/g,"") === noSpace;
+    });
+    if(matchKey) subFeatures = SUBCLASS_FEATURES[matchKey];
+  }
 
   const byLevel = {};
-  base.forEach(([lvl, text]) => { (byLevel[lvl] = byLevel[lvl] || []).push(text); });
-  if(subFeatures) subFeatures.forEach(([lvl, text]) => { (byLevel[lvl] = byLevel[lvl] || []).push(text); });
+  base.forEach(entry => { (byLevel[entry.level] = byLevel[entry.level] || []).push(...entry.features); });
+  if(subFeatures) subFeatures.forEach(entry => { (byLevel[entry.level] = byLevel[entry.level] || []).push(...entry.features); });
 
   const levels = Object.keys(byLevel).map(Number).sort((a,b) => a-b);
   const rowsHTML = levels.map(lvl => `
     <div class="pc-feature-level ${lvl > level ? "future" : ""}">
-      <span class="pc-feature-level-num">Lv ${lvl}</span>
-      <span class="pc-feature-level-text">${byLevel[lvl].join(", ")}</span>
+      <div class="pc-feature-level-num">Lv ${lvl}</div>
+      <div class="pc-feature-level-items">
+        ${byLevel[lvl].map(feat => `<div class="entry"><b>${feat.name}.</b> ${feat.text}</div>`).join("")}
+      </div>
     </div>
   `).join("");
 
@@ -2407,7 +2698,7 @@ function resetPlayerForm(){
   document.getElementById("pcSavesSection").classList.remove("open");
   document.getElementById("pcSkillsSection").classList.remove("open");
   document.getElementById("pcEquipmentSection").classList.remove("open");
-  document.getElementById("pcFeaturesSection").classList.add("open");
+  document.getElementById("pcFeaturesSection").classList.remove("open");
   recomputePcDerived();
   updatePcEquipmentSummary();
   renderClassFeatures();
