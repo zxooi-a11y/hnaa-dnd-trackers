@@ -871,10 +871,11 @@
   .hb-span-2{ grid-column: span 2; }
   .hb-ability-grid{
     display:grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 8px;
   }
-  .hb-ability-grid .hb-field input{ text-align: center; padding: 9px 4px; }
+  .hb-ability-grid .hb-field{ min-width: 0; }
+  .hb-ability-grid .hb-field input{ width: 100%; min-width: 0; text-align: center; padding: 9px 4px; box-sizing: border-box; }
 
   .hb-repeat-section{ margin-top: 22px; }
   .hb-repeat-header{
