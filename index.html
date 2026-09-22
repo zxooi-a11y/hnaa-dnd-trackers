@@ -944,6 +944,78 @@
   }
   .hb-ability-grid .hb-field{ min-width: 0; }
   .hb-ability-grid .hb-field input{ width: 100%; min-width: 0; text-align: center; padding: 9px 4px; box-sizing: border-box; }
+  .pc-mod{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-ink);
+    text-align: center;
+  }
+  .pc-bonus-readout{ font-size: 0.8rem; color: var(--text-soft); margin: -4px 0 2px; }
+  .pc-bonus-readout strong{ color: var(--accent-ink); }
+  .pc-section-label{
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+  }
+  .pc-prof-grid{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 12px;
+    background: var(--surface-soft);
+    border-radius: var(--radius-md);
+    padding: 6px;
+  }
+  .pc-prof-row{
+    display:flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.83rem;
+    padding: 5px 6px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    min-width: 0;
+  }
+  .pc-prof-row:hover{ background: var(--surface); }
+  .pc-prof-row input[type="checkbox"]{ width: 15px; height: 15px; accent-color: var(--accent); cursor: pointer; flex: 0 0 auto; }
+  .pc-prof-label{ flex: 1 1 auto; min-width: 0; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pc-prof-ability{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    flex: 0 0 auto;
+  }
+  .pc-prof-value{
+    font-family:'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--accent-ink);
+    flex: 0 0 auto;
+    min-width: 30px;
+    text-align: right;
+  }
+  .pc-equip-grid{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .pc-equip-row{ display:flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .pc-equip-row span{ font-size: 0.68rem; font-weight: 700; color: var(--text-faint); text-transform: uppercase; letter-spacing: 0.02em; }
+  .pc-equip-row input{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    border-radius: var(--radius-sm);
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
 
   .hb-repeat-section{ margin-top: 22px; }
   .hb-repeat-header{
@@ -1026,6 +1098,7 @@
     .card-actions{ flex-wrap: wrap; margin-left: 44px; width: calc(100% - 44px); }
     .stat-strip{ gap:10px; }
     .prop-line b{ flex-basis: 118px; width: 118px; }
+    .pc-prof-grid{ grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -1233,23 +1306,40 @@
       <div class="hb-form-grid">
         <label class="hb-field hb-span-2">Character Name<input type="text" id="pcName" placeholder="e.g. Kaelith Brightblade"></label>
         <label class="hb-field">Player Name (optional)<input type="text" id="pcPlayerName" placeholder="e.g. Sam"></label>
-        <label class="hb-field">Class &amp; Level (optional)<input type="text" id="pcClassLevel" placeholder="e.g. Level 5 Paladin (Half-Elf)"></label>
+        <label class="hb-field">Class (optional)<input type="text" id="pcClass" placeholder="e.g. Paladin"></label>
+        <label class="hb-field">Subclass (optional)<input type="text" id="pcSubclass" placeholder="e.g. Oath of Devotion"></label>
+        <label class="hb-field">Level<input type="number" id="pcLevel" min="1" max="20" value="1"></label>
 
         <label class="hb-field">Armor Class<input type="number" id="pcAC" placeholder="17"></label>
         <label class="hb-field">Hit Points (max)<input type="number" id="pcHP" placeholder="45"></label>
         <label class="hb-field hb-span-2">Speed<input type="text" id="pcSpeed" placeholder="e.g. 30 ft."></label>
 
         <div class="hb-span-2 hb-ability-grid">
-          <label class="hb-field">STR<input type="number" id="pcStr" value="10"></label>
-          <label class="hb-field">DEX<input type="number" id="pcDex" value="10"></label>
-          <label class="hb-field">CON<input type="number" id="pcCon" value="10"></label>
-          <label class="hb-field">INT<input type="number" id="pcInt" value="10"></label>
-          <label class="hb-field">WIS<input type="number" id="pcWis" value="10"></label>
-          <label class="hb-field">CHA<input type="number" id="pcCha" value="10"></label>
+          <label class="hb-field">STR<input type="number" id="pcStr" value="10"><span class="pc-mod" id="pcStrMod">+0</span></label>
+          <label class="hb-field">DEX<input type="number" id="pcDex" value="10"><span class="pc-mod" id="pcDexMod">+0</span></label>
+          <label class="hb-field">CON<input type="number" id="pcCon" value="10"><span class="pc-mod" id="pcConMod">+0</span></label>
+          <label class="hb-field">INT<input type="number" id="pcInt" value="10"><span class="pc-mod" id="pcIntMod">+0</span></label>
+          <label class="hb-field">WIS<input type="number" id="pcWis" value="10"><span class="pc-mod" id="pcWisMod">+0</span></label>
+          <label class="hb-field">CHA<input type="number" id="pcCha" value="10"><span class="pc-mod" id="pcChaMod">+0</span></label>
         </div>
 
-        <label class="hb-field hb-span-2">Saving Throws (optional)<input type="text" id="pcSavingThrows" placeholder="e.g. Str +6, Con +5"></label>
-        <label class="hb-field hb-span-2">Skills (optional)<input type="text" id="pcSkills" placeholder="e.g. Athletics +6, Persuasion +5"></label>
+        <div class="hb-span-2 pc-bonus-readout">Proficiency Bonus <strong id="pcProfBonusReadout">+2</strong> (from level)</div>
+
+        <div class="hb-span-2">
+          <div class="pc-section-label">Saving Throws — check what this character is proficient in</div>
+          <div class="pc-prof-grid" id="pcSavesGrid"></div>
+        </div>
+
+        <div class="hb-span-2">
+          <div class="pc-section-label">Skills — check what this character is proficient in</div>
+          <div class="pc-prof-grid pc-prof-grid-skills" id="pcSkillsGrid"></div>
+        </div>
+
+        <div class="hb-span-2">
+          <div class="pc-section-label">Equipment worn (optional) — one of each slot</div>
+          <div class="pc-equip-grid" id="pcEquipmentGrid"></div>
+        </div>
+
         <label class="hb-field hb-span-2">Senses (optional)<input type="text" id="pcSenses" placeholder="e.g. passive Perception 13"></label>
         <label class="hb-field hb-span-2">Languages (optional)<input type="text" id="pcLanguages" placeholder="e.g. Common, Elvish"></label>
         <label class="hb-field hb-span-2">Notes (optional)<input type="text" id="pcNotes" placeholder="e.g. Spell save DC 15, Lay on Hands pool 25"></label>
@@ -1534,6 +1624,7 @@ function statBlockHTML(m){
   let props = "";
   if(m.classLevel) props += `<div class="prop-line"><b>Class &amp; Level</b><span class="prop-value">${m.classLevel}</span></div>`;
   if(m.playerName) props += `<div class="prop-line"><b>Player</b><span class="prop-value">${m.playerName}</span></div>`;
+  if(m.isPlayer && m.proficiencyBonus) props += `<div class="prop-line"><b>Proficiency Bonus</b><span class="prop-value">${abilityMod(m.proficiencyBonus)}</span></div>`;
   if(m.savingThrows) props += `<div class="prop-line"><b>Saving Throws</b><span class="prop-value">${m.savingThrows}</span></div>`;
   if(m.skills) props += `<div class="prop-line"><b>Skills</b><span class="prop-value">${m.skills}</span></div>`;
   if(m.damageVulnerabilities) props += `<div class="prop-line"><b>Damage Vulnerabilities</b><span class="prop-value">${m.damageVulnerabilities}</span></div>`;
@@ -1543,6 +1634,13 @@ function statBlockHTML(m){
   if(m.senses) props += `<div class="prop-line"><b>Senses</b><span class="prop-value">${m.senses}</span></div>`;
   if(m.languages) props += `<div class="prop-line"><b>Languages</b><span class="prop-value">${m.languages}</span></div>`;
   if(!m.isPlayer) props += `<div class="prop-line"><b>Challenge</b><span class="prop-value">${m.cr} (${(m.xp||0).toLocaleString()} XP)</span></div>`;
+  if(m.equipment && Object.keys(m.equipment).length){
+    const eqStr = EQUIPMENT_SLOTS
+      .filter(s=>m.equipment[s.key])
+      .map(s=>`${s.label}: ${m.equipment[s.key]}`)
+      .join(", ");
+    if(eqStr) props += `<div class="prop-line"><b>Equipment</b><span class="prop-value">${eqStr}</span></div>`;
+  }
   if(m.notes) props += `<div class="prop-line"><b>Notes</b><span class="prop-value">${m.notes}</span></div>`;
 
   const traitsHTML = (m.traits||[]).map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("");
@@ -1881,20 +1979,126 @@ function deleteHomebrew(id){
 /* ============================================================
    PLAYER CHARACTERS
    ============================================================ */
+const ABILITY_LABELS = { str:"Str", dex:"Dex", con:"Con", int:"Int", wis:"Wis", cha:"Cha" };
+const SKILLS_5E = [
+  { key:"athletics", label:"Athletics", ability:"str" },
+  { key:"acrobatics", label:"Acrobatics", ability:"dex" },
+  { key:"sleightOfHand", label:"Sleight of Hand", ability:"dex" },
+  { key:"stealth", label:"Stealth", ability:"dex" },
+  { key:"arcana", label:"Arcana", ability:"int" },
+  { key:"history", label:"History", ability:"int" },
+  { key:"investigation", label:"Investigation", ability:"int" },
+  { key:"nature", label:"Nature", ability:"int" },
+  { key:"religion", label:"Religion", ability:"int" },
+  { key:"animalHandling", label:"Animal Handling", ability:"wis" },
+  { key:"insight", label:"Insight", ability:"wis" },
+  { key:"medicine", label:"Medicine", ability:"wis" },
+  { key:"perception", label:"Perception", ability:"wis" },
+  { key:"survival", label:"Survival", ability:"wis" },
+  { key:"deception", label:"Deception", ability:"cha" },
+  { key:"intimidation", label:"Intimidation", ability:"cha" },
+  { key:"performance", label:"Performance", ability:"cha" },
+  { key:"persuasion", label:"Persuasion", ability:"cha" }
+];
+const EQUIPMENT_SLOTS = [
+  { key:"armor", label:"Armor", placeholder:"e.g. Chain mail" },
+  { key:"footwear", label:"Footwear", placeholder:"e.g. Leather boots" },
+  { key:"gloves", label:"Gloves / Gauntlets", placeholder:"e.g. Gauntlets of ogre power" },
+  { key:"bracers", label:"Bracers", placeholder:"e.g. Bracers of archery" },
+  { key:"headwear", label:"Headwear", placeholder:"e.g. Circlet of blasting" },
+  { key:"cloak", label:"Cloak", placeholder:"e.g. Cloak of protection" }
+];
+function proficiencyBonus(level){ return Math.floor((Math.max(1, level||1) - 1) / 4) + 2; }
+
 let playerExpandedSet = new Set();
+
+/* Build the fixed-list sections (saving throws, skills, equipment slots)
+   once -- their structure never changes, only the values inside them. */
+function buildPlayerFormLists(){
+  const savesGrid = document.getElementById("pcSavesGrid");
+  savesGrid.innerHTML = Object.keys(ABILITY_LABELS).map(ab => `
+    <label class="pc-prof-row">
+      <input type="checkbox" data-save-prof="${ab}">
+      <span class="pc-prof-label">${ABILITY_LABELS[ab]}</span>
+      <span class="pc-prof-value" id="pcSaveVal-${ab}">+0</span>
+    </label>
+  `).join("");
+
+  const skillsGrid = document.getElementById("pcSkillsGrid");
+  skillsGrid.innerHTML = SKILLS_5E.map(s => `
+    <label class="pc-prof-row">
+      <input type="checkbox" data-skill-prof="${s.key}">
+      <span class="pc-prof-label">${s.label}</span>
+      <span class="pc-prof-ability">${ABILITY_LABELS[s.ability]}</span>
+      <span class="pc-prof-value" id="pcSkillVal-${s.key}">+0</span>
+    </label>
+  `).join("");
+
+  const equipGrid = document.getElementById("pcEquipmentGrid");
+  equipGrid.innerHTML = EQUIPMENT_SLOTS.map(s => `
+    <label class="pc-equip-row">
+      <span>${s.label}</span>
+      <input type="text" data-equip-slot="${s.key}" placeholder="${s.placeholder}">
+    </label>
+  `).join("");
+
+  savesGrid.querySelectorAll("[data-save-prof]").forEach(cb => cb.addEventListener("change", recomputePcDerived));
+  skillsGrid.querySelectorAll("[data-skill-prof]").forEach(cb => cb.addEventListener("change", recomputePcDerived));
+  ["pcStr","pcDex","pcCon","pcInt","pcWis","pcCha","pcLevel"].forEach(id => {
+    document.getElementById(id).addEventListener("input", recomputePcDerived);
+  });
+}
+
+/* Live-recompute ability modifiers, proficiency bonus, and every save/skill
+   value as ability scores, level, or proficiency checkboxes change. */
+function recomputePcDerived(){
+  const abilityMods = {};
+  Object.keys(ABILITY_LABELS).forEach(ab => {
+    const idBase = "pc" + ab[0].toUpperCase() + ab.slice(1);
+    const score = parseInt(document.getElementById(idBase).value, 10);
+    const mod = Number.isFinite(score) ? abilityScoreMod(score) : 0;
+    abilityMods[ab] = mod;
+    const modEl = document.getElementById(idBase + "Mod");
+    if(modEl) modEl.textContent = abilityMod(mod);
+  });
+
+  const level = parseInt(document.getElementById("pcLevel").value, 10) || 1;
+  const profBonus = proficiencyBonus(level);
+  document.getElementById("pcProfBonusReadout").textContent = abilityMod(profBonus);
+
+  Object.keys(ABILITY_LABELS).forEach(ab => {
+    const cb = document.querySelector(`[data-save-prof="${ab}"]`);
+    const el = document.getElementById(`pcSaveVal-${ab}`);
+    if(el) el.textContent = abilityMod(abilityMods[ab] + (cb && cb.checked ? profBonus : 0));
+  });
+
+  SKILLS_5E.forEach(s => {
+    const cb = document.querySelector(`[data-skill-prof="${s.key}"]`);
+    const el = document.getElementById(`pcSkillVal-${s.key}`);
+    if(el) el.textContent = abilityMod(abilityMods[s.ability] + (cb && cb.checked ? profBonus : 0));
+  });
+}
 
 function resetPlayerForm(){
   document.getElementById("pcFormError").style.display = "none";
-  ["pcName","pcPlayerName","pcClassLevel","pcSpeed","pcSavingThrows",
-   "pcSkills","pcSenses","pcLanguages","pcNotes"].forEach(id=>{
+  ["pcName","pcPlayerName","pcClass","pcSubclass","pcSpeed",
+   "pcSenses","pcLanguages","pcNotes"].forEach(id=>{
     document.getElementById(id).value = "";
   });
   document.getElementById("pcAC").value = "";
   document.getElementById("pcHP").value = "";
+  document.getElementById("pcLevel").value = "1";
   ["pcStr","pcDex","pcCon","pcInt","pcWis","pcCha"].forEach(id=>{
     document.getElementById(id).value = "10";
   });
+  document.querySelectorAll("#pcSavesGrid [data-save-prof], #pcSkillsGrid [data-skill-prof]").forEach(cb=>{
+    cb.checked = false;
+  });
+  document.querySelectorAll("#pcEquipmentGrid [data-equip-slot]").forEach(input=>{
+    input.value = "";
+  });
   document.getElementById("pcFeaturesList").innerHTML = "";
+  recomputePcDerived();
 }
 
 function openPlayerModal(){
@@ -1933,6 +2137,41 @@ function savePlayerCharacter(){
   };
   Object.keys(abilities).forEach(k=>{ abilities[k][1] = abilityScoreMod(abilities[k][0]); });
 
+  const charClass = document.getElementById("pcClass").value.trim();
+  const subclass = document.getElementById("pcSubclass").value.trim();
+  const level = Math.max(1, Math.min(20, parseInt(document.getElementById("pcLevel").value, 10) || 1));
+  const profBonus = proficiencyBonus(level);
+
+  const savingThrowProfs = {};
+  document.querySelectorAll("#pcSavesGrid [data-save-prof]").forEach(cb=>{
+    savingThrowProfs[cb.dataset.saveProf] = cb.checked;
+  });
+  const skillProfs = {};
+  document.querySelectorAll("#pcSkillsGrid [data-skill-prof]").forEach(cb=>{
+    skillProfs[cb.dataset.skillProf] = cb.checked;
+  });
+  const equipment = {};
+  document.querySelectorAll("#pcEquipmentGrid [data-equip-slot]").forEach(input=>{
+    const v = input.value.trim();
+    if(v) equipment[input.dataset.equipSlot] = v;
+  });
+
+  // Stat blocks conventionally only list saves/skills the character is
+  // actually proficient in (matching the 5e stat block format), even
+  // though the form itself shows and lets you toggle all of them.
+  const savingThrowsStr = Object.keys(savingThrowProfs)
+    .filter(ab=>savingThrowProfs[ab])
+    .map(ab=>`${ABILITY_LABELS[ab]} ${abilityMod(abilities[ab][1] + profBonus)}`)
+    .join(", ") || undefined;
+  const skillsStr = SKILLS_5E
+    .filter(s=>skillProfs[s.key])
+    .map(s=>`${s.label} ${abilityMod(abilities[s.ability][1] + profBonus)}`)
+    .join(", ") || undefined;
+  const classLevel = [
+    `Level ${level}`,
+    charClass ? (charClass + (subclass ? ` (${subclass})` : "")) : ""
+  ].filter(Boolean).join(" ");
+
   playerCounter++;
   const id = "player-" + playerCounter + "-" + name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
 
@@ -1940,14 +2179,21 @@ function savePlayerCharacter(){
     id, name,
     isPlayer: true,
     playerName: document.getElementById("pcPlayerName").value.trim() || undefined,
-    classLevel: document.getElementById("pcClassLevel").value.trim() || undefined,
+    charClass: charClass || undefined,
+    subclass: subclass || undefined,
+    level,
+    classLevel,
     size: "Medium", type: "player character", alignment: "",
     tag: "player",
     ac, hp, hpFormula: "",
     speed,
     abilities,
-    savingThrows: document.getElementById("pcSavingThrows").value.trim() || undefined,
-    skills: document.getElementById("pcSkills").value.trim() || undefined,
+    proficiencyBonus: profBonus,
+    savingThrowProfs,
+    skillProfs,
+    savingThrows: savingThrowsStr,
+    skills: skillsStr,
+    equipment: Object.keys(equipment).length ? equipment : undefined,
     senses: document.getElementById("pcSenses").value.trim() || undefined,
     languages: document.getElementById("pcLanguages").value.trim() || undefined,
     notes: document.getElementById("pcNotes").value.trim() || undefined,
@@ -2821,6 +3067,7 @@ document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeatures
   renderChips();
   setupDragScroll(document.getElementById("typeChips"));
   setupDragScroll(document.querySelector(".mode-switch"));
+  buildPlayerFormLists();
   renderGrid();
   updateTrackerBadge();
   updateHistoryBadge();
