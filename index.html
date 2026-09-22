@@ -97,13 +97,21 @@
   /* ---------- mode switch ---------- */
   .mode-switch{
     display:inline-flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
     background: var(--surface-sunken);
     border-radius: var(--radius-pill);
     padding: 4px;
     margin-bottom: 20px;
     gap: 2px;
   }
+  .mode-switch::-webkit-scrollbar{ display: none; }
+  .mode-switch.dragging{ cursor: grabbing; user-select: none; }
+  .mode-switch button{ flex: 0 0 auto; white-space: nowrap; }
   .mode-switch button{
     font-family:'Plus Jakarta Sans', sans-serif;
     font-size: 0.85rem;
@@ -1459,30 +1467,29 @@ function renderChips(){
    Native touch/trackpad scroll already works; this adds click-and-drag
    for mouse users, since the scrollbar itself is hidden.
    ============================================================ */
-function setupChipDragScroll(){
-  const wrap = document.getElementById("typeChips");
+function setupDragScroll(el){
   let isDown = false, startX = 0, startScroll = 0, moved = false;
 
-  wrap.addEventListener("mousedown", e=>{
+  el.addEventListener("mousedown", e=>{
     isDown = true; moved = false;
     startX = e.pageX;
-    startScroll = wrap.scrollLeft;
-    wrap.classList.add("dragging");
+    startScroll = el.scrollLeft;
+    el.classList.add("dragging");
   });
   window.addEventListener("mousemove", e=>{
     if(!isDown) return;
     const dx = e.pageX - startX;
     if(Math.abs(dx) > 4) moved = true;
-    wrap.scrollLeft = startScroll - dx;
+    el.scrollLeft = startScroll - dx;
   });
   window.addEventListener("mouseup", ()=>{
     isDown = false;
-    wrap.classList.remove("dragging");
+    el.classList.remove("dragging");
   });
-  wrap.addEventListener("mouseleave", ()=>{ isDown = false; wrap.classList.remove("dragging"); });
-  // suppress the chip's click if the mouse actually dragged, so releasing
-  // over a chip after panning doesn't also toggle the filter
-  wrap.addEventListener("click", e=>{
+  el.addEventListener("mouseleave", ()=>{ isDown = false; el.classList.remove("dragging"); });
+  // suppress the click if the mouse actually dragged, so releasing over a
+  // button after panning doesn't also fire it (e.g. toggle a filter/tab)
+  el.addEventListener("click", e=>{
     if(moved){ e.stopPropagation(); e.preventDefault(); }
   }, true);
 }
@@ -2805,7 +2812,8 @@ document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeatures
 (async function init(){
   await loadState();
   renderChips();
-  setupChipDragScroll();
+  setupDragScroll(document.getElementById("typeChips"));
+  setupDragScroll(document.querySelector(".mode-switch"));
   renderGrid();
   updateTrackerBadge();
   updateHistoryBadge();
