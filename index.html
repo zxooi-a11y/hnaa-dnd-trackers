@@ -412,6 +412,43 @@
   .players-wrap.show{ display:block; }
   .players-wrap .controls{ justify-content: flex-end; margin-bottom: 4px; }
 
+  /* ---------- saved encounters (in Tracker tab) ---------- */
+  .saved-encounters-wrap{ margin-top: 0; padding-top: 0; border-top: none; margin-bottom: 26px; }
+
+  /* ---------- loot (template + live tracker) ---------- */
+  .loot-add-row{ display:flex; gap: 8px; margin-bottom: 10px; }
+  .loot-add-row .encounter-name-input{ min-width: 0; }
+  .loot-list{
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    padding: 4px;
+  }
+  .loot-row{
+    display:flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .loot-row:not(:last-child){ border-bottom: 1px solid var(--border-soft); }
+  .loot-checkbox{ flex: 0 0 auto; width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .loot-text{ flex: 1 1 auto; }
+  .loot-row.claimed .loot-text{ text-decoration: line-through; color: var(--text-faint); }
+  .loot-remove{
+    flex: 0 0 auto;
+    background: none;
+    border: none;
+    color: var(--text-faint);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    line-height: 1;
+  }
+  .loot-remove:hover{ color: var(--worst); }
+  .loot-empty{ padding: 10px 10px; font-size: 0.82rem; color: var(--text-faint); }
+
   /* ---------- history tab ---------- */
   .history-wrap{ display:none; }
   .history-wrap.show{ display:block; }
@@ -999,15 +1036,37 @@
 
   <!-- TRACKER MODE -->
   <div id="trackerWrap" class="tracker-wrap">
+    <div id="savedEncountersWrap" class="log-wrap saved-encounters-wrap">
+      <div class="log-header">
+        <span class="log-header-label">Saved Encounters</span>
+        <span class="log-header-count" id="savedEncountersCount">0 saved</span>
+      </div>
+      <div id="savedEncountersEmpty" class="compare-empty" style="display:none;">Build an encounter below, then "+ save as template" to relaunch it here later.</div>
+      <div id="savedEncountersList"></div>
+    </div>
+
     <div id="trackerEmpty" class="compare-empty">Add creatures to the tracker from Browse mode ("+ tracker") to build your initiative order.</div>
     <div id="trackerControls" class="controls" style="display:none;">
       <div class="xp-total-badge">Total XP <strong id="trackerTotalXP">0</strong></div>
       <input type="text" id="encounterNameInput" class="encounter-name-input" placeholder="Name this encounter…">
+      <button id="trackerSaveTemplate" class="chip">+ save as template</button>
       <button id="trackerSaveLog" class="chip save-log-btn">save encounter</button>
       <button id="trackerSort" class="chip">re-sort by initiative</button>
       <button id="trackerClearAll" class="chip">clear encounter</button>
     </div>
     <div class="grid" id="trackerList"></div>
+
+    <div id="trackerLootWrap" class="log-wrap" style="display:none;">
+      <div class="log-header">
+        <span class="log-header-label">Loot</span>
+        <span class="log-header-count" id="trackerLootCount">0 items</span>
+      </div>
+      <div class="loot-add-row">
+        <input type="text" id="trackerLootInput" class="encounter-name-input" placeholder="Add loot… e.g. 50 gp, a +1 dagger">
+        <button id="trackerAddLootBtn" class="chip">+ add</button>
+      </div>
+      <div id="trackerLootList" class="loot-list"></div>
+    </div>
 
     <div id="activityWrap" class="log-wrap" style="display:none;">
       <div class="log-header">
@@ -1281,7 +1340,9 @@ function persistState(){
     actionLog, actionLogCounter,
     historyLog, historyCounter,
     homebrew, homebrewCounter,
-    players, playerCounter
+    players, playerCounter,
+    savedEncounters, savedEncounterCounter,
+    trackerLoot, trackerLootCounter
   });
 }
 
@@ -1298,11 +1359,16 @@ async function loadState(){
     homebrewCounter = saved.homebrewCounter || 0;
     players = saved.players || [];
     playerCounter = saved.playerCounter || 0;
+    savedEncounters = saved.savedEncounters || [];
+    savedEncounterCounter = saved.savedEncounterCounter || 0;
+    trackerLoot = saved.trackerLoot || [];
+    trackerLootCounter = saved.trackerLootCounter || 0;
     // backfill fields for tracker entries saved before status tracking existed
     trackerList.forEach(e=>{
       if(!e.conditions) e.conditions = [];
       if(!e.deathSaves) e.deathSaves = {success:0, fail:0};
     });
+    savedEncounters.forEach(enc=>{ if(!enc.loot) enc.loot = []; });
   }
 }
 
@@ -1320,6 +1386,11 @@ let actionLog = [];
 let actionLogCounter = 0;
 let historyLog = [];
 let historyCounter = 0;
+let savedEncounters = [];
+let savedEncounterCounter = 0;
+let savedEncounterExpandedSet = new Set();
+let trackerLoot = [];
+let trackerLootCounter = 0;
 let historyExpandedSet = new Set();
 let homebrew = [];
 let homebrewCounter = 0;
@@ -1961,11 +2032,13 @@ function renderTracker(){
     empty.style.display = "block";
     controls.style.display = "none";
     updateTotalXP();
+    renderTrackerLoot();
     return;
   }
   empty.style.display = "none";
   controls.style.display = "flex";
   updateTotalXP();
+  renderTrackerLoot();
 
   const ordered = sortedTracker();
 
@@ -2163,6 +2236,248 @@ function encounterSummary(list){
   }).join(", ") || "No creatures";
 }
 
+/* ============================================================
+   SAVED ENCOUNTERS (reusable templates, launch into the Tracker)
+   ============================================================ */
+function buildCreatureCounts(list){
+  const counts = [];
+  const seen = {};
+  list.forEach(e=>{
+    if(!(e.monsterId in seen)){
+      seen[e.monsterId] = counts.length;
+      counts.push({monsterId: e.monsterId, count: 0});
+    }
+    counts[seen[e.monsterId]].count++;
+  });
+  return counts;
+}
+
+function savedEncounterSummary(creatures){
+  return creatures.map(c=>{
+    const m = findCreature(c.monsterId);
+    const name = m ? m.name : c.monsterId;
+    return c.count > 1 ? `${c.count}× ${name}` : name;
+  }).join(", ") || "No creatures";
+}
+
+function savedEncounterXP(creatures){
+  return creatures.reduce((sum,c)=>{
+    const m = findCreature(c.monsterId);
+    return sum + (m ? (m.xp||0) * c.count : 0);
+  }, 0);
+}
+
+function saveAsTemplate(){
+  if(trackerList.length === 0) return;
+  savedEncounterCounter++;
+  const nameInput = document.getElementById("encounterNameInput");
+  const rawName = nameInput ? nameInput.value.trim() : "";
+  const name = rawName || `Saved Encounter ${savedEncounterCounter}`;
+
+  savedEncounters.unshift({
+    id: "enc" + savedEncounterCounter,
+    name: name,
+    createdAt: new Date().toLocaleString([], {dateStyle:"medium", timeStyle:"short"}),
+    creatures: buildCreatureCounts(trackerList),
+    loot: trackerLoot.map(l=>{ trackerLootCounter++; return {id:"tloot"+trackerLootCounter, text:l.text, claimed:false}; })
+  });
+
+  logAction(`Saved current encounter as template "${name}".`);
+  if(nameInput) nameInput.value = "";
+  renderSavedEncounters();
+}
+
+function deleteSavedEncounter(id){
+  const enc = savedEncounters.find(e=>e.id===id);
+  savedEncounters = savedEncounters.filter(e=>e.id!==id);
+  savedEncounterExpandedSet.delete(id);
+  if(enc) logAction(`Deleted saved encounter "${enc.name}".`);
+  renderSavedEncounters();
+}
+
+function launchSavedEncounter(id){
+  const enc = savedEncounters.find(e=>e.id===id);
+  if(!enc) return;
+  if(trackerList.length > 0){
+    const ok = confirm(`Replace the current encounter with "${enc.name}"? This clears what's currently in the Tracker.`);
+    if(!ok) return;
+  }
+  trackerList = [];
+  trackerExpandedSet.clear();
+  enc.creatures.forEach(c=>{
+    const m = findCreature(c.monsterId);
+    if(!m) return;
+    for(let i=0;i<c.count;i++){
+      trackerCounter++;
+      trackerList.push({
+        instanceId: "t"+trackerCounter,
+        monsterId: c.monsterId,
+        initiative: 10,
+        currentHp: m.hp,
+        maxHp: m.hp,
+        conditions: [],
+        deathSaves: {success:0, fail:0}
+      });
+    }
+  });
+  trackerLoot = enc.loot.map(l=>{ trackerLootCounter++; return {id:"loot"+trackerLootCounter, text:l.text, claimed:false}; });
+
+  const creatureCount = enc.creatures.reduce((n,c)=>n+c.count, 0);
+  logAction(`Launched saved encounter "${enc.name}" (${creatureCount} creature${creatureCount===1?"":"s"}).`);
+  updateTrackerBadge();
+  renderTracker();
+}
+
+function addTemplateLoot(encId, rawText){
+  const text = (rawText||"").trim();
+  if(!text) return;
+  const enc = savedEncounters.find(e=>e.id===encId);
+  if(!enc) return;
+  trackerLootCounter++;
+  enc.loot.push({id:"tloot"+trackerLootCounter, text, claimed:false});
+  renderSavedEncounters();
+  persistState();
+}
+
+function removeTemplateLoot(encId, lootId){
+  const enc = savedEncounters.find(e=>e.id===encId);
+  if(!enc) return;
+  enc.loot = enc.loot.filter(l=>l.id!==lootId);
+  renderSavedEncounters();
+  persistState();
+}
+
+function renderSavedEncounters(){
+  const emptyEl = document.getElementById("savedEncountersEmpty");
+  const list = document.getElementById("savedEncountersList");
+  const count = document.getElementById("savedEncountersCount");
+  count.textContent = savedEncounters.length + (savedEncounters.length===1 ? " saved" : " saved");
+  list.innerHTML = "";
+
+  if(savedEncounters.length === 0){
+    emptyEl.style.display = "block";
+    return;
+  }
+  emptyEl.style.display = "none";
+
+  savedEncounters.forEach(enc=>{
+    const isOpen = savedEncounterExpandedSet.has(enc.id);
+    const entry = document.createElement("div");
+    entry.className = "history-entry";
+
+    const lootRowsHTML = enc.loot.map(item=>`
+      <div class="loot-row">
+        <span class="loot-text">${item.text}</span>
+        <button class="loot-remove" data-remove-template-loot="${item.id}" title="Remove">&times;</button>
+      </div>
+    `).join("");
+
+    entry.innerHTML = `
+      <div class="history-head" data-saved-toggle="${enc.id}">
+        <div class="history-title-col">
+          <div class="history-name">${enc.name}</div>
+          <div class="history-meta">${savedEncounterSummary(enc.creatures)} · ${savedEncounterXP(enc.creatures).toLocaleString()} XP${enc.loot.length ? ` · ${enc.loot.length} loot item${enc.loot.length===1?"":"s"}` : ""}</div>
+        </div>
+        <button class="chip save-log-btn" data-launch-saved="${enc.id}">launch</button>
+        <span class="history-expand-hint">${isOpen ? "▲ collapse" : "▼ loot"}</span>
+        <button class="history-remove" data-remove-saved="${enc.id}" title="Delete this template">&times;</button>
+      </div>
+      <div class="history-detail ${isOpen ? "open":""}">
+        <div class="history-section-label">LOOT</div>
+        <div class="loot-add-row">
+          <input type="text" class="encounter-name-input" data-template-loot-input placeholder="Add loot for this encounter…">
+          <button class="chip" data-template-loot-add>+ add</button>
+        </div>
+        <div class="loot-list">${lootRowsHTML || `<div class="loot-empty">No loot listed yet.</div>`}</div>
+      </div>
+    `;
+
+    entry.querySelector("[data-saved-toggle]").addEventListener("click", (e)=>{
+      if(e.target.closest("[data-remove-saved]") || e.target.closest("[data-launch-saved]")) return;
+      if(savedEncounterExpandedSet.has(enc.id)) savedEncounterExpandedSet.delete(enc.id);
+      else savedEncounterExpandedSet.add(enc.id);
+      renderSavedEncounters();
+    });
+    entry.querySelector("[data-remove-saved]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      if(confirm(`Delete saved encounter "${enc.name}"?`)) deleteSavedEncounter(enc.id);
+    });
+    entry.querySelector("[data-launch-saved]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      launchSavedEncounter(enc.id);
+    });
+    const lootInput = entry.querySelector("[data-template-loot-input]");
+    entry.querySelector("[data-template-loot-add]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      addTemplateLoot(enc.id, lootInput.value);
+    });
+    lootInput.addEventListener("click", e=>e.stopPropagation());
+    lootInput.addEventListener("keydown", (e)=>{
+      if(e.key === "Enter") addTemplateLoot(enc.id, e.target.value);
+    });
+    entry.querySelectorAll("[data-remove-template-loot]").forEach(btn=>{
+      btn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        removeTemplateLoot(enc.id, btn.dataset.removeTemplateLoot);
+      });
+    });
+
+    list.appendChild(entry);
+  });
+}
+
+/* ============================================================
+   LOOT — live/current encounter (Tracker tab)
+   ============================================================ */
+function addTrackerLoot(rawText){
+  const text = (rawText||"").trim();
+  if(!text) return;
+  trackerLootCounter++;
+  trackerLoot.push({id:"loot"+trackerLootCounter, text, claimed:false});
+  logAction(`Added loot: ${text}`);
+  renderTrackerLoot();
+}
+
+function removeTrackerLoot(lootId){
+  const item = trackerLoot.find(l=>l.id===lootId);
+  trackerLoot = trackerLoot.filter(l=>l.id!==lootId);
+  if(item) logAction(`Removed loot: ${item.text}`);
+  renderTrackerLoot();
+}
+
+function toggleTrackerLootClaimed(lootId){
+  const item = trackerLoot.find(l=>l.id===lootId);
+  if(!item) return;
+  item.claimed = !item.claimed;
+  logAction(`${item.claimed ? "Claimed" : "Unclaimed"} loot: ${item.text}`);
+  renderTrackerLoot();
+}
+
+function renderTrackerLoot(){
+  const wrap = document.getElementById("trackerLootWrap");
+  const list = document.getElementById("trackerLootList");
+  const count = document.getElementById("trackerLootCount");
+  const show = trackerList.length > 0 || trackerLoot.length > 0;
+  wrap.style.display = show ? "block" : "none";
+  if(!show){ list.innerHTML = ""; return; }
+
+  count.textContent = trackerLoot.length + (trackerLoot.length===1 ? " item" : " items");
+  list.innerHTML = trackerLoot.length ? trackerLoot.map(item=>`
+    <div class="loot-row ${item.claimed ? "claimed":""}">
+      <input type="checkbox" class="loot-checkbox" ${item.claimed?"checked":""} data-toggle-tracker-loot="${item.id}">
+      <span class="loot-text">${item.text}</span>
+      <button class="loot-remove" data-remove-tracker-loot="${item.id}" title="Remove">&times;</button>
+    </div>
+  `).join("") : `<div class="loot-empty">No loot yet — add some above.</div>`;
+
+  list.querySelectorAll("[data-toggle-tracker-loot]").forEach(cb=>{
+    cb.addEventListener("change", ()=> toggleTrackerLootClaimed(cb.dataset.toggleTrackerLoot));
+  });
+  list.querySelectorAll("[data-remove-tracker-loot]").forEach(btn=>{
+    btn.addEventListener("click", ()=> removeTrackerLoot(btn.dataset.removeTrackerLoot));
+  });
+}
+
 /* ---- live activity feed (current encounter) ---- */
 function renderActivityLog(){
   const wrap = document.getElementById("activityWrap");
@@ -2314,15 +2629,29 @@ document.getElementById("btnTracker").onclick = ()=>setMode("tracker");
 document.getElementById("btnHistory").onclick = ()=>setMode("history");
 document.getElementById("trackerSort").onclick = ()=>renderTracker();
 document.getElementById("trackerSaveLog").onclick = ()=>saveEncounterLog();
+document.getElementById("trackerSaveTemplate").onclick = ()=>saveAsTemplate();
 document.getElementById("trackerClearAll").onclick = ()=>{
   trackerList = [];
   trackerExpandedSet.clear();
+  trackerLoot = [];
   actionLog = [];
   updateTrackerBadge();
   renderActivityLog();
   renderTracker();
   persistState();
 };
+
+document.getElementById("trackerAddLootBtn").onclick = ()=>{
+  const input = document.getElementById("trackerLootInput");
+  addTrackerLoot(input.value);
+  input.value = "";
+};
+document.getElementById("trackerLootInput").addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    addTrackerLoot(e.target.value);
+    e.target.value = "";
+  }
+});
 
 document.getElementById("search").addEventListener("input", (e)=>{
   searchTerm = e.target.value;
@@ -2378,6 +2707,7 @@ document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeatures
   renderActivityLog();
   renderHistory();
   renderPlayers();
+  renderSavedEncounters();
 })();
 </script>
 </body>
