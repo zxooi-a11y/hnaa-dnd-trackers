@@ -959,8 +959,65 @@
     color: var(--text-soft);
     text-transform: uppercase;
     letter-spacing: 0.03em;
-    margin-bottom: 6px;
   }
+  .pc-collapsible{
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .pc-collapsible-header{
+    width: 100%;
+    display:flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--surface-soft);
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+  }
+  .pc-collapsible-header .pc-section-label{ flex: 0 0 auto; }
+  .pc-collapsible-summary{
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.78rem;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: normal;
+    color: var(--text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .pc-collapsible-chevron{
+    flex: 0 0 auto;
+    color: var(--text-faint);
+    transition: transform .15s ease;
+  }
+  .pc-collapsible.open .pc-collapsible-chevron{ transform: rotate(180deg); }
+  .pc-collapsible-body{ display:none; padding: 10px 12px 12px; }
+  .pc-collapsible.open .pc-collapsible-body{ display:block; }
+  .pc-collapsible .pc-prof-grid, .pc-collapsible .pc-equip-grid{ background: none; padding: 0; border-radius: 0; }
+  .pc-feature-level{
+    display:flex;
+    gap: 10px;
+    padding: 5px 0;
+    font-size: 0.83rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .pc-feature-level:last-child{ border-bottom: none; }
+  .pc-feature-level-num{
+    flex: 0 0 auto;
+    width: 42px;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight: 700;
+    color: var(--accent-ink);
+  }
+  .pc-feature-level-text{ flex: 1 1 auto; color: var(--text); }
+  .pc-feature-level.future{ opacity: 0.45; }
+  .pc-feature-level.future .pc-feature-level-num{ color: var(--text-faint); }
+  .pc-feature-hint{ font-size: 0.82rem; color: var(--text-faint); padding: 6px 0; }
   .pc-prof-grid{
     display:grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1310,6 +1367,17 @@
         <label class="hb-field">Subclass (optional)<input type="text" id="pcSubclass" placeholder="e.g. Oath of Devotion"></label>
         <label class="hb-field">Level<input type="number" id="pcLevel" min="1" max="20" value="1"></label>
 
+        <div class="hb-span-2 pc-collapsible open" id="pcFeaturesSection">
+          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcFeaturesSection">
+            <span class="pc-section-label">Class Features</span>
+            <span class="pc-collapsible-summary" id="pcFeaturesSummary">Enter a class above</span>
+            <span class="pc-collapsible-chevron">▾</span>
+          </button>
+          <div class="pc-collapsible-body">
+            <div id="pcFeaturesReference"></div>
+          </div>
+        </div>
+
         <label class="hb-field">Armor Class<input type="number" id="pcAC" placeholder="17"></label>
         <label class="hb-field">Hit Points (max)<input type="number" id="pcHP" placeholder="45"></label>
         <label class="hb-field hb-span-2">Speed<input type="text" id="pcSpeed" placeholder="e.g. 30 ft."></label>
@@ -1325,19 +1393,37 @@
 
         <div class="hb-span-2 pc-bonus-readout">Proficiency Bonus <strong id="pcProfBonusReadout">+2</strong> (from level)</div>
 
-        <div class="hb-span-2">
-          <div class="pc-section-label">Saving Throws — check what this character is proficient in</div>
-          <div class="pc-prof-grid" id="pcSavesGrid"></div>
+        <div class="hb-span-2 pc-collapsible" id="pcSavesSection">
+          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcSavesSection">
+            <span class="pc-section-label">Saving Throws</span>
+            <span class="pc-collapsible-summary" id="pcSavesSummary">None selected</span>
+            <span class="pc-collapsible-chevron">▾</span>
+          </button>
+          <div class="pc-collapsible-body">
+            <div class="pc-prof-grid" id="pcSavesGrid"></div>
+          </div>
         </div>
 
-        <div class="hb-span-2">
-          <div class="pc-section-label">Skills — check what this character is proficient in</div>
-          <div class="pc-prof-grid pc-prof-grid-skills" id="pcSkillsGrid"></div>
+        <div class="hb-span-2 pc-collapsible" id="pcSkillsSection">
+          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcSkillsSection">
+            <span class="pc-section-label">Skills</span>
+            <span class="pc-collapsible-summary" id="pcSkillsSummary">None selected</span>
+            <span class="pc-collapsible-chevron">▾</span>
+          </button>
+          <div class="pc-collapsible-body">
+            <div class="pc-prof-grid pc-prof-grid-skills" id="pcSkillsGrid"></div>
+          </div>
         </div>
 
-        <div class="hb-span-2">
-          <div class="pc-section-label">Equipment worn (optional) — one of each slot</div>
-          <div class="pc-equip-grid" id="pcEquipmentGrid"></div>
+        <div class="hb-span-2 pc-collapsible" id="pcEquipmentSection">
+          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcEquipmentSection">
+            <span class="pc-section-label">Equipment Worn</span>
+            <span class="pc-collapsible-summary" id="pcEquipmentSummary">Nothing worn</span>
+            <span class="pc-collapsible-chevron">▾</span>
+          </button>
+          <div class="pc-collapsible-body">
+            <div class="pc-equip-grid" id="pcEquipmentGrid"></div>
+          </div>
         </div>
 
         <label class="hb-field hb-span-2">Senses (optional)<input type="text" id="pcSenses" placeholder="e.g. passive Perception 13"></label>
@@ -2010,6 +2096,159 @@ const EQUIPMENT_SLOTS = [
 ];
 function proficiencyBonus(level){ return Math.floor((Math.max(1, level||1) - 1) / 4) + 2; }
 
+/* ============================================================
+   CLASS FEATURES REFERENCE (5e PHB) — base class progressions for all
+   12 core classes, plus one seeded PHB subclass per class. This is a
+   summary reference (feature names, not full rules text) shown live as
+   the Class/Subclass/Level fields are filled in. Not every subclass is
+   covered yet -- add more entries to SUBCLASS_FEATURES following the
+   same "classname|subclassname" key pattern to extend it.
+   ============================================================ */
+const CLASS_FEATURES = {
+  barbarian: [
+    [1,"Rage, Unarmored Defense"], [2,"Reckless Attack, Danger Sense"], [3,"Primal Path (subclass)"],
+    [4,"Ability Score Improvement"], [5,"Extra Attack, Fast Movement"], [7,"Feral Instinct"],
+    [8,"Ability Score Improvement"], [9,"Brutal Critical (1 die)"], [11,"Relentless Rage"],
+    [12,"Ability Score Improvement"], [13,"Brutal Critical (2 dice)"], [15,"Persistent Rage"],
+    [16,"Ability Score Improvement"], [17,"Brutal Critical (3 dice)"], [18,"Indomitable Might"],
+    [19,"Ability Score Improvement"], [20,"Primal Champion"]
+  ],
+  bard: [
+    [1,"Spellcasting, Bardic Inspiration (d6)"], [2,"Jack of All Trades, Song of Rest (d6)"],
+    [3,"Bard College (subclass), Expertise"], [4,"Ability Score Improvement"],
+    [5,"Bardic Inspiration (d8), Font of Inspiration"], [6,"Countercharm"], [8,"Ability Score Improvement"],
+    [9,"Song of Rest (d8)"], [10,"Bardic Inspiration (d10), Expertise, Magical Secrets"],
+    [12,"Ability Score Improvement"], [13,"Song of Rest (d10)"], [14,"Magical Secrets"],
+    [15,"Bardic Inspiration (d12)"], [16,"Ability Score Improvement"], [17,"Song of Rest (d12)"],
+    [18,"Magical Secrets"], [19,"Ability Score Improvement"], [20,"Superior Inspiration"]
+  ],
+  cleric: [
+    [1,"Spellcasting, Divine Domain (subclass)"], [2,"Channel Divinity (1/rest), Domain feature"],
+    [4,"Ability Score Improvement"], [5,"Destroy Undead (CR 1/2)"], [6,"Channel Divinity (2/rest), Domain feature"],
+    [8,"Ability Score Improvement, Destroy Undead (CR 1), Domain feature"], [10,"Divine Intervention"],
+    [11,"Destroy Undead (CR 2)"], [12,"Ability Score Improvement"], [14,"Destroy Undead (CR 3)"],
+    [16,"Ability Score Improvement"], [17,"Destroy Undead (CR 4), Domain feature"], [18,"Channel Divinity (3/rest)"],
+    [19,"Ability Score Improvement"], [20,"Divine Intervention improves"]
+  ],
+  druid: [
+    [1,"Druidic, Spellcasting"], [2,"Wild Shape, Druid Circle (subclass)"],
+    [4,"Wild Shape improves, Ability Score Improvement"], [6,"Circle feature"],
+    [8,"Wild Shape improves, Ability Score Improvement"], [10,"Circle feature"], [12,"Ability Score Improvement"],
+    [14,"Circle feature"], [16,"Ability Score Improvement"], [18,"Timeless Body, Beast Spells"],
+    [19,"Ability Score Improvement"], [20,"Archdruid"]
+  ],
+  fighter: [
+    [1,"Fighting Style, Second Wind"], [2,"Action Surge (1/rest)"], [3,"Martial Archetype (subclass)"],
+    [4,"Ability Score Improvement"], [5,"Extra Attack"], [6,"Ability Score Improvement"], [7,"Archetype feature"],
+    [8,"Ability Score Improvement"], [9,"Indomitable (1/rest)"], [10,"Archetype feature"],
+    [11,"Extra Attack (2)"], [12,"Ability Score Improvement"], [13,"Indomitable (2/rest)"],
+    [14,"Ability Score Improvement"], [15,"Archetype feature"], [16,"Ability Score Improvement"],
+    [17,"Action Surge (2/rest), Indomitable (3/rest)"], [18,"Archetype feature"],
+    [19,"Ability Score Improvement"], [20,"Extra Attack (3)"]
+  ],
+  monk: [
+    [1,"Unarmored Defense, Martial Arts"], [2,"Ki, Unarmored Movement"],
+    [3,"Monastic Tradition (subclass), Deflect Missiles"], [4,"Ability Score Improvement, Slow Fall"],
+    [5,"Extra Attack, Stunning Strike"], [6,"Ki-Empowered Strikes, Tradition feature"],
+    [7,"Evasion, Stillness of Mind"], [8,"Ability Score Improvement"], [9,"Unarmored Movement improves"],
+    [10,"Purity of Body"], [11,"Tradition feature"], [12,"Ability Score Improvement"],
+    [13,"Tongue of the Sun and Moon"], [14,"Diamond Soul"], [15,"Timeless Body"],
+    [16,"Ability Score Improvement"], [17,"Tradition feature"], [18,"Empty Body"],
+    [19,"Ability Score Improvement"], [20,"Perfect Self"]
+  ],
+  paladin: [
+    [1,"Divine Sense, Lay on Hands"], [2,"Fighting Style, Spellcasting, Divine Smite"],
+    [3,"Divine Health, Sacred Oath (subclass)"], [4,"Ability Score Improvement"], [5,"Extra Attack"],
+    [6,"Aura of Protection"], [7,"Oath feature"], [8,"Ability Score Improvement"], [10,"Aura of Courage"],
+    [11,"Improved Divine Smite"], [12,"Ability Score Improvement"], [14,"Cleansing Touch"],
+    [15,"Oath feature"], [16,"Ability Score Improvement"], [18,"Aura improvements"],
+    [19,"Ability Score Improvement"], [20,"Oath feature"]
+  ],
+  ranger: [
+    [1,"Favored Enemy, Natural Explorer"], [2,"Fighting Style, Spellcasting"],
+    [3,"Ranger Archetype (subclass), Primeval Awareness"], [4,"Ability Score Improvement"],
+    [5,"Extra Attack"], [6,"Favored Enemy/Natural Explorer improve"], [7,"Archetype feature"],
+    [8,"Ability Score Improvement, Land's Stride"], [10,"Natural Explorer improves, Hide in Plain Sight"],
+    [11,"Archetype feature"], [12,"Ability Score Improvement"], [14,"Favored Enemy improves, Vanish"],
+    [15,"Archetype feature"], [16,"Ability Score Improvement"], [18,"Feral Senses"],
+    [19,"Ability Score Improvement"], [20,"Foe Slayer"]
+  ],
+  rogue: [
+    [1,"Expertise, Sneak Attack, Thieves' Cant"], [2,"Cunning Action"], [3,"Roguish Archetype (subclass)"],
+    [4,"Ability Score Improvement"], [5,"Uncanny Dodge"], [6,"Expertise"], [7,"Evasion"],
+    [8,"Ability Score Improvement"], [9,"Archetype feature"], [10,"Ability Score Improvement"],
+    [11,"Reliable Talent"], [12,"Ability Score Improvement"], [13,"Archetype feature"],
+    [14,"Blindsense"], [15,"Slippery Mind"], [16,"Ability Score Improvement"], [17,"Archetype feature"],
+    [18,"Elusive"], [19,"Ability Score Improvement"], [20,"Stroke of Luck"]
+  ],
+  sorcerer: [
+    [1,"Spellcasting, Sorcerous Origin (subclass)"], [2,"Font of Magic"], [3,"Metamagic"],
+    [4,"Ability Score Improvement"], [6,"Origin feature"], [8,"Ability Score Improvement"],
+    [10,"Metamagic"], [12,"Ability Score Improvement"], [14,"Origin feature"],
+    [16,"Ability Score Improvement"], [17,"Metamagic"], [18,"Origin feature"],
+    [19,"Ability Score Improvement"], [20,"Sorcerous Restoration"]
+  ],
+  warlock: [
+    [1,"Otherworldly Patron (subclass), Pact Magic"], [2,"Eldritch Invocations"], [3,"Pact Boon"],
+    [4,"Ability Score Improvement"], [6,"Patron feature"], [8,"Ability Score Improvement"],
+    [10,"Patron feature"], [11,"Mystic Arcanum (6th level)"], [12,"Ability Score Improvement"],
+    [13,"Mystic Arcanum (7th level)"], [14,"Patron feature"], [15,"Mystic Arcanum (8th level)"],
+    [16,"Ability Score Improvement"], [17,"Mystic Arcanum (9th level)"], [19,"Ability Score Improvement"],
+    [20,"Eldritch Master"]
+  ],
+  wizard: [
+    [1,"Spellcasting, Arcane Recovery"], [2,"Arcane Tradition (subclass)"], [4,"Ability Score Improvement"],
+    [6,"Tradition feature"], [8,"Ability Score Improvement"], [10,"Tradition feature"],
+    [12,"Ability Score Improvement"], [14,"Tradition feature"], [16,"Ability Score Improvement"],
+    [18,"Spell Mastery"], [19,"Ability Score Improvement"], [20,"Signature Spells"]
+  ]
+};
+
+/* One seeded PHB subclass per class (the most iconic/commonly played
+   pick), merged into the level list alongside base class features. */
+const SUBCLASS_FEATURES = {
+  "barbarian|path of the berserker": [
+    [3,"Frenzy"], [6,"Mindless Rage"], [10,"Intimidating Presence"], [14,"Retaliation"]
+  ],
+  "bard|college of lore": [
+    [3,"Bonus Proficiencies, Cutting Words"], [6,"Additional Magical Secrets"], [14,"Peerless Skill"]
+  ],
+  "cleric|life domain": [
+    [1,"Bonus Proficiency, Disciple of Life"], [2,"Channel Divinity: Preserve Life"],
+    [6,"Blessed Healer"], [8,"Divine Strike"], [17,"Supreme Healing"]
+  ],
+  "druid|circle of the land": [
+    [2,"Bonus Cantrip, Natural Recovery, Circle Spells"], [6,"Land's Stride"],
+    [10,"Nature's Ward"], [14,"Nature's Sanctuary"]
+  ],
+  "fighter|champion": [
+    [3,"Improved Critical"], [7,"Remarkable Athlete"], [10,"Additional Fighting Style"],
+    [15,"Superior Critical"], [18,"Survivor"]
+  ],
+  "monk|way of the open hand": [
+    [3,"Open Hand Technique"], [6,"Wholeness of Body"], [11,"Tranquility"], [17,"Quivering Palm"]
+  ],
+  "paladin|oath of devotion": [
+    [3,"Sacred Weapon, Turn the Unholy"], [7,"Aura of Devotion"], [15,"Purity of Spirit"], [20,"Holy Nimbus"]
+  ],
+  "ranger|hunter": [
+    [3,"Hunter's Prey"], [7,"Defensive Tactics"], [11,"Multiattack"], [15,"Superior Hunter's Defense"]
+  ],
+  "rogue|thief": [
+    [3,"Fast Hands, Second-Story Work"], [9,"Supreme Sneak"], [13,"Use Magic Device"], [17,"Thief's Reflexes"]
+  ],
+  "sorcerer|draconic bloodline": [
+    [1,"Dragon Ancestor, Draconic Resilience"], [6,"Elemental Affinity"], [14,"Dragon Wings"], [18,"Draconic Presence"]
+  ],
+  "warlock|the fiend": [
+    [1,"Dark One's Blessing"], [6,"Dark One's Own Luck"], [10,"Fiendish Resilience"], [14,"Hurl Through Hell"]
+  ],
+  "wizard|school of evocation": [
+    [2,"Evocation Savant, Sculpt Spells"], [6,"Potent Cantrip"], [10,"Empowered Evocation"], [14,"Overchannel"]
+  ]
+};
+function normClassKey(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+
 let playerExpandedSet = new Set();
 
 /* Build the fixed-list sections (saving throws, skills, equipment slots)
@@ -2047,6 +2286,68 @@ function buildPlayerFormLists(){
   ["pcStr","pcDex","pcCon","pcInt","pcWis","pcCha","pcLevel"].forEach(id => {
     document.getElementById(id).addEventListener("input", recomputePcDerived);
   });
+  equipGrid.querySelectorAll("[data-equip-slot]").forEach(input => input.addEventListener("input", updatePcEquipmentSummary));
+  ["pcClass","pcSubclass","pcLevel"].forEach(id => {
+    document.getElementById(id).addEventListener("input", renderClassFeatures);
+  });
+  document.querySelectorAll("[data-pc-toggle]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.getElementById(btn.dataset.pcToggle).classList.toggle("open");
+    });
+  });
+}
+
+/* Read Class/Subclass/Level and render the level-by-level feature
+   reference. Levels already reached (<= current level) render normally;
+   levels not yet reached are shown muted, so raising Level "propagates"
+   which features are highlighted as attained. */
+function renderClassFeatures(){
+  const cls = document.getElementById("pcClass").value.trim();
+  const subclass = document.getElementById("pcSubclass").value.trim();
+  const level = Math.max(1, Math.min(20, parseInt(document.getElementById("pcLevel").value, 10) || 1));
+  const container = document.getElementById("pcFeaturesReference");
+  const summary = document.getElementById("pcFeaturesSummary");
+
+  if(!cls){
+    container.innerHTML = `<div class="pc-feature-hint">Enter a class above to see its level-by-level features.</div>`;
+    summary.textContent = "Enter a class above";
+    return;
+  }
+
+  const classKey = normClassKey(cls);
+  const base = CLASS_FEATURES[classKey];
+  if(!base){
+    container.innerHTML = `<div class="pc-feature-hint">No feature data for "${cls}" yet. Recognized classes: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard.</div>`;
+    summary.textContent = "Unrecognized class";
+    return;
+  }
+
+  const subFeatures = subclass ? SUBCLASS_FEATURES[classKey + "|" + normClassKey(subclass)] : null;
+
+  const byLevel = {};
+  base.forEach(([lvl, text]) => { (byLevel[lvl] = byLevel[lvl] || []).push(text); });
+  if(subFeatures) subFeatures.forEach(([lvl, text]) => { (byLevel[lvl] = byLevel[lvl] || []).push(text); });
+
+  const levels = Object.keys(byLevel).map(Number).sort((a,b) => a-b);
+  const rowsHTML = levels.map(lvl => `
+    <div class="pc-feature-level ${lvl > level ? "future" : ""}">
+      <span class="pc-feature-level-num">Lv ${lvl}</span>
+      <span class="pc-feature-level-text">${byLevel[lvl].join(", ")}</span>
+    </div>
+  `).join("");
+
+  const note = (subclass && !subFeatures)
+    ? `<div class="pc-feature-hint">No feature data for subclass "${subclass}" yet — showing base ${cls} features only.</div>`
+    : "";
+
+  container.innerHTML = note + rowsHTML;
+  const attained = levels.filter(l => l <= level).length;
+  summary.textContent = `${cls}${subclass && subFeatures ? " (" + subclass + ")" : ""} — ${attained} of ${levels.length} feature levels reached`;
+}
+
+function updatePcEquipmentSummary(){
+  const filled = Array.from(document.querySelectorAll("#pcEquipmentGrid [data-equip-slot]")).filter(i => i.value.trim()).length;
+  document.getElementById("pcEquipmentSummary").textContent = filled ? `${filled} item${filled===1?"":"s"} worn` : "Nothing worn";
 }
 
 /* Live-recompute ability modifiers, proficiency bonus, and every save/skill
@@ -2077,6 +2378,11 @@ function recomputePcDerived(){
     const el = document.getElementById(`pcSkillVal-${s.key}`);
     if(el) el.textContent = abilityMod(abilityMods[s.ability] + (cb && cb.checked ? profBonus : 0));
   });
+
+  const savesChecked = document.querySelectorAll("#pcSavesGrid [data-save-prof]:checked").length;
+  document.getElementById("pcSavesSummary").textContent = savesChecked ? `${savesChecked} proficient` : "None selected";
+  const skillsChecked = document.querySelectorAll("#pcSkillsGrid [data-skill-prof]:checked").length;
+  document.getElementById("pcSkillsSummary").textContent = skillsChecked ? `${skillsChecked} proficient` : "None selected";
 }
 
 function resetPlayerForm(){
@@ -2098,7 +2404,13 @@ function resetPlayerForm(){
     input.value = "";
   });
   document.getElementById("pcFeaturesList").innerHTML = "";
+  document.getElementById("pcSavesSection").classList.remove("open");
+  document.getElementById("pcSkillsSection").classList.remove("open");
+  document.getElementById("pcEquipmentSection").classList.remove("open");
+  document.getElementById("pcFeaturesSection").classList.add("open");
   recomputePcDerived();
+  updatePcEquipmentSummary();
+  renderClassFeatures();
 }
 
 function openPlayerModal(){
