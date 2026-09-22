@@ -779,7 +779,7 @@
   .detail.open{ display:block; }
   .abilities-table{
     display:grid;
-    grid-template-columns: repeat(6,1fr);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     gap: 8px;
     margin: 12px 0 14px;
   }
@@ -907,13 +907,14 @@
   }
   .hb-form-grid{
     display:grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 14px;
   }
   .hb-field{
     display:flex;
     flex-direction: column;
     gap: 5px;
+    min-width: 0;
     font-size: 0.72rem;
     font-weight: 700;
     color: var(--text-soft);
@@ -931,6 +932,9 @@
     border: 1px solid var(--border);
     background: var(--surface-soft);
     border-radius: var(--radius-sm);
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .hb-span-2{ grid-column: span 2; }
   .hb-ability-grid{
@@ -951,7 +955,7 @@
   .hb-repeat-header span{ font-size: 0.85rem; font-weight: 700; color: var(--text); }
   .hb-dynamic-row{
     display:grid;
-    grid-template-columns: 1fr 2fr auto;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) auto;
     gap: 8px;
     margin-bottom: 8px;
     align-items: start;
@@ -964,6 +968,9 @@
     background: var(--surface-soft);
     border-radius: var(--radius-sm);
     resize: vertical;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
   }
   .hb-dynamic-row textarea{ min-height: 38px; }
   .hb-row-remove{
@@ -1014,7 +1021,7 @@
 
   @media (max-width: 620px){
     .masthead h1{ font-size: 1.7rem; }
-    .abilities-table{ grid-template-columns: repeat(3,1fr); }
+    .abilities-table{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .card-head{ flex-wrap: wrap; }
     .card-actions{ flex-wrap: wrap; margin-left: 44px; width: calc(100% - 44px); }
     .stat-strip{ gap:10px; }
