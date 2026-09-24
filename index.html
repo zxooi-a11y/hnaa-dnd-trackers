@@ -2116,8 +2116,15 @@ function proficiencyBonus(level){ return Math.floor((Math.max(1, level||1) - 1) 
    "Draconic Bloodline" -> "Draconic Sorcery", "Way of the Open Hand" ->
    "Warrior of the Open Hand"). SUBCLASS_FEATURES exposes each entry under
    both its 2024 SRD key and the older alias key so lookups work either
-   way. Gloom Stalker (Ranger) is Xanathar's Guide content not covered by
-   the SRD, so it's kept as a hand-written entry.
+   way.
+
+   Xanathar's Guide to Everything (XGtE) subclasses (Gloom Stalker, Path
+   of the Zealot, College of Glamour, Grave Domain, Circle of the
+   Shepherd, Samurai, Way of the Drunken Master, Oath of Conquest,
+   Horizon Walker, Monster Slayer, Swashbuckler, Divine Soul, the
+   Hexblade, War Magic) aren't SRD content -- there's no open-license
+   source for them -- so those entries are hand-written mechanical
+   summaries, one representative subclass per class (two for Ranger).
 
    Not every subclass is covered -- add more entries to SUBCLASS_FEATURES
    following the same "classname|subclassname" key pattern to extend it.
@@ -2386,6 +2393,121 @@ const SUBCLASS_FEATURES = {
     {level:7, features:[f("Iron Mind","Gain proficiency in Wisdom saving throws (or another save of your choice if already proficient).")]},
     {level:11, features:[f("Stalker's Flurry","Once per turn when you miss with a weapon attack, make another attack against a different target.")]},
     {level:15, features:[f("Shadowy Dodge","When a creature you can't see attacks you, it has disadvantage; reaction to impose disadvantage on a seen attacker instead.")]}
+  ],
+  "barbarian|path of the zealot": [
+    {level:3, features:[
+      f("Divine Fury","While raging, deal extra necrotic or radiant damage (your choice) on your first hit each turn."),
+      f("Warrior of the Gods","Your fervor makes you especially hard to keep dead — you can be restored to life without the caster needing a diamond or other costly material component.")
+    ]},
+    {level:6, features:[f("Fanatical Focus","Once per rage, if you fail a saving throw, you can reroll it.")]},
+    {level:10, features:[f("Zealous Presence","Once per long rest, as a bonus action, let out a battle cry that grants a burst of divine fervor to allies within 60 ft, giving them advantage on their next attack roll or ability check this turn.")]},
+    {level:14, features:[f("Rage beyond Death","While raging, you can't be reduced below 1 hit point unless you're dealt damage equal to your total hit point maximum; the rage's normal end conditions still apply once it ends.")]}
+  ],
+  "bard|college of glamour": [
+    {level:3, features:[
+      f("Mantle of Inspiration","As a bonus action, grant temporary hit points to a number of creatures equal to your Charisma modifier, including yourself; any of them who have a Bardic Inspiration die from you can immediately use their reaction to move up to their speed without provoking opportunity attacks."),
+      f("Enthralling Performance","After performing for at least 1 minute, charm some of the listeners for 1 hour (or until you or your allies harm them); once per short/long rest per target.")
+    ]},
+    {level:6, features:[f("Mantle of Majesty","As a bonus action, take on an air of unearthly beauty for 1 minute: cast Command every turn for free without a slot, and creatures have disadvantage on the save if you're fey or resemble one to them.")]},
+    {level:14, features:[f("Unbreakable Majesty","As a bonus action, take on a form of unearthly beauty for 1 minute: any creature that tries to attack you must first succeed a Wisdom save or be unable to, and you have advantage on Charisma checks against anyone charmed, frightened, or attracted to you.")]}
+  ],
+  "cleric|grave domain": [
+    {level:1, features:[
+      f("Circle of Mortality","Your healing spells can restore the maximum possible hit points to a creature at 0 hit points, and you learn the Spare the Dying cantrip if you don't already know it."),
+      f("Eyes of the Grave","As an action, sense the general direction of any undead within 60 ft (through barriers, but blocked by 1 ft of stone/wood or thin metal) once per short/long rest, plus more with high Wisdom.")
+    ]},
+    {level:2, features:[f("Channel Divinity: Path to the Grave","As an action, curse a creature you can see for 1 round: the next attack against it (from anyone) is a critical hit.")]},
+    {level:6, features:[f("Sentinel at Death's Door","Reaction, once per short/long rest (more with high Wisdom): turn a critical hit against a creature you can see into a normal hit.")]},
+    {level:8, features:[f("Potent Spellcasting","Add your Wisdom modifier to the damage you deal with any Cleric cantrip.")]},
+    {level:17, features:[f("Keeper of Souls","When you reduce a creature to 0 hit points with a spell, you or an ally within 60 ft regains hit points equal to the spell's level, or gains that many temporary hit points if already at full.")]}
+  ],
+  "druid|circle of the shepherd": [
+    {level:2, features:[
+      f("Speech of the Woods","Speak with beasts as if under the effect of Speak with Animals, and learn (but not speak) Sylvan."),
+      f("Spirit Totem","As a bonus action, summon a spectral animal spirit (Bear, Hawk, or Unicorn) for 1 minute that grants a passive benefit to allies within 30 ft of it — extra hit points, advantage on attack rolls, or bonus healing — depending on the totem chosen.")
+    ]},
+    {level:6, features:[f("Mighty Summoner","Beasts and fey you summon (via Conjure Animals/Fey or Wild Shape into a beast) gain extra hit points and their natural weapons count as magical.")]},
+    {level:10, features:[f("Guardian Spirit","Beasts and fey you summon regain hit points equal to half your Druid level whenever they end their turn with 1 or more hit points.")]},
+    {level:14, features:[f("Faithful Summons","If you drop to 0 hit points or are incapacitated, spectral guardian beasts spring up to defend you for 1 minute, once per long rest.")]}
+  ],
+  "fighter|samurai": [
+    {level:3, features:[f("Fighting Spirit","As a bonus action, gain advantage on weapon attack rolls and temporary hit points until the start of your next turn; usable a limited number of times per long rest, regained on a short rest.")]},
+    {level:7, features:[f("Elegant Courtier","Gain proficiency in Wisdom saving throws (or another ability if already proficient) and add your Charisma modifier to Wisdom saves; also gain proficiency in one Wisdom or Charisma skill.")]},
+    {level:10, features:[f("Tireless Spirit","If you start combat with no uses of Fighting Spirit left, you regain one use of it.")]},
+    {level:15, features:[f("Rapid Strike","When you have advantage on a weapon attack, you can forgo the advantage to make an additional attack with the same action.")]},
+    {level:18, features:[f("Strength before Death","When reduced to 0 hit points but not killed outright, you can immediately take an extra turn (acting normally) before falling unconscious, once per long rest.")]}
+  ],
+  "monk|way of the drunken master": [
+    {level:3, features:[
+      f("Bonus Proficiencies","Gain proficiency with brewer's supplies and the Performer background's typical tool of choice."),
+      f("Drunken Technique","When you use Flurry of Blows, you also gain the benefit of the Disengage action and your walking speed increases by 10 ft until the end of the turn.")
+    ]},
+    {level:6, features:[f("Tipsy Sway","As a bonus action or reaction, stagger unpredictably: move up to your speed without provoking opportunity attacks and through other creatures' spaces; you can also spend 1 ki to stand up from prone for free even if you'd normally need to use movement.")]},
+    {level:11, features:[f("Drunkard's Luck","When you make an ability check, attack roll, or saving throw and dislike the result, spend 1 ki point to gain advantage on the roll.")]},
+    {level:17, features:[f("Intoxicated Frenzy","When you use Flurry of Blows, you can make up to three additional attacks with it (instead of two), as long as each targets a different creature.")]}
+  ],
+  "paladin|oath of conquest": [
+    {level:3, features:[
+      f("Channel Divinity: Conquering Presence","As an action, present a terrifying visage; each creature of your choice within 30 ft must succeed a Wisdom save or be frightened of you for 1 minute."),
+      f("Channel Divinity: Guided Strike","As a bonus action, gain a +10 bonus to your next attack roll made within the next minute.")
+    ]},
+    {level:7, features:[f("Aura of Conquest","Creatures frightened of you within 10 ft (30 ft at 18th level) have their speed reduced to 0 and take psychic damage equal to your Paladin level each turn if they end their turn there.")]},
+    {level:15, features:[f("Scornful Rebuke","When a creature hits you with an attack, it takes psychic damage equal to your Charisma modifier (minimum 1).")]},
+    {level:20, features:[f("Invincible Conqueror","As a bonus action, become an avatar of conquest for 1 minute: gain resistance to all damage, an extra attack each turn, and your melee weapon attacks count as magical.")]}
+  ],
+  "ranger|horizon walker": [
+    {level:3, features:[
+      f("Detect Portal","As an action, sense the direction of the nearest planar portal or permanent teleportation circle within 1 mile, once per short/long rest."),
+      f("Planar Warrior","Once per turn when you hit a creature with a weapon attack, you can push it partway into the Ethereal Plane, adding extra force damage.")
+    ]},
+    {level:7, features:[f("Ethereal Step","Cast Etherealness once per short/long rest, affecting yourself only.")]},
+    {level:11, features:[f("Distant Strike","When you use Extra Attack, teleport up to 10 ft before one of the attacks; if you hit two different creatures with your attacks this turn, you can make an additional attack against a third.")]},
+    {level:15, features:[f("Spectral Defense","Reaction, once per turn: gain resistance to the damage from one attack that hits you.")]}
+  ],
+  "ranger|monster slayer": [
+    {level:3, features:[
+      f("Hunter's Sense","As an action, study a creature you can see and learn whether it has any damage vulnerabilities, resistances, or immunities, a limited number of times per long rest."),
+      f("Slayer's Prey","As a bonus action, magically mark a creature you can see; you deal extra weapon damage to it on your first hit against it each turn.")
+    ]},
+    {level:7, features:[f("Supernatural Defense","When your marked target forces you to make a saving throw or the target's spell/ability targets you, add 1d6 to your roll.")]},
+    {level:11, features:[f("Magic-User's Nemesis","Reaction: force a creature you can see within 60 ft to reroll a spell, teleport, or plane shift it's using, potentially foiling it, once per short/long rest.")]},
+    {level:15, features:[f("Slayer's Counter","If your marked target forces you to make a saving throw, you can use your reaction to automatically succeed and deal your Slayer's Prey damage to it, without expending a use.")]}
+  ],
+  "rogue|swashbuckler": [
+    {level:3, features:[
+      f("Fancy Footwork","During your turn, if you make a melee attack against a creature, that creature can't make opportunity attacks against you for the rest of the turn."),
+      f("Rakish Audacity","Add your Charisma modifier to your initiative rolls; you can also use Sneak Attack against a lone target without advantage, as long as no other creature is within 5 ft of it.")
+    ]},
+    {level:9, features:[f("Panache","As an action, try to charm or taunt a creature that can see and hear you into being unable to attack anyone but you, or unwilling to attack you at all, based on a Wisdom (Persuasion) check against your Deception (Persuasion) check.")]},
+    {level:13, features:[f("Elegant Maneuver","As a bonus action, gain advantage on the next Acrobatics or Athletics check you make this turn.")]},
+    {level:17, features:[f("Master Duelist","When you miss with an attack roll, you can reroll it with advantage, once per short/long rest.")]}
+  ],
+  "sorcerer|divine soul": [
+    {level:1, features:[
+      f("Divine Magic","Choose an extra 1st-level spell from the Cleric spell list to always have prepared, in addition to your normal sorcerer spells known."),
+      f("Favored by the Gods","When you fail a saving throw or miss with an attack roll, add 2d4 to the total, potentially changing the outcome; once per short/long rest.")
+    ]},
+    {level:6, features:[f("Empowered Healing","Once per turn when you or an ally within 5 ft rolls dice to restore hit points, you can spend 1 sorcery point to reroll any number of those dice.")]},
+    {level:14, features:[f("Otherworldly Wings","As a bonus action, sprout spectral or feathered wings for 1 hour, giving you a flying speed of 30 ft.")]},
+    {level:18, features:[f("Unearthly Recovery","Once per long rest, as a bonus action when you have less than half your hit points remaining, regain hit points equal to half your hit point maximum.")]}
+  ],
+  "warlock|the hexblade": [
+    {level:1, features:[
+      f("Hexblade's Curse","As a bonus action, curse a creature you can see for 1 minute: you deal extra damage to it, score a critical hit on a 19 or 20 against it, and regain hit points when you reduce it to 0."),
+      f("Hex Warrior","Bond with a weapon so you can use Charisma instead of Strength or Dexterity for its attack and damage rolls, and gain proficiency with medium armor, shields, and martial weapons.")
+    ]},
+    {level:6, features:[f("Accursed Specter","When you slay a humanoid, you can curse its soul; it rises as a specter under your control for 1 hour or until your next long rest.")]},
+    {level:10, features:[f("Armor of Hexes","While a creature is cursed by your Hexblade's Curse, whenever it hits you with an attack roll, roll a d6; on a 4 or higher the attack instead misses you.")]},
+    {level:14, features:[f("Master of Hexes","When the creature cursed by your Hexblade's Curse dies, you can use your reaction to curse a different creature you can see, without expending another use.")]}
+  ],
+  "wizard|war magic": [
+    {level:2, features:[
+      f("Arcane Deflection","Reaction when hit by an attack or failing a save: gain a bonus to your AC or the save (enough to often turn a hit into a miss), but you can only cast a cantrip, not another spell, on your next turn."),
+      f("Tactical Wit","Add your Intelligence modifier to your initiative rolls.")
+    ]},
+    {level:6, features:[f("Power Surge","Whenever you cast a spell using a spell slot, store a surge of magical energy (up to a limited number based on level); expend one to add extra force damage to a spell attack that hits.")]},
+    {level:10, features:[f("Durable Magic","While concentrating on a spell, gain a bonus to your AC and saving throws.")]},
+    {level:14, features:[f("Deflecting Shroud","When you use Arcane Deflection, you can also deal force damage equal to your Intelligence modifier to the triggering creature, or to a number of creatures within 10 ft of you equal to that modifier.")]}
   ],
 };
 function normClassKey(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
