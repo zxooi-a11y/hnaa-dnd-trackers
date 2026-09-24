@@ -108,3 +108,14 @@ Hyena, Lizard, Giant Weasel, Mule, Swarm of Rats, Swarm of Ravens, Quaggoth Spor
 ## Not included
 
 Out of ~284 stat blocks the parser found in the source, only these 34 passed every check: a complete header (AC/HP/all six ability scores/CR), a Challenge rating that matches the creature's real, known CR (this catches column-misalignment cases where a stat block's numbers get attached to the wrong creature's name), and a mostly-clean traits/actions split. Everything else was dropped rather than shipped with unverified data. If there's a specific monster you wanted that isn't here, tell me which one and I can hand-verify it against the source text directly.
+
+## SRD 2024 import (downfallx/dnd-5e-srd-markdown)
+
+Added 200 monsters from `monsters-A-Z.md` in [downfallx/dnd-5e-srd-markdown](https://github.com/downfallx/dnd-5e-srd-markdown), which mirrors the official 2024 D&D SRD 5.2. Unlike the OCR'd Monster Manual extraction above, this source is clean structured Markdown/HTML (no scan noise), so quality is much higher: 232 of 235 stat blocks parsed cleanly on the first pass.
+
+- **`monsters.md`** in that repo is just the stat-block rules chapter (prose explaining what AC/HP/traits mean) — it contains no actual creature data, so nothing was extracted from it.
+- **3 monsters excluded** for genuine data corruption in the upstream source itself (not a parsing issue on this end — verified by reading the raw file): **Ancient Red Dragon** and **Remorhaz** have a shifted/merged ability-score table (cells combined, e.g. `+10 +10` in one cell), and **Will-o'-Wisp** is missing its Strength score cell entirely. None of these were guessed or reconstructed — they're simply not included. If you want them, they'd need fixing against the official book by hand.
+- **32 names overlapped** with monsters already in `monsters.js` (from the original hand-authored set or the earlier Monster Manual extraction) and were skipped rather than duplicated or overwritten.
+- **Beholder, Mind Flayer, and Displacer Beast** are not in this source at all — Wizards deliberately withholds those from the free SRD as protected "product identity," so their absence isn't a gap on this end.
+- New optional fields this import introduced: **Initiative** (shown when present) and **Gear** (a monster's carried equipment, e.g. "Shortbow, Shortsword"). Both are additive — existing entries without them are unaffected.
+- This is 2024 rules content (5.2 SRD), which differs in places from the 2014-based entries added earlier (e.g. monster saving throws are computed differently, "Emanation" is a new area-effect type). Worth knowing if you're running a 2014-rules table and want strict consistency.

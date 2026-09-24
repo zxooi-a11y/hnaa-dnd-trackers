@@ -1724,6 +1724,7 @@ function statBlockHTML(m){
   if(m.senses) props += `<div class="prop-line"><b>Senses</b><span class="prop-value">${m.senses}</span></div>`;
   if(m.languages) props += `<div class="prop-line"><b>Languages</b><span class="prop-value">${m.languages}</span></div>`;
   if(!m.isPlayer) props += `<div class="prop-line"><b>Challenge</b><span class="prop-value">${m.cr} (${(m.xp||0).toLocaleString()} XP)</span></div>`;
+  if(m.gear) props += `<div class="prop-line"><b>Gear</b><span class="prop-value">${m.gear}</span></div>`;
   if(m.equipment && Object.keys(m.equipment).length){
     const eqStr = EQUIPMENT_SLOTS
       .filter(s=>m.equipment[s.key])
@@ -1738,12 +1739,13 @@ function statBlockHTML(m){
   const reactionsHTML = (m.reactions||[]).map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("");
   const legendaryHTML = m.legendary ? `
     <div class="section-label">LEGENDARY ACTIONS</div>
-    <div class="entry">${m.legendary.intro}</div>
+    ${m.legendary.intro ? `<div class="entry">${m.legendary.intro}</div>` : ""}
     ${m.legendary.actions.map(t=>`<div class="entry"><b>${t.name}.</b> ${t.text}</div>`).join("")}
   ` : "";
 
   return `
     <div class="prop-line"><b>Armor Class</b><span class="prop-value">${m.ac}${m.acNote ? " ("+m.acNote+")":""}</span></div>
+    ${m.initiative ? `<div class="prop-line"><b>Initiative</b><span class="prop-value">${abilityMod(parseInt(m.initiative,10))}</span></div>` : ""}
     <div class="prop-line"><b>Hit Points</b><span class="prop-value">${m.hp}${m.hpFormula ? " ("+m.hpFormula+")" : ""}</span></div>
     <div class="prop-line"><b>Speed</b><span class="prop-value">${m.speed}</span></div>
     <div class="abilities-table">${abilitiesHTML}</div>
