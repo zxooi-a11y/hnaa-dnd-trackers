@@ -1165,6 +1165,140 @@
     .prop-line b{ flex-basis: 118px; width: 118px; }
     .pc-prof-grid{ grid-template-columns: 1fr; }
   }
+
+  /* ============================================================
+     CHARACTER SHEET (Characters section rework)
+     ============================================================ */
+  .sheet-view{ display:none; }
+  .sheet-view.show{ display:block; }
+  .sheet-back{
+    background: none; border: none; color: var(--text-soft); font-size: 0.82rem;
+    font-weight: 700; cursor: pointer; padding: 6px 0 14px; display:flex; align-items:center; gap:4px;
+  }
+  .sheet-back:hover{ color: var(--accent-ink); }
+  .sheet-header{ display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+  .sheet-avatar{
+    width:46px; height:46px; border-radius: var(--radius-md); background: var(--accent); color:#fff;
+    display:grid; place-items:center; font-weight:800; font-size:1.2rem; flex:none;
+  }
+  .sheet-idtext{ min-width:0; flex:1; }
+  .sheet-idtext input.sheet-name-input{
+    font-size:1.15rem; font-weight:800; color:var(--text); border:none; background:none; padding:2px 0;
+    width:100%; font-family:'Plus Jakarta Sans', sans-serif;
+  }
+  .sheet-idtext .sheet-sub{ color: var(--text-soft); font-size:0.8rem; }
+  .sheet-tabs button{ font-size:0.8rem !important; padding:8px 16px !important; }
+  .sheet-tabpanel[hidden]{ display:none; }
+
+  .sheet-g{ display:grid; gap:12px; }
+  .sheet-g>*{ min-width: 0; }
+  .sheet-g2{ grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); }
+  .sheet-g3{ grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); }
+  .sheet-g4{ grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); }
+
+  .sheet-tile{
+    background: var(--surface-soft); border-radius: var(--radius-md); padding:12px; text-align:center;
+  }
+  .sheet-tile .lab{ font-size:0.68rem; font-weight:700; color:var(--text-soft); text-transform:uppercase; letter-spacing:0.03em; display:flex; align-items:center; justify-content:center; gap:4px; }
+  .sheet-tile .v{ display:block; font-size:1.7rem; font-weight:800; color:var(--text); font-family:'IBM Plex Mono', monospace; margin-top:4px; }
+  .sheet-tile .v.roll{ background:none; border:none; cursor:pointer; width:100%; padding:0; }
+  .sheet-tile .v.roll:hover{ color: var(--accent-ink); }
+  .sheet-tile input{ text-align:center; margin-top:6px; }
+  .sheet-tile .sub{ font-size:0.68rem; color:var(--text-faint); margin-top:2px; }
+  .sheet-tile .mini{ display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; font-size:0.68rem; color:var(--text-faint); }
+  .sheet-tile .mini input{ width:52px; padding:4px 6px; min-height:unset; }
+
+  .sheet-hp{ background: var(--surface-soft); border-radius: var(--radius-md); padding:14px; margin-top:12px; }
+  .sheet-hp-top{ display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .sheet-hp-num{ font-family:'IBM Plex Mono', monospace; font-size:1.9rem; font-weight:800; }
+  .sheet-hp-num span{ font-size:1rem; font-weight:500; color:var(--text-soft); }
+  .sheet-hp-temp{ margin-left:auto; color: var(--accent-ink); font-weight:700; font-size:0.82rem; }
+  .sheet-bar{ height:14px; border-radius:999px; background:var(--surface-sunken); border:1px solid var(--border); position:relative; overflow:hidden; margin:8px 0 12px; }
+  .sheet-bar i, .sheet-bar b{ position:absolute; top:0; bottom:0; left:0; transition:width .2s; }
+  .sheet-bar i{ background: var(--best); }
+  .sheet-bar.mid i{ background: var(--amber); }
+  .sheet-bar.low i{ background: var(--worst); }
+  .sheet-bar b{ background: var(--accent); opacity:.8; }
+  .sheet-bar.xp i{ background: var(--amber); height:16px; }
+  .sheet-hp-ctl{ display:flex; gap:8px; align-items:flex-end; margin-bottom:12px; flex-wrap:wrap; }
+  .sheet-hp-ctl label{ flex:1 1 120px; }
+  .sheet-dots{ display:flex; gap:8px; }
+  .sheet-dot{ width:26px; height:26px; border-radius:50%; border:2px solid var(--border); background:var(--surface); padding:0; cursor:pointer; }
+  .sheet-dot.on.s{ background: var(--best); border-color: var(--best); }
+  .sheet-dot.on.f{ background: var(--worst); border-color: var(--worst); }
+  .sheet-dsrow{ display:flex; align-items:center; gap:12px; margin:6px 0; }
+  .sheet-dsrow>span{ width:76px; font-size:0.78rem; color:var(--text-soft); }
+  .sheet-panel{ background: var(--surface-soft); border-radius: var(--radius-md); padding:12px; }
+  .sheet-panel h4{ margin:0 0 8px; font-size:0.85rem; font-weight:800; }
+  .sheet-big{ font-family:'IBM Plex Mono', monospace; font-weight:800; font-size:1.4rem; }
+
+  .sheet-abilities{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; cursor:grab; }
+  .sheet-abilities::-webkit-scrollbar{ display:none; }
+  .sheet-abilities.dragging{ cursor:grabbing; user-select:none; }
+  .sheet-ab{ flex:1 0 96px; background: var(--surface-soft); border-radius: var(--radius-md); padding:10px 8px; text-align:center; }
+  .sheet-ab .nm{ font-size:0.7rem; font-weight:700; color:var(--text-soft); }
+  .sheet-ab .md{ display:block; width:100%; background:none; border:0; cursor:pointer; font-family:'IBM Plex Mono', monospace; font-weight:800; font-size:1.7rem; padding:2px 0; color:var(--text); }
+  .sheet-ab .md:hover{ color:var(--accent-ink); }
+  .sheet-ab .tt{ font-size:0.68rem; color:var(--text-faint); margin-bottom:6px; }
+  .sheet-ab .tt b{ color:var(--text); }
+  .sheet-ab .in{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:4px; text-align:left; }
+  .sheet-ab .in span{ font-size:0.6rem; color:var(--text-faint); }
+  .sheet-ab .in input{ padding:3px 4px; min-height:28px; text-align:center; font-size:0.78rem; }
+
+  .sheet-cols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:16px; margin-top:12px; }
+  @media (max-width:720px){ .sheet-cols{ grid-template-columns:1fr; } }
+  .sheet-lr{ display:grid; grid-template-columns:24px 42px minmax(0,1fr); align-items:center; gap:8px; padding:5px 2px; border-bottom:1px solid var(--border-soft); }
+  .sheet-lr:last-child{ border-bottom:none; }
+  .sheet-lr .nm small{ color:var(--text-faint); margin-left:4px; }
+  .sheet-lr .bn{ background:none; border:0; font-family:'IBM Plex Mono', monospace; font-weight:800; font-size:0.9rem; padding:3px; text-align:center; border-radius:6px; cursor:pointer; }
+  .sheet-lr .bn:hover{ color:var(--accent-ink); }
+  .sheet-pf{ width:18px; height:18px; border-radius:50%; border:2px solid var(--text-faint); background:transparent; padding:0; cursor:pointer; }
+  .sheet-pf.p1{ background:var(--accent); border-color:var(--accent); }
+  .sheet-pf.p2{ background:var(--accent); border-color:var(--accent); box-shadow:0 0 0 2px var(--surface-soft), 0 0 0 4px var(--accent); }
+  .sheet-pass{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .sheet-pass .sheet-tile{ flex:1 1 120px; }
+
+  .sheet-slots{ display:grid; grid-template-columns:repeat(auto-fit, minmax(96px,1fr)); gap:10px; }
+  .sheet-slot{ background: var(--surface-soft); border-radius: var(--radius-md); padding:10px; text-align:center; }
+  .sheet-slot.off{ opacity:.4; }
+  .sheet-slot .t{ font-weight:700; font-size:0.72rem; color:var(--text-soft); }
+  .sheet-pips{ display:flex; gap:4px; justify-content:center; flex-wrap:wrap; margin:6px 0 4px; min-height:18px; }
+  .sheet-pip{ width:18px; height:18px; border-radius:50%; border:2px solid var(--accent); background:var(--accent); padding:0; cursor:pointer; }
+  .sheet-pip.used{ background:transparent; }
+  .sheet-slot .n{ font-size:0.66rem; color:var(--text-faint); }
+
+  .sheet-item{ background: var(--surface-soft); border-radius: var(--radius-md); padding:10px 12px; margin-top:8px; }
+  .sheet-item-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(90px,1fr)); gap:8px; margin-bottom:8px; }
+  .sheet-item-grid>*{ min-width: 0; }
+  .sheet-item-grid label{ font-size:0.62rem; font-weight:700; color:var(--text-faint); text-transform:uppercase; }
+  .sheet-item-grid input, .sheet-item-grid select{ margin-top:3px; padding:6px 8px; font-size:0.82rem; }
+  .sheet-item-foot{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; font-size:0.78rem; color:var(--text-soft); }
+  .sheet-item-foot .sheet-readout{ background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:5px 10px; font-family:'IBM Plex Mono', monospace; font-weight:700; cursor:pointer; }
+  .sheet-item-foot .sheet-readout:hover{ color:var(--accent-ink); }
+  .sheet-item-remove{ margin-left:auto; background:none; border:none; color:var(--text-faint); font-size:0.78rem; cursor:pointer; }
+  .sheet-item-remove:hover{ color:var(--worst); }
+  .sheet-qty{ display:flex; align-items:center; gap:6px; }
+  .sheet-qty button{ width:24px; height:24px; border-radius:7px; border:1px solid var(--border); background:var(--surface); padding:0; cursor:pointer; }
+
+  .sheet-coins{ display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:8px; }
+  .sheet-coins>*{ min-width: 0; }
+  .sheet-coins label{ font-size:0.62rem; font-weight:700; color:var(--text-faint); text-align:center; display:block; text-transform:uppercase; }
+  .sheet-coins input{ text-align:center; padding:8px 4px; margin-top:3px; }
+
+  .sheet-toast{
+    position:fixed; left:50%; bottom:24px; transform:translate(-50%,16px); background:var(--text); color:var(--surface);
+    padding:10px 16px; border-radius:var(--radius-md); box-shadow:var(--shadow-lg); opacity:0; pointer-events:none;
+    transition:opacity .2s, transform .2s; z-index:60; max-width:calc(100% - 24px); text-align:center;
+  }
+  .sheet-toast.show{ opacity:1; transform:translate(-50%,0); }
+  .sheet-toast .tr{ display:block; font-family:'IBM Plex Mono', monospace; font-weight:800; font-size:1.6rem; }
+  .sheet-toast small{ opacity:.82; }
+  .sheet-toast.crit .tr{ color:#9BE8B8; }
+  .sheet-toast.fumble .tr{ color:#F0A8A0; }
+
+  .sheet-add-btn{ margin-top:10px; }
+  .sheet-empty{ color:var(--text-faint); padding:10px 0; font-size:0.85rem; }
+  @media (max-width:520px){ .sheet-item-grid{ grid-template-columns:repeat(2,1fr); } }
 </style>
 </head>
 <body>
@@ -1272,12 +1406,38 @@
 
   <!-- PLAYERS MODE -->
   <div id="playersWrap" class="players-wrap">
-    <div class="controls">
-      <button id="addPlayerBtn" class="chip save-log-btn">+ add character</button>
+    <div id="playersListView">
+      <div class="controls">
+        <button id="addPlayerBtn" class="chip save-log-btn">+ add character</button>
+      </div>
+      <div id="playersEmpty" class="compare-empty">Add your party's character sheets here so you can drop them straight into the Tracker.</div>
+      <div class="grid" id="playersList"></div>
     </div>
-    <div id="playersEmpty" class="compare-empty">Add your party's character sheets here so you can drop them straight into the Tracker.</div>
-    <div class="grid" id="playersList"></div>
+
+    <div id="playerSheetView" class="sheet-view">
+      <button class="sheet-back" id="sheetBackBtn">&larr; Back to characters</button>
+      <div class="sheet-header">
+        <div class="sheet-avatar" id="sheetAvatar">?</div>
+        <div class="sheet-idtext">
+          <input type="text" class="sheet-name-input" id="sheetName" data-fk="name" placeholder="Character name">
+          <div class="sheet-sub" id="sheetSub">Level 1</div>
+        </div>
+        <button class="homebrew-delete" id="sheetDeleteBtn">delete</button>
+      </div>
+      <div class="mode-switch sheet-tabs" id="sheetTabs">
+        <button type="button" data-sheet-tab="character">CHARACTER</button>
+        <button type="button" data-sheet-tab="features">FEATURES</button>
+        <button type="button" data-sheet-tab="spells">SPELLCASTING</button>
+        <button type="button" data-sheet-tab="inventory">INVENTORY</button>
+      </div>
+      <section id="sheetTab-character" class="sheet-tabpanel"></section>
+      <section id="sheetTab-features" class="sheet-tabpanel" hidden></section>
+      <section id="sheetTab-spells" class="sheet-tabpanel" hidden></section>
+      <section id="sheetTab-inventory" class="sheet-tabpanel" hidden></section>
+    </div>
   </div>
+
+  <div class="sheet-toast" id="sheetToast" role="status" aria-live="polite"></div>
 
   <footer class="note">
     Data lives in a plain JS array at the top of this file (id, stats, actions) — duplicate an entry's object to add a new creature; no build step required.
@@ -1360,98 +1520,6 @@
     <div class="modal-footer">
       <button class="chip" id="hbCancelBtn">Cancel</button>
       <button class="chip save-log-btn" id="hbSaveBtn">Save Creature</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="playerModalOverlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      <span class="modal-title">Add a Player Character</span>
-      <button class="modal-close" id="playerModalClose" title="Close">&times;</button>
-    </div>
-    <div class="modal-body">
-      <div id="pcFormError" class="hb-form-error" style="display:none;"></div>
-
-      <div class="hb-form-grid">
-        <label class="hb-field hb-span-2">Character Name<input type="text" id="pcName" placeholder="e.g. Kaelith Brightblade"></label>
-        <label class="hb-field">Player Name (optional)<input type="text" id="pcPlayerName" placeholder="e.g. Sam"></label>
-        <label class="hb-field">Class (optional)<input type="text" id="pcClass" placeholder="e.g. Paladin"></label>
-        <label class="hb-field">Subclass (optional)<input type="text" id="pcSubclass" placeholder="e.g. Oath of Devotion"></label>
-        <label class="hb-field">Level<input type="number" id="pcLevel" min="1" max="20" value="1"></label>
-
-        <label class="hb-field">Armor Class<input type="number" id="pcAC" placeholder="17"></label>
-        <label class="hb-field">Hit Points (max)<input type="number" id="pcHP" placeholder="45"></label>
-        <label class="hb-field hb-span-2">Speed<input type="text" id="pcSpeed" placeholder="e.g. 30 ft."></label>
-
-        <div class="hb-span-2 hb-ability-grid">
-          <label class="hb-field">STR<input type="number" id="pcStr" value="10"><span class="pc-mod" id="pcStrMod">+0</span></label>
-          <label class="hb-field">DEX<input type="number" id="pcDex" value="10"><span class="pc-mod" id="pcDexMod">+0</span></label>
-          <label class="hb-field">CON<input type="number" id="pcCon" value="10"><span class="pc-mod" id="pcConMod">+0</span></label>
-          <label class="hb-field">INT<input type="number" id="pcInt" value="10"><span class="pc-mod" id="pcIntMod">+0</span></label>
-          <label class="hb-field">WIS<input type="number" id="pcWis" value="10"><span class="pc-mod" id="pcWisMod">+0</span></label>
-          <label class="hb-field">CHA<input type="number" id="pcCha" value="10"><span class="pc-mod" id="pcChaMod">+0</span></label>
-        </div>
-
-        <div class="hb-span-2 pc-bonus-readout">Proficiency Bonus <strong id="pcProfBonusReadout">+2</strong> (from level)</div>
-
-        <div class="hb-span-2 pc-collapsible" id="pcSavesSection">
-          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcSavesSection">
-            <span class="pc-section-label">Saving Throws</span>
-            <span class="pc-collapsible-summary" id="pcSavesSummary">None selected</span>
-            <span class="pc-collapsible-chevron">▾</span>
-          </button>
-          <div class="pc-collapsible-body">
-            <div class="pc-prof-grid" id="pcSavesGrid"></div>
-          </div>
-        </div>
-
-        <div class="hb-span-2 pc-collapsible" id="pcSkillsSection">
-          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcSkillsSection">
-            <span class="pc-section-label">Skills</span>
-            <span class="pc-collapsible-summary" id="pcSkillsSummary">None selected</span>
-            <span class="pc-collapsible-chevron">▾</span>
-          </button>
-          <div class="pc-collapsible-body">
-            <div class="pc-prof-grid pc-prof-grid-skills" id="pcSkillsGrid"></div>
-          </div>
-        </div>
-
-        <div class="hb-span-2 pc-collapsible" id="pcEquipmentSection">
-          <button type="button" class="pc-collapsible-header" data-pc-toggle="pcEquipmentSection">
-            <span class="pc-section-label">Equipment Worn</span>
-            <span class="pc-collapsible-summary" id="pcEquipmentSummary">Nothing worn</span>
-            <span class="pc-collapsible-chevron">▾</span>
-          </button>
-          <div class="pc-collapsible-body">
-            <div class="pc-equip-grid" id="pcEquipmentGrid"></div>
-          </div>
-        </div>
-
-        <label class="hb-field hb-span-2">Senses (optional)<input type="text" id="pcSenses" placeholder="e.g. passive Perception 13"></label>
-        <label class="hb-field hb-span-2">Languages (optional)<input type="text" id="pcLanguages" placeholder="e.g. Common, Elvish"></label>
-        <label class="hb-field hb-span-2">Notes (optional)<input type="text" id="pcNotes" placeholder="e.g. Spell save DC 15, Lay on Hands pool 25"></label>
-      </div>
-
-      <div class="hb-repeat-section">
-        <div class="hb-repeat-header"><span>Features / Actions (optional)</span><button class="chip" id="pcAddFeature" type="button">+ add feature</button></div>
-        <div id="pcFeaturesList"></div>
-      </div>
-
-      <div class="hb-repeat-section pc-collapsible" id="pcFeaturesSection">
-        <button type="button" class="pc-collapsible-header" data-pc-toggle="pcFeaturesSection">
-          <span class="pc-section-label">Class Features Reference</span>
-          <span class="pc-collapsible-summary" id="pcFeaturesSummary">Enter a class above</span>
-          <span class="pc-collapsible-chevron">▾</span>
-        </button>
-        <div class="pc-collapsible-body">
-          <div id="pcFeaturesReference"></div>
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="chip" id="pcCancelBtn">Cancel</button>
-      <button class="chip save-log-btn" id="pcSaveBtn">Save Character</button>
     </div>
   </div>
 </div>
@@ -2521,304 +2589,1140 @@ const SUBCLASS_FEATURES = {
 };
 function normClassKey(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
 
-let playerExpandedSet = new Set();
 
-/* Build the fixed-list sections (saving throws, skills, equipment slots)
-   once -- their structure never changes, only the values inside them. */
-function buildPlayerFormLists(){
-  const savesGrid = document.getElementById("pcSavesGrid");
-  savesGrid.innerHTML = Object.keys(ABILITY_LABELS).map(ab => `
-    <label class="pc-prof-row">
-      <input type="checkbox" data-save-prof="${ab}">
-      <span class="pc-prof-label">${ABILITY_LABELS[ab]}</span>
-      <span class="pc-prof-value" id="pcSaveVal-${ab}">+0</span>
-    </label>
-  `).join("");
+let openPlayerSheetId = null;
+let lastFeatClassKey = "";
+const ABIL = ["str","dex","con","int","wis","cha"];
 
-  const skillsGrid = document.getElementById("pcSkillsGrid");
-  skillsGrid.innerHTML = SKILLS_5E.map(s => `
-    <label class="pc-prof-row">
-      <input type="checkbox" data-skill-prof="${s.key}">
-      <span class="pc-prof-label">${s.label}</span>
-      <span class="pc-prof-ability">${ABILITY_LABELS[s.ability]}</span>
-      <span class="pc-prof-value" id="pcSkillVal-${s.key}">+0</span>
-    </label>
-  `).join("");
+/* ============================================================
+   CHARACTER SHEET DATA TABLES
+   Mechanical reference data (hit dice, saves, spellcasting tables,
+   racial bonuses, standard weapons/armor) used to automate the
+   character sheet -- not narrative text, just the numbers.
+   ============================================================ */
+const XP_TABLE = [0,300,900,2700,6500,14000,23000,34000,48000,64000,85000,100000,120000,140000,165000,195000,225000,265000,305000,355000];
+const SPELL_SLOTS_FULL = [null,[2],[3],[4,2],[4,3],[4,3,2],[4,3,3],[4,3,3,1],[4,3,3,2],[4,3,3,3,1],[4,3,3,3,2],[4,3,3,3,2,1],[4,3,3,3,2,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1],[4,3,3,3,2,1,1,1,1],[4,3,3,3,3,1,1,1,1],[4,3,3,3,3,2,1,1,1],[4,3,3,3,3,2,2,1,1]];
 
-  const equipGrid = document.getElementById("pcEquipmentGrid");
-  equipGrid.innerHTML = EQUIPMENT_SLOTS.map(s => `
-    <label class="pc-equip-row">
-      <span>${s.label}</span>
-      <input type="text" data-equip-slot="${s.key}" placeholder="${s.placeholder}">
-    </label>
-  `).join("");
+const CLASS_META = {
+  barbarian:{ hd:12, saves:["str","con"], unarmored:"con", caster:null },
+  bard:{ hd:8, saves:["dex","cha"], caster:"full", spAbil:"cha", prep:"known", cantrips:[[1,2],[4,3],[10,4]], known:[4,5,6,7,8,9,10,11,12,14,15,15,16,18,19,19,20,22,22,22] },
+  cleric:{ hd:8, saves:["wis","cha"], caster:"full", spAbil:"wis", prep:"prepared", cantrips:[[1,3],[4,4],[10,5]] },
+  druid:{ hd:8, saves:["int","wis"], caster:"full", spAbil:"wis", prep:"prepared", cantrips:[[1,2],[4,3],[10,4]] },
+  fighter:{ hd:10, saves:["str","con"], caster:null },
+  monk:{ hd:8, saves:["str","dex"], unarmored:"wis", caster:null },
+  paladin:{ hd:10, saves:["wis","cha"], caster:"half", spAbil:"cha", prep:"prepared" },
+  ranger:{ hd:10, saves:["str","dex"], caster:"half", spAbil:"wis", prep:"known", known:[0,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11] },
+  rogue:{ hd:8, saves:["dex","int"], caster:null },
+  sorcerer:{ hd:6, saves:["con","cha"], caster:"full", spAbil:"cha", prep:"known", cantrips:[[1,4],[4,5],[10,6]], known:[2,3,4,5,6,7,8,9,10,11,12,12,13,13,14,14,15,15,15,15] },
+  warlock:{ hd:8, saves:["wis","cha"], caster:"pact", spAbil:"cha", prep:"known", cantrips:[[1,2],[4,3],[10,4]], known:[2,3,4,5,6,7,8,9,10,10,11,11,12,12,13,13,14,14,15,15] },
+  wizard:{ hd:6, saves:["int","wis"], caster:"full", spAbil:"int", prep:"prepared", cantrips:[[1,3],[4,4],[10,5]] },
+  artificer:{ hd:8, saves:["con","int"], caster:"artificer", spAbil:"int", prep:"prepared", cantrips:[[1,2],[10,3],[14,4]] }
+};
+const THIRD_CASTER_SUBCLASS = /eldritch knight|arcane trickster/i;
 
-  savesGrid.querySelectorAll("[data-save-prof]").forEach(cb => cb.addEventListener("change", recomputePcDerived));
-  skillsGrid.querySelectorAll("[data-skill-prof]").forEach(cb => cb.addEventListener("change", recomputePcDerived));
-  ["pcStr","pcDex","pcCon","pcInt","pcWis","pcCha","pcLevel"].forEach(id => {
-    document.getElementById(id).addEventListener("input", recomputePcDerived);
+const RACES = {
+  "human":{ n:"Human", b:{str:1,dex:1,con:1,int:1,wis:1,cha:1}, sp:30, t:["Extra Language"] },
+  "hill dwarf":{ n:"Hill Dwarf", b:{con:2,wis:1}, sp:25, t:["Darkvision","Dwarven Resilience","Dwarven Combat Training","Tool Proficiency","Stonecunning","Dwarven Toughness"] },
+  "mountain dwarf":{ n:"Mountain Dwarf", b:{str:2,con:2}, sp:25, t:["Darkvision","Dwarven Resilience","Dwarven Combat Training","Tool Proficiency","Stonecunning","Dwarven Armor Training"] },
+  "high elf":{ n:"High Elf", b:{dex:2,int:1}, sp:30, t:["Darkvision","Keen Senses","Fey Ancestry","Trance","Elf Weapon Training","Cantrip","Extra Language"] },
+  "wood elf":{ n:"Wood Elf", b:{dex:2,wis:1}, sp:35, t:["Darkvision","Keen Senses","Fey Ancestry","Trance","Elf Weapon Training","Fleet of Foot","Mask of the Wild"] },
+  "drow":{ n:"Drow", b:{dex:2,cha:1}, sp:30, t:["Superior Darkvision","Keen Senses","Fey Ancestry","Trance","Sunlight Sensitivity","Drow Magic","Drow Weapon Training"] },
+  "lightfoot halfling":{ n:"Lightfoot Halfling", b:{dex:2,cha:1}, sp:25, t:["Lucky","Brave","Halfling Nimbleness","Naturally Stealthy"] },
+  "stout halfling":{ n:"Stout Halfling", b:{dex:2,con:1}, sp:25, t:["Lucky","Brave","Halfling Nimbleness","Stout Resilience"] },
+  "dragonborn":{ n:"Dragonborn", b:{str:2,cha:1}, sp:30, t:["Draconic Ancestry","Breath Weapon","Damage Resistance"] },
+  "forest gnome":{ n:"Forest Gnome", b:{int:2,dex:1}, sp:25, t:["Darkvision","Gnome Cunning","Natural Illusionist","Speak with Small Beasts"] },
+  "rock gnome":{ n:"Rock Gnome", b:{int:2,con:1}, sp:25, t:["Darkvision","Gnome Cunning","Artificer's Lore","Tinker"] },
+  "half-elf":{ n:"Half-Elf", b:{cha:2}, sp:30, t:["Darkvision","Fey Ancestry","Skill Versatility"], note:"Also add +1 to two other abilities of your choice (edit the Bonus boxes)." },
+  "half-orc":{ n:"Half-Orc", b:{str:2,con:1}, sp:30, t:["Darkvision","Menacing","Relentless Endurance","Savage Attacks"] },
+  "tiefling":{ n:"Tiefling", b:{int:1,cha:2}, sp:30, t:["Darkvision","Hellish Resistance","Infernal Legacy"] }
+};
+const BACKGROUNDS = {
+  "acolyte":["Insight","Religion"], "charlatan":["Deception","Sleight of Hand"], "criminal":["Deception","Stealth"],
+  "entertainer":["Acrobatics","Performance"], "folk hero":["Animal Handling","Survival"], "guild artisan":["Insight","Persuasion"],
+  "hermit":["Medicine","Religion"], "noble":["History","Persuasion"], "outlander":["Athletics","Survival"],
+  "sage":["Arcana","History"], "sailor":["Athletics","Perception"], "soldier":["Athletics","Intimidation"], "urchin":["Sleight of Hand","Stealth"]
+};
+const SKILL_KEY_TO_NAME = {}; SKILLS_5E.forEach(s=>SKILL_KEY_TO_NAME[s.label.toLowerCase()] = s.key);
+
+const WEAPONS_CATALOG = [
+  ["Club","Simple",false,"1d4","bludgeoning","Light"],["Dagger","Simple",false,"1d4","piercing","Finesse, light, thrown (20/60)"],
+  ["Greatclub","Simple",false,"1d8","bludgeoning","Two-handed"],["Handaxe","Simple",false,"1d6","slashing","Light, thrown (20/60)"],
+  ["Javelin","Simple",false,"1d6","piercing","Thrown (30/120)"],["Mace","Simple",false,"1d6","bludgeoning",""],
+  ["Quarterstaff","Simple",false,"1d6","bludgeoning","Versatile (1d8)"],["Spear","Simple",false,"1d6","piercing","Thrown (20/60), versatile (1d8)"],
+  ["Light Crossbow","Simple",true,"1d8","piercing","Ammunition, loading, two-handed"],["Dart","Simple",true,"1d4","piercing","Finesse, thrown (20/60)"],
+  ["Shortbow","Simple",true,"1d6","piercing","Ammunition, two-handed"],["Sling","Simple",true,"1d4","bludgeoning","Ammunition"],
+  ["Battleaxe","Martial",false,"1d8","slashing","Versatile (1d10)"],["Flail","Martial",false,"1d8","bludgeoning",""],
+  ["Glaive","Martial",false,"1d10","slashing","Heavy, reach, two-handed"],["Greataxe","Martial",false,"1d12","slashing","Heavy, two-handed"],
+  ["Greatsword","Martial",false,"2d6","slashing","Heavy, two-handed"],["Longsword","Martial",false,"1d8","slashing","Versatile (1d10)"],
+  ["Rapier","Martial",false,"1d8","piercing","Finesse"],["Scimitar","Martial",false,"1d6","slashing","Finesse, light"],
+  ["Shortsword","Martial",false,"1d6","piercing","Finesse, light"],["Warhammer","Martial",false,"1d8","bludgeoning","Versatile (1d10)"],
+  ["Whip","Martial",false,"1d4","slashing","Finesse, reach"],["Hand Crossbow","Martial",true,"1d6","piercing","Ammunition, light, loading"],
+  ["Heavy Crossbow","Martial",true,"1d10","piercing","Ammunition, heavy, loading, two-handed"],["Longbow","Martial",true,"1d8","piercing","Ammunition, heavy, two-handed"]
+];
+const ARMOR_CATALOG = [
+  ["Padded","light",11,0,0],["Leather","light",11,0,0],["Studded Leather","light",12,0,0],
+  ["Hide","medium",12,0,0],["Chain Shirt","medium",13,0,0],["Scale Mail","medium",14,0,0],["Breastplate","medium",14,0,0],["Half Plate","medium",15,0,0],
+  ["Ring Mail","heavy",14,0,0],["Chain Mail","heavy",16,13,0],["Splint","heavy",17,15,0],["Plate","heavy",18,15,0],["Shield","shield",2,0,0]
+];
+const ARMOR_TYPE_LABEL = { light:"Light", medium:"Medium", heavy:"Heavy", shield:"Shield" };
+
+/* ============================================================
+   STATE: blank sheet + migration for pre-rework characters
+   ============================================================ */
+function blankSheet(){
+  return {
+    race:"", background:"", xpTotal:0,
+    abilBase:{str:10,dex:10,con:10,int:10,wis:10,cha:10}, bonus:{str:0,dex:0,con:0,int:0,wis:0,cha:0},
+    hpCur:null, hpTemp:0, hpOverride:0, hdUsed:0, ds:{s:0,f:0},
+    initMisc:0, acMisc:0, speedNum:30,
+    spAbil:"", slotsUsed:[0,0,0,0,0,0,0,0,0,0],
+    spells:[], weapons:[], armors:[], gear:[], coins:{cp:0,sp:0,ep:0,gp:0,pp:0},
+    profText:"", tab:"character"
+  };
+}
+function ensureSheet(p){
+  if(!p.sheet){
+    const base = blankSheet();
+    // migrate what we can from the old simple character shape
+    if(p.abilities) ABIL.forEach(a=>{ if(p.abilities[a]) base.abilBase[a] = p.abilities[a][0]; });
+    if(p.savingThrowProfs) ABIL.forEach(a=>{ if(p.savingThrowProfs[a]) base.saves = base.saves||{}; });
+    p.sheet = base;
+    p.sheet.saveProf = {};
+    if(p.savingThrowProfs) ABIL.forEach(a=>{ if(p.savingThrowProfs[a]) p.sheet.saveProf[a]=1; });
+    p.sheet.skillProf = {};
+    if(p.skillProfs) Object.keys(p.skillProfs).forEach(k=>{ if(p.skillProfs[k]) p.sheet.skillProf[k]=1; });
+  }
+  const s = p.sheet;
+  if(!s.abilBase) s.abilBase = {str:10,dex:10,con:10,int:10,wis:10,cha:10};
+  if(!s.bonus) s.bonus = {str:0,dex:0,con:0,int:0,wis:0,cha:0};
+  if(!s.coins) s.coins = {cp:0,sp:0,ep:0,gp:0,pp:0};
+  if(!s.ds) s.ds = {s:0,f:0};
+  if(!Array.isArray(s.slotsUsed) || s.slotsUsed.length<10) s.slotsUsed = [0,0,0,0,0,0,0,0,0,0];
+  ["spells","weapons","armors","gear"].forEach(k=>{ if(!Array.isArray(s[k])) s[k]=[]; });
+  if(!s.saveProf) s.saveProf = {};
+  if(!s.skillProf) s.skillProf = {};
+  if(s.speedNum==null) s.speedNum = 30;
+  if(!s.tab) s.tab = "character";
+  return s;
+}
+function uid(){ return "x"+Math.random().toString(36).slice(2,9); }
+const num = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+const sgn = n => (n<0 ? "−" : "+") + Math.abs(n);
+const d = n => 1 + Math.floor(Math.random()*n);
+
+/* ============================================================
+   DERIVED VALUES
+   ============================================================ */
+function casterKindFor(p){
+  const meta = CLASS_META[normClassKey(p.charClass||"")];
+  if(!meta || !meta.caster) return null;
+  if(meta.caster==="third"){
+    return THIRD_CASTER_SUBCLASS.test(p.subclass||"") ? "third" : null;
+  }
+  if((p.charClass==="Fighter"||p.charClass==="Rogue") && THIRD_CASTER_SUBCLASS.test(p.subclass||"")) return "third";
+  return meta.caster;
+}
+function slotsForKind(kind, L){
+  const out = [0,0,0,0,0,0,0,0,0,0];
+  if(kind==="pact"){
+    const n = L>=17?4:L>=11?3:L>=2?2:1;
+    const lv = L>=9?5:L>=7?4:L>=5?3:L>=3?2:1;
+    out[lv]=n;
+    [[11,6],[13,7],[15,8],[17,9]].forEach(([a,b])=>{ if(L>=a) out[b]=1; });
+    return out;
+  }
+  let e=0;
+  if(kind==="full") e=L;
+  else if(kind==="half") e = L>=2 ? Math.ceil(L/2) : 0;
+  else if(kind==="artificer") e = Math.ceil(L/2);
+  else if(kind==="third") e = L>=3 ? Math.floor((L+2)/3) : 0;
+  if(e>0) SPELL_SLOTS_FULL[e].forEach((n,i)=>{ out[i+1]=n; });
+  return out;
+}
+const stepVal = (table,L) => { let v=0; (table||[]).forEach(([a,b])=>{ if(L>=a) v=b; }); return v; };
+
+function deriveSheet(p){
+  const s = ensureSheet(p);
+  const meta = CLASS_META[normClassKey(p.charClass||"")] || null;
+  const L = Math.max(1, Math.min(20, parseInt(p.level,10) || 1));
+  const D = { L, meta, prof: proficiencyBonus(L) };
+  D.tot = {}; D.mod = {};
+  ABIL.forEach(a=>{
+    const t = Math.max(1, Math.min(30, num(s.abilBase[a]) + num(s.bonus[a])));
+    D.tot[a] = t; D.mod[a] = Math.floor((t-10)/2);
   });
-  equipGrid.querySelectorAll("[data-equip-slot]").forEach(input => input.addEventListener("input", updatePcEquipmentSummary));
-  ["pcClass","pcSubclass","pcLevel"].forEach(id => {
-    document.getElementById(id).addEventListener("input", renderClassFeatures);
+  D.hd = meta ? meta.hd : 8;
+  const autoHP = Math.max(1, D.hd + D.mod.con) + (L-1) * Math.max(1, Math.floor(D.hd/2) + 1 + D.mod.con);
+  D.autoHP = autoHP;
+  D.maxHP = num(s.hpOverride) > 0 ? Math.floor(num(s.hpOverride)) : autoHP;
+  D.hp = s.hpCur===null ? D.maxHP : Math.max(0, Math.min(Math.floor(num(s.hpCur)), D.maxHP));
+  D.hdLeft = Math.max(0, L - s.hdUsed);
+
+  // Armor Class
+  const body = s.armors.find(a=>a.equipped && a.type!=="shield");
+  const shield = s.armors.find(a=>a.equipped && a.type==="shield");
+  const parts = []; let ac = 0;
+  if(body){
+    const b = num(body.ac) + num(body.magic);
+    ac = b; parts.push([body.name||"Armor", b]);
+    if(body.type==="light"){ ac += D.mod.dex; parts.push(["Dexterity modifier", D.mod.dex]); }
+    else if(body.type==="medium"){ const v = Math.min(D.mod.dex, 2); ac += v; parts.push(["Dexterity modifier (max 2)", v]); }
+    else parts.push(["Heavy armor ignores Dexterity", 0]);
+  } else {
+    ac = 10; parts.push(["Base (no armor)", 10]);
+    ac += D.mod.dex; parts.push(["Dexterity modifier", D.mod.dex]);
+    if(meta && meta.unarmored==="con"){ ac += D.mod.con; parts.push(["Unarmored Defense (Constitution)", D.mod.con]); }
+    if(meta && meta.unarmored==="wis" && !shield){ ac += D.mod.wis; parts.push(["Unarmored Defense (Wisdom)", D.mod.wis]); }
+  }
+  if(shield){ const v = num(shield.ac) + num(shield.magic); ac += v; parts.push([shield.name||"Shield", v]); }
+  if(num(s.acMisc)){ ac += num(s.acMisc); parts.push(["Misc bonus", num(s.acMisc)]); }
+  D.ac = ac; D.acParts = parts;
+  D.speedEff = num(s.speedNum) - (body && body.type==="heavy" && num(body.str) > D.tot.str ? 10 : 0);
+
+  // Saves & skills
+  D.save = {}; ABIL.forEach(a=>{ D.save[a] = D.mod[a] + (s.saveProf[a] ? D.prof : 0); });
+  D.jack = p.charClass==="Bard" && L>=2;
+  D.skill = {};
+  SKILLS_5E.forEach(sk=>{
+    const prof = s.skillProf[sk.key] || 0;
+    let b = D.mod[sk.ability];
+    if(prof===1) b += D.prof; else if(prof===2) b += 2*D.prof; else if(D.jack) b += Math.floor(D.prof/2);
+    D.skill[sk.key] = b;
   });
-  document.querySelectorAll("[data-pc-toggle]").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.getElementById(btn.dataset.pcToggle).classList.toggle("open");
-    });
-  });
+  const perception = SKILLS_5E.find(sk=>sk.key==="perception");
+  const insight = SKILLS_5E.find(sk=>sk.key==="insight");
+  const investigation = SKILLS_5E.find(sk=>sk.key==="investigation");
+  D.passive = 10 + (D.skill.perception||0);
+  D.passIns = 10 + (D.skill.insight||0);
+  D.passInv = 10 + (D.skill.investigation||0);
+  D.init = D.mod.dex + num(s.initMisc);
+
+  // Spellcasting
+  const kind = casterKindFor(p);
+  const sa = s.spAbil || (meta && meta.spAbil) || "int";
+  const sp = { kind, slots:[0,0,0,0,0,0,0,0,0,0], mode:null, cant:0, limit:0, abil:sa, mod:D.mod[sa], dc: 8+D.prof+D.mod[sa], atk: D.prof+D.mod[sa] };
+  if(kind){
+    sp.slots = slotsForKind(kind, L);
+    sp.cant = stepVal(meta && meta.cantrips, L);
+    sp.mode = kind==="third" ? "known" : (meta ? meta.prep : "known");
+    const any = sp.slots.some(n=>n>0);
+    if(sp.mode==="known") sp.limit = ((meta && meta.known)||[])[L-1] || 0;
+    else sp.limit = any ? Math.max(1, sp.mod + L) : 0;
+  }
+  sp.maxLv = 0; for(let i=1;i<=9;i++) if(sp.slots[i]>0) sp.maxLv=i;
+  D.sp = sp;
+
+  return D;
 }
 
-/* Read Class/Subclass/Level and render the level-by-level feature
-   reference. Levels already reached (<= current level) render normally;
-   levels not yet reached are shown muted, so raising Level "propagates"
-   which features are highlighted as attained. */
-function renderClassFeatures(){
-  const cls = document.getElementById("pcClass").value.trim();
-  const subclass = document.getElementById("pcSubclass").value.trim();
-  const level = Math.max(1, Math.min(20, parseInt(document.getElementById("pcLevel").value, 10) || 1));
-  const container = document.getElementById("pcFeaturesReference");
-  const summary = document.getElementById("pcFeaturesSummary");
+/* keep current HP proportionally sane across max-HP changes (level up etc) */
+function keepHP(p, fn){
+  const before = deriveSheet(p); const wasFull = before.hp >= before.maxHP;
+  fn();
+  const s = ensureSheet(p); const after = deriveSheet(p);
+  if(s.hpCur!==null){
+    if(wasFull) s.hpCur = null;
+    else s.hpCur = Math.min(after.maxHP, before.hp + Math.max(0, after.maxHP - before.maxHP));
+  }
+}
 
-  if(!cls){
-    container.innerHTML = `<div class="pc-feature-hint">Enter a class above to see its level-by-level features.</div>`;
-    summary.textContent = "Enter a class above";
+/* ============================================================
+   COMPAT LAYER: keep the legacy top-level display fields (used by
+   statBlockHTML, the Tracker, and History) in sync with the sheet.
+   ============================================================ */
+function syncCompatFields(p){
+  const s = ensureSheet(p);
+  const D = deriveSheet(p);
+  ABIL.forEach(a=>{ p.abilities[a] = [D.tot[a], D.mod[a]]; });
+  p.ac = D.ac;
+  p.hp = D.maxHP;
+  p.speed = num(s.speedNum) + " ft.";
+  p.proficiencyBonus = D.prof;
+  p.classLevel = ["Level "+D.L, p.charClass ? (p.charClass + (p.subclass ? " ("+p.subclass+")" : "")) : ""].filter(Boolean).join(" ");
+  p.savingThrows = ABIL.filter(a=>s.saveProf[a]).map(a=>ABILITY_LABELS[a]+" "+abilityMod(D.save[a])).join(", ") || undefined;
+  p.skills = SKILLS_5E.filter(sk=>s.skillProf[sk.key]).map(sk=>sk.label+" "+abilityMod(D.skill[sk.key])).join(", ") || undefined;
+  return D;
+}
+function syncPlayerTrackerHP(p, D){
+  const entry = trackerList.find(e=>e.monsterId===p.id);
+  if(!entry) return;
+  entry.maxHp = D.maxHP;
+  entry.currentHp = Math.max(0, Math.min(D.hp, D.maxHP));
+}
+
+/* ============================================================
+   DICE ROLLING
+   ============================================================ */
+let sheetToastT = null;
+function sheetToast(html, cls){
+  const t = document.getElementById("sheetToast");
+  if(!t) return;
+  t.className = "sheet-toast" + (cls ? " "+cls : "");
+  t.innerHTML = html;
+  void t.offsetWidth;
+  t.classList.add("show");
+  clearTimeout(sheetToastT);
+  sheetToastT = setTimeout(()=>t.classList.remove("show"), 4200);
+}
+function rollD20(label, bonus, ev){
+  const adv = ev && ev.shiftKey, dis = ev && ev.altKey && !adv;
+  const a = d(20), b = (adv||dis) ? d(20) : null;
+  const r = b===null ? a : (adv ? Math.max(a,b) : Math.min(a,b));
+  const total = r + bonus;
+  sheetToast(
+    `<b>${label}</b><span class="tr">${total}</span><small>d20 ${b===null ? "("+r+")" : "("+a+", "+b+" → "+r+")"} ${sgn(bonus)}${adv?" with advantage":dis?" with disadvantage":""}${r===20?" • Natural 20!":r===1?" • Natural 1":""}</small>`,
+    r===20?"crit":r===1?"fumble":""
+  );
+}
+function rollDiceExpr(expr, crit){
+  const m = /(\d+)\s*d\s*(\d+)/i.exec(expr||"");
+  if(!m) return { rolls:[], sum: parseInt(expr)||0 };
+  const n = (+m[1]) * (crit?2:1), sides = +m[2];
+  const rolls = Array.from({length:n}, ()=>d(sides));
+  return { rolls, sum: rolls.reduce((x,y)=>x+y,0) };
+}
+function weaponCalc(D, w){
+  const fin = /finesse/i.test(w.props||"");
+  const ab = (w.ability && w.ability!=="auto") ? w.ability : (w.ranged ? "dex" : fin ? (D.mod.dex>D.mod.str?"dex":"str") : "str");
+  const mg = num(w.magic);
+  return { ab, atk: D.mod[ab] + (w.prof?D.prof:0) + mg, flat: D.mod[ab] + mg };
+}
+
+/* ============================================================
+   HP / XP / LEVEL ACTIONS
+   ============================================================ */
+function applyDamage(p, n){
+  n = Math.max(0, Math.floor(n)); if(!n) return;
+  const s = ensureSheet(p); const D = deriveSheet(p);
+  const was = D.hp;
+  const absorbed = Math.min(num(s.hpTemp), n);
+  s.hpTemp = num(s.hpTemp) - absorbed;
+  let rest = n - absorbed;
+  if(was===0 && rest>0){
+    s.ds.f = Math.min(3, s.ds.f+1);
+    sheetToast(`<b>Damage at 0 HP</b><small>Counts as a death save failure (${s.ds.f} of 3)</small>`);
+  }
+  s.hpCur = Math.max(0, was - rest);
+  if(was>0 && s.hpCur===0){
+    sheetToast(rest-was>=D.maxHP ? "<b>Massive damage</b><small>Leftover damage equals max HP: instant death</small>" : "<b>Dropped to 0 HP</b><small>Unconscious. Start making death saves.</small>");
+  }
+}
+function applyHeal(p, n){
+  n = Math.max(0, Math.floor(n)); if(!n) return;
+  const s = ensureSheet(p); const D = deriveSheet(p);
+  if(D.hp===0) s.ds = {s:0,f:0};
+  s.hpCur = Math.min(D.maxHP, D.hp + n);
+}
+function setLevel(p, newL){
+  keepHP(p, ()=>{
+    p.level = Math.max(1, Math.min(20, newL|0 || 1));
+    const s = ensureSheet(p);
+    const lo = XP_TABLE[p.level-1], hi = p.level<20 ? XP_TABLE[p.level] : Infinity;
+    if(s.xpTotal<lo || s.xpTotal>=hi) s.xpTotal = lo;
+  });
+}
+function setXP(p, total){
+  const s = ensureSheet(p); const before = parseInt(p.level,10)||1;
+  keepHP(p, ()=>{
+    s.xpTotal = Math.max(0, Math.floor(total));
+    let L = before;
+    while(L<20 && s.xpTotal>=XP_TABLE[L]) L++;
+    p.level = L;
+  });
+  if(p.level>before) sheetToast(`<b>Level up!</b><span class="tr">Level ${p.level}</span><small>Max HP and spell slots updated</small>`,"crit");
+}
+
+/* ============================================================
+   APPLY RACE / BACKGROUND
+   ============================================================ */
+function applyRace(p){
+  const s = ensureSheet(p);
+  const r = RACES[(s.race||"").trim().toLowerCase()];
+  if(!r) return;
+  s.race = r.n;
+  ABIL.forEach(a=>{ s.bonus[a] = r.b[a]||0; });
+  s.speedNum = r.sp;
+  sheetToast(`<b>${r.n}</b><small>Speed ${r.sp} ft. Ability bonuses applied: ${Object.entries(r.b).map(([a,n])=>ABILITY_LABELS[a]+" +"+n).join(", ")}</small>`);
+}
+function applyBackground(p){
+  const s = ensureSheet(p);
+  const key = (s.background||"").trim().toLowerCase();
+  const sk = BACKGROUNDS[key];
+  if(!sk) return;
+  s.background = key.replace(/\b\w/g, c=>c.toUpperCase());
+  sk.forEach(label=>{
+    const k = SKILL_KEY_TO_NAME[label.toLowerCase()];
+    if(k && !s.skillProf[k]) s.skillProf[k] = 1;
+  });
+  sheetToast(`<b>${s.background}</b><small>Skill proficiencies added: ${sk.join(" and ")}</small>`);
+}
+function applyClass(p){
+  const meta = CLASS_META[normClassKey(p.charClass||"")];
+  if(!meta) return;
+  const s = ensureSheet(p);
+  s.saveProf = {}; meta.saves.forEach(a=>{ s.saveProf[a]=1; });
+  s.spAbil = "";
+  sheetToast(`<b>${p.charClass}</b><small>Hit die d${meta.hd}. Saving throws: ${meta.saves.map(a=>ABILITY_LABELS[a]).join(" and ")}.</small>`);
+}
+
+/* ============================================================
+   PER-SECTION OPEN/CLOSED STATE (survives the full-rerender model --
+   build functions call oc(key, defaultOpen) instead of hardcoding
+   "open" so a section a user expanded stays expanded).
+   ============================================================ */
+const DEFAULT_OPEN_SECS = ["basic","xp","combat","abil","skills","spstat","slots","weap","arm","gear"];
+let sheetOpenSecs = new Set(DEFAULT_OPEN_SECS);
+function oc(key, def){
+  const isOpen = sheetOpenSecs.has(key) || (def && !sheetOpenSecs.has("!"+key));
+  return "pc-collapsible" + (isOpen ? " open" : "");
+}
+function toggleSec(key, def){
+  const isOpen = sheetOpenSecs.has(key) || (def && !sheetOpenSecs.has("!"+key));
+  if(isOpen){ sheetOpenSecs.delete(key); if(def) sheetOpenSecs.add("!"+key); }
+  else { sheetOpenSecs.add(key); sheetOpenSecs.delete("!"+key); }
+}
+
+/* ============================================================
+   GENERIC FIELD READ/WRITE
+   Every editable control in the sheet carries data-fk describing
+   where its value lives:
+     "name" / "level" / "charClass" / "subclass"  -> player root field
+     "sheet.xpTotal" / "sheet.bonus.str"           -> dot-path into p.sheet
+     "list.weapons.<id>.name"                      -> item field in a list
+   ============================================================ */
+function ensureIds(arr){ arr.forEach(x=>{ if(!x.id) x.id = uid(); }); return arr; }
+function getList(p, key){ return key==="actions" ? (p.actions = p.actions||[]) : ensureSheet(p)[key]; }
+function getField(p, path){
+  if(path.startsWith("list.")){
+    const [,listKey,id,field] = path.split(".");
+    const item = getList(p,listKey).find(x=>x.id===id);
+    return item ? item[field] : "";
+  }
+  if(path.startsWith("sheet.")){
+    const ks = path.slice(6).split(".");
+    let o = ensureSheet(p);
+    for(const k of ks){ if(o==null) return ""; o = o[k]; }
+    return o;
+  }
+  return p[path];
+}
+function setField(p, path, val){
+  if(path.startsWith("list.")){
+    const [,listKey,id,field] = path.split(".");
+    const item = getList(p,listKey).find(x=>x.id===id);
+    if(item) item[field] = val;
     return;
   }
-
-  const classKey = normClassKey(cls);
-  const base = CLASS_FEATURES[classKey];
-  if(!base){
-    container.innerHTML = `<div class="pc-feature-hint">No feature data for "${cls}" yet. Recognized classes: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Warlock, Wizard.</div>`;
-    summary.textContent = "Unrecognized class";
+  if(path.startsWith("sheet.")){
+    const ks = path.slice(6).split(".");
+    let o = ensureSheet(p);
+    for(let i=0;i<ks.length-1;i++) o = o[ks[i]];
+    o[ks[ks.length-1]] = val;
     return;
   }
+  p[path] = val;
+}
+function fv(v){ return v==null ? "" : v; }
 
-  let subFeatures = subclass ? SUBCLASS_FEATURES[classKey + "|" + normClassKey(subclass)] : null;
-  if(subclass && !subFeatures){
-    // fallback: tolerate spacing differences, e.g. "Gloomstalker" vs "Gloom Stalker"
-    const noSpace = normClassKey(subclass).replace(/\s+/g,"");
-    const matchKey = Object.keys(SUBCLASS_FEATURES).find(k=>{
-      const [kc, ks] = k.split("|");
-      return kc === classKey && ks.replace(/\s+/g,"") === noSpace;
-    });
-    if(matchKey) subFeatures = SUBCLASS_FEATURES[matchKey];
-  }
+/* ============================================================
+   RENDER: Character tab
+   ============================================================ */
+function buildCharacterTabHTML(p, D){
+  const s = ensureSheet(p);
+  const abilTiles = ABIL.map(a=>`
+    <div class="sheet-ab">
+      <div class="nm">${ABILITY_LABELS[a].toUpperCase()}</div>
+      <button type="button" class="md" data-roll="check:${a}">${sgn(D.mod[a])}</button>
+      <div class="tt"><b>${D.tot[a]}</b> total</div>
+      <div class="in">
+        <label><span>Base</span><input type="number" min="1" max="30" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
+        <label><span>Bonus</span><input type="number" data-fk="sheet.bonus.${a}" value="${s.bonus[a]}"></label>
+      </div>
+    </div>`).join("");
 
-  const byLevel = {};
-  base.forEach(entry => { (byLevel[entry.level] = byLevel[entry.level] || []).push(...entry.features); });
-  if(subFeatures) subFeatures.forEach(entry => { (byLevel[entry.level] = byLevel[entry.level] || []).push(...entry.features); });
+  const saveRows = ABIL.map(a=>`
+    <div class="sheet-lr">
+      <button type="button" class="sheet-pf ${s.saveProf[a]?'p1':''}" data-pf="save:${a}" aria-label="Toggle ${ABILITY_LABELS[a]} save proficiency"></button>
+      <button type="button" class="sheet-bn bn" data-roll="save:${a}">${sgn(D.save[a])}</button>
+      <span class="nm">${ABILITY_LABELS[a]}</span>
+    </div>`).join("");
+  const skillRows = SKILLS_5E.map(sk=>{
+    const st = s.skillProf[sk.key]||0;
+    return `<div class="sheet-lr">
+      <button type="button" class="sheet-pf ${st===1?'p1':st===2?'p2':''}" data-pf="skill:${sk.key}" aria-label="Cycle ${sk.label} proficiency"></button>
+      <button type="button" class="sheet-bn bn" data-roll="skill:${sk.key}">${sgn(D.skill[sk.key])}</button>
+      <span class="nm">${sk.label}<small>${ABILITY_LABELS[sk.ability]}</small></span>
+    </div>`;
+  }).join("");
 
-  const levels = Object.keys(byLevel).map(Number).sort((a,b) => a-b);
-  const rowsHTML = levels.map(lvl => `
-    <div class="pc-feature-level ${lvl > level ? "future" : ""}">
-      <div class="pc-feature-level-num">Lv ${lvl}</div>
-      <div class="pc-feature-level-items">
-        ${byLevel[lvl].map(feat => `<div class="entry"><b>${feat.name}.</b> ${feat.text}</div>`).join("")}
+  const lo = XP_TABLE[D.L-1], hi = D.L<20 ? XP_TABLE[D.L] : null;
+  const xpPct = D.L>=20 ? 100 : Math.max(0, Math.min(100, (s.xpTotal-lo)/(hi-lo)*100));
+  const hpPct = D.maxHP ? Math.min(100, D.hp/D.maxHP*100) : 0;
+  const tPct = D.maxHP ? Math.min(100-hpPct, num(s.hpTemp)/D.maxHP*100) : 0;
+  const hpBarCls = "sheet-bar" + (hpPct<=25?" low":hpPct<=50?" mid":"");
+
+  return `
+    <div class="${oc('basic', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="basic">
+        <span class="pc-section-label">Basic Information</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-g sheet-g4">
+          <label>Player name<input type="text" data-fk="playerName" value="${fv(p.playerName)}" placeholder="Your name"></label>
+          <label>Level<input type="number" min="1" max="20" data-fk="level" value="${D.L}"></label>
+          <label>Race<input type="text" list="dl-race" data-fk="sheet.race" value="${fv(s.race)}" placeholder="Pick or type"></label>
+          <label>Class<input type="text" list="dl-class" data-fk="charClass" value="${fv(p.charClass)}" placeholder="e.g. Paladin"></label>
+          <label>Subclass<input type="text" data-fk="subclass" value="${fv(p.subclass)}" placeholder="e.g. Oath of Devotion"></label>
+          <label>Background<input type="text" list="dl-bg" data-fk="sheet.background" value="${fv(s.background)}" placeholder="Pick or type"></label>
+        </div>
+        <datalist id="dl-race">${Object.values(RACES).map(r=>`<option value="${r.n}">`).join("")}</datalist>
+        <datalist id="dl-class">${Object.keys(CLASS_META).map(k=>`<option value="${k[0].toUpperCase()+k.slice(1)}">`).join("")}</datalist>
+        <datalist id="dl-bg">${Object.keys(BACKGROUNDS).map(k=>`<option value="${k.replace(/\b\w/g,c=>c.toUpperCase())}">`).join("")}</datalist>
       </div>
     </div>
-  `).join("");
 
-  const note = (subclass && !subFeatures)
-    ? `<div class="pc-feature-hint">No feature data for subclass "${subclass}" yet — showing base ${cls} features only.</div>`
-    : "";
+    <div class="${oc('xp', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="xp">
+        <span class="pc-section-label">Experience</span>
+        <span class="pc-collapsible-summary">${D.L<20?fv(s.xpTotal).toLocaleString()+" / "+hi.toLocaleString()+" XP":"Max level"}</span>
+        <span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-bar xp"><i style="width:${xpPct}%"></i></div>
+        <div class="sheet-g sheet-g3">
+          <label>Add XP<input type="number" id="sheetXpAdd" placeholder="e.g. 250"></label>
+          <button type="button" class="chip" data-act="addxp" style="align-self:end">Add XP</button>
+          <label>Total XP<input type="number" min="0" data-fk="sheet.xpTotal" value="${s.xpTotal}"></label>
+        </div>
+      </div>
+    </div>
 
-  container.innerHTML = note + rowsHTML;
-  const attained = levels.filter(l => l <= level).length;
-  summary.textContent = `${cls}${subclass && subFeatures ? " (" + subclass + ")" : ""} — ${attained} of ${levels.length} feature levels reached`;
+    <div class="${oc('combat', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="combat">
+        <span class="pc-section-label">Combat</span>
+        <span class="pc-collapsible-summary">AC ${D.ac}, HP ${D.hp}/${D.maxHP}</span>
+        <span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-g sheet-g4">
+          <div class="sheet-tile"><div class="lab">Armor Class</div><span class="v">${D.ac}</span><div class="mini"><span>Misc</span><input type="number" data-fk="sheet.acMisc" value="${s.acMisc}"></div></div>
+          <div class="sheet-tile"><div class="lab">Initiative</div><button type="button" class="v roll" data-roll="init">${sgn(D.init)}</button><div class="mini"><span>Misc</span><input type="number" data-fk="sheet.initMisc" value="${s.initMisc}"></div></div>
+          <div class="sheet-tile"><div class="lab">Speed (ft)</div><input type="number" min="0" step="5" style="font:800 1.5rem 'IBM Plex Mono',monospace;padding:4px;text-align:center" data-fk="sheet.speedNum" value="${s.speedNum}"><div class="sub">${D.speedEff!==num(s.speedNum)?"Effective "+D.speedEff+" ft (heavy armor)":""}</div></div>
+          <div class="sheet-tile"><div class="lab">Proficiency</div><span class="v">${sgn(D.prof)}</span></div>
+        </div>
+        <div class="sheet-hp">
+          <div class="sheet-hp-top"><div class="sheet-hp-num">${D.hp}<span> / ${D.maxHP}</span></div><span class="sheet-hp-temp">${num(s.hpTemp)>0?"+"+s.hpTemp+" temp":""}</span></div>
+          <div class="${hpBarCls}"><i style="width:${hpPct}%"></i><b style="left:${hpPct}%;width:${tPct}%"></b></div>
+          <div class="sheet-hp-ctl">
+            <label>Amount<input type="number" min="0" id="sheetHpAmt" placeholder="Amount"></label>
+            <button type="button" class="chip" data-act="dmg">Damage</button>
+            <button type="button" class="chip save-log-btn" data-act="heal">Heal</button>
+          </div>
+          <div class="sheet-g sheet-g3">
+            <label>Current HP<input type="number" min="0" data-fk="sheet.hpCurView" value="${D.hp}"></label>
+            <label>Temporary HP<input type="number" min="0" data-fk="sheet.hpTemp" value="${s.hpTemp}"></label>
+            <label>Max HP override<input type="number" min="0" data-fk="sheet.hpOverride" value="${s.hpOverride||""}" placeholder="auto ${D.autoHP}"></label>
+          </div>
+        </div>
+        <div class="sheet-g sheet-g2" style="margin-top:12px">
+          <div class="sheet-panel"><h4>Hit dice</h4><div class="sheet-big">${D.hdLeft} <span style="font-size:0.9rem;color:var(--text-soft)">of ${D.L} d${D.hd}</span></div>
+            <div class="row" style="margin-top:8px"><button type="button" class="chip" data-act="spendhd">Spend a hit die</button></div>
+            <div class="row" style="margin-top:8px;gap:8px"><button type="button" class="chip" data-act="short">Short rest</button><button type="button" class="chip" data-act="long">Long rest</button></div></div>
+          <div class="sheet-panel"><h4>Death saves</h4>
+            <div class="sheet-dsrow"><span>Successes</span><div class="sheet-dots">${[0,1,2].map(i=>`<button type="button" class="sheet-dot s ${s.ds.s>i?'on':''}" data-ds="s:${i}"></button>`).join("")}</div></div>
+            <div class="sheet-dsrow"><span>Failures</span><div class="sheet-dots">${[0,1,2].map(i=>`<button type="button" class="sheet-dot f ${s.ds.f>i?'on':''}" data-ds="f:${i}"></button>`).join("")}</div></div>
+            <div class="row" style="margin-top:8px"><button type="button" class="chip" data-act="deathroll">Roll death save</button></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="${oc('abil', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="abil">
+        <span class="pc-section-label">Ability Scores</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-abilities" id="sheetAbilities">${abilTiles}</div>
+        <div class="row" style="margin-top:10px;gap:8px"><span class="small muted" style="color:var(--text-faint);font-size:0.78rem">Set scores:</span><button type="button" class="chip" data-act="std">Standard array</button><button type="button" class="chip" data-act="rollabil">Roll 4d6</button></div>
+      </div>
+    </div>
+
+    <div class="${oc('skills', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="skills">
+        <span class="pc-section-label">Saving Throws &amp; Skills</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-pass">
+          <div class="sheet-tile"><div class="lab">Passive Perception</div><span class="v">${D.passive}</span></div>
+          <div class="sheet-tile"><div class="lab">Passive Insight</div><span class="v">${D.passIns}</span></div>
+          <div class="sheet-tile"><div class="lab">Passive Investigation</div><span class="v">${D.passInv}</span></div>
+        </div>
+        <div class="sheet-cols">
+          <div><h4 style="margin:0 0 6px;font-size:0.85rem;font-weight:800">Saving throws</h4>${saveRows}</div>
+          <div><h4 style="margin:0 0 6px;font-size:0.85rem;font-weight:800">Skills</h4>${skillRows}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="${oc('notes', false)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="notes">
+        <span class="pc-section-label">Senses, Languages &amp; Notes</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-g sheet-g2">
+          <label>Senses<input type="text" data-fk="senses" value="${fv(p.senses)}" placeholder="e.g. passive Perception 13"></label>
+          <label>Languages<input type="text" data-fk="languages" value="${fv(p.languages)}" placeholder="e.g. Common, Elvish"></label>
+        </div>
+        <label style="margin-top:10px;display:block">Proficiencies &amp; tool training<textarea rows="2" data-fk="sheet.profText" placeholder="Tools, extra weapon or armor training">${fv(s.profText)}</textarea></label>
+        <label style="margin-top:10px;display:block">Notes<textarea rows="3" data-fk="notes" placeholder="Spell save DC, pool trackers, anything else">${fv(p.notes)}</textarea></label>
+      </div>
+    </div>`;
 }
 
-function updatePcEquipmentSummary(){
-  const filled = Array.from(document.querySelectorAll("#pcEquipmentGrid [data-equip-slot]")).filter(i => i.value.trim()).length;
-  document.getElementById("pcEquipmentSummary").textContent = filled ? `${filled} item${filled===1?"":"s"} worn` : "Nothing worn";
+/* ============================================================
+   RENDER: Features tab
+   ============================================================ */
+function buildFeaturesTabHTML(p, D){
+  const actions = ensureIds(p.actions = p.actions||[]);
+  const actionRows = actions.map(a=>`
+    <div class="sheet-item">
+      <div class="sheet-item-grid" style="grid-template-columns:1fr">
+        <label>Name<input type="text" data-fk="list.actions.${a.id}.name" value="${fv(a.name)}" placeholder="e.g. Second Wind"></label>
+      </div>
+      <label style="font-size:0.62rem;font-weight:700;color:var(--text-faint);text-transform:uppercase">Description<textarea rows="2" data-fk="list.actions.${a.id}.text" style="margin-top:3px">${fv(a.text)}</textarea></label>
+      <div class="sheet-item-foot"><button type="button" class="sheet-item-remove" data-del="actions:${a.id}">Remove</button></div>
+    </div>`).join("") || `<div class="sheet-empty">No custom features or actions yet.</div>`;
+
+  const classKey = normClassKey(p.charClass||"");
+  const base = CLASS_FEATURES[classKey];
+  let featuresHTML;
+  if(!base){
+    featuresHTML = `<div class="sheet-empty">Enter a class on the Character tab to see its features by level.</div>`;
+  } else {
+    let subFeatures = p.subclass ? SUBCLASS_FEATURES[classKey+"|"+normClassKey(p.subclass)] : null;
+    if(p.subclass && !subFeatures){
+      const noSpace = normClassKey(p.subclass).replace(/\s+/g,"");
+      const matchKey = Object.keys(SUBCLASS_FEATURES).find(k=>{
+        const [kc,ks] = k.split("|");
+        return kc===classKey && ks.replace(/\s+/g,"")===noSpace;
+      });
+      if(matchKey) subFeatures = SUBCLASS_FEATURES[matchKey];
+    }
+    const byLevel = {};
+    base.forEach(entry=>{ (byLevel[entry.level]=byLevel[entry.level]||[]).push(...entry.features.map(f=>({...f,t:"cl"}))); });
+    if(subFeatures) subFeatures.forEach(entry=>{ (byLevel[entry.level]=byLevel[entry.level]||[]).push(...entry.features.map(f=>({...f,t:"sb"}))); });
+    const levels = Object.keys(byLevel).map(Number).sort((a,b)=>a-b);
+    if(lastFeatClassKey!==classKey){ lastFeatClassKey=classKey; sheetOpenSecs.add("lv"+D.L); }
+    const note = (p.subclass && !subFeatures) ? `<div class="sheet-empty">No feature data for subclass "${p.subclass}" yet — showing base ${p.charClass} features only.</div>` : "";
+    featuresHTML = note + levels.map(lvl=>{
+      const items = byLevel[lvl];
+      const chips = items.map(f=>`<span class="chip ${f.t==='sb'?'sb':''}" style="background:${f.t==='sb'?'color-mix(in srgb, var(--amber) 25%, transparent)':'var(--accent-soft)'};border-radius:999px;padding:2px 9px;font-size:0.72rem;display:inline-block;margin:2px 4px 2px 0">${f.name}</span>`).join("");
+      const cards = items.map(f=>`<div style="padding:8px 0;border-top:1px solid var(--border-soft)"><b>${f.name}</b> <span style="font-size:0.68rem;color:var(--text-faint)">${f.t==='sb'?'Subclass':'Class'}</span><p style="margin:4px 0 0;font-size:0.85rem">${f.text}</p></div>`).join("");
+      return `<div class="${oc('lv'+lvl, false)}" style="${lvl===D.L?'border-color:var(--accent)':''}">
+        <button type="button" class="pc-collapsible-header" data-pc-toggle-local="lv${lvl}">
+          <span class="pc-section-label">Lv ${lvl}</span><span class="pc-collapsible-summary">${chips}</span><span class="pc-collapsible-chevron">▾</span>
+        </button>
+        <div class="pc-collapsible-body">${cards}</div>
+      </div>`;
+    }).join("");
+  }
+
+  return `
+    <div class="hb-repeat-section">
+      <div class="hb-repeat-header"><span>Custom Features &amp; Actions</span><button type="button" class="chip" data-add="actions">+ add</button></div>
+      ${actionRows}
+    </div>
+    <div class="hb-repeat-section">
+      <div class="hb-repeat-header"><span>Class Features by Level</span></div>
+      ${featuresHTML}
+    </div>`;
 }
 
-/* Live-recompute ability modifiers, proficiency bonus, and every save/skill
-   value as ability scores, level, or proficiency checkboxes change. */
-function recomputePcDerived(){
-  const abilityMods = {};
-  Object.keys(ABILITY_LABELS).forEach(ab => {
-    const idBase = "pc" + ab[0].toUpperCase() + ab.slice(1);
-    const score = parseInt(document.getElementById(idBase).value, 10);
-    const mod = Number.isFinite(score) ? abilityScoreMod(score) : 0;
-    abilityMods[ab] = mod;
-    const modEl = document.getElementById(idBase + "Mod");
-    if(modEl) modEl.textContent = abilityMod(mod);
-  });
+/* ============================================================
+   RENDER: Spellcasting tab
+   ============================================================ */
+function buildSpellsTabHTML(p, D){
+  const s = ensureSheet(p);
+  const sp = D.sp;
+  if(!sp.kind){
+    const meta = CLASS_META[normClassKey(p.charClass||"")];
+    const msg = !p.charClass ? "Choose a class on the Character tab and slots, cantrips and spell limits fill in automatically."
+      : (meta && meta.caster==="third" ? `${p.charClass}s only cast spells with the Eldritch Knight or Arcane Trickster subclass (level 3).`
+      : `${p.charClass}s don't cast spells from a class feature. You can still track spells from feats or items below.`);
+    return `<div class="note" style="background:var(--accent-soft);border-radius:var(--radius-md);padding:10px 14px;font-size:0.85rem">${msg}</div>` + buildSpellLevelSections(p, D, 0);
+  }
 
-  const level = parseInt(document.getElementById("pcLevel").value, 10) || 1;
-  const profBonus = proficiencyBonus(level);
-  document.getElementById("pcProfBonusReadout").textContent = abilityMod(profBonus);
+  const abOpts = ["str","dex","con","int","wis","cha"].map(a=>`<option value="${a}" ${s.spAbil===a?'selected':''}>${ABILITY_LABELS[a]}</option>`).join("");
+  const slotCells = [1,2,3,4,5,6,7,8,9].map(l=>{
+    const t = sp.slots[l], used = Math.min(t, s.slotsUsed[l]);
+    const pips = t ? Array.from({length:t},(_,i)=>`<button type="button" class="sheet-pip ${i>=t-used?'used':''}" data-pip="${l}"></button>`).join("") : `<span class="sub">—</span>`;
+    return `<div class="sheet-slot ${t?'':'off'}"><div class="t">Level ${l}</div><div class="sheet-pips">${pips}</div><div class="n">${t?`${t-used} of ${t} left`:'None'}</div></div>`;
+  }).join("");
 
-  Object.keys(ABILITY_LABELS).forEach(ab => {
-    const cb = document.querySelector(`[data-save-prof="${ab}"]`);
-    const el = document.getElementById(`pcSaveVal-${ab}`);
-    if(el) el.textContent = abilityMod(abilityMods[ab] + (cb && cb.checked ? profBonus : 0));
-  });
-
-  SKILLS_5E.forEach(s => {
-    const cb = document.querySelector(`[data-skill-prof="${s.key}"]`);
-    const el = document.getElementById(`pcSkillVal-${s.key}`);
-    if(el) el.textContent = abilityMod(abilityMods[s.ability] + (cb && cb.checked ? profBonus : 0));
-  });
-
-  const savesChecked = document.querySelectorAll("#pcSavesGrid [data-save-prof]:checked").length;
-  document.getElementById("pcSavesSummary").textContent = savesChecked ? `${savesChecked} proficient` : "None selected";
-  const skillsChecked = document.querySelectorAll("#pcSkillsGrid [data-skill-prof]:checked").length;
-  document.getElementById("pcSkillsSummary").textContent = skillsChecked ? `${skillsChecked} proficient` : "None selected";
+  return `
+    <div class="${oc('spstat', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="spstat">
+        <span class="pc-section-label">Spellcasting</span><span class="pc-collapsible-summary">DC ${sp.dc}, ${sgn(sp.atk)} to hit</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-g sheet-g3">
+          <div class="sheet-tile"><div class="lab">Ability</div><select data-fk="sheet.spAbil"><option value="">Auto (${ABILITY_LABELS[(CLASS_META[normClassKey(p.charClass||"")]||{}).spAbil||'int']})</option>${abOpts}</select></div>
+          <div class="sheet-tile"><div class="lab">Save DC</div><span class="v">${sp.dc}</span></div>
+          <div class="sheet-tile"><div class="lab">Attack bonus</div><button type="button" class="v roll" data-roll="spatk">${sgn(sp.atk)}</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="${oc('slots', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="slots">
+        <span class="pc-section-label">Spell Slots</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-slots">${slotCells}</div>
+        <div class="row" style="margin-top:10px"><button type="button" class="chip" data-act="restoreSlots">Restore all slots</button></div>
+      </div>
+    </div>
+    ${buildSpellLevelSections(p, D, Math.max(1, sp.maxLv))}`;
+}
+function buildSpellLevelSections(p, D, hiLevel){
+  const s = ensureSheet(p);
+  ensureIds(s.spells);
+  const prepMode = D.sp.mode==="prepared";
+  let out = "";
+  for(let l=0; l<=Math.max(hiLevel, ...s.spells.map(x=>x.level), 0); l++){
+    const list = s.spells.filter(x=>x.level===l);
+    const rows = list.map(sp=>`
+      <div class="sheet-item">
+        <div class="sheet-item-grid">
+          <label>Name<input type="text" data-fk="list.spells.${sp.id}.name" value="${fv(sp.name)}" placeholder="Spell name"></label>
+          <label>Level<select data-fk="list.spells.${sp.id}.level">${[0,1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}" ${sp.level===n?'selected':''}>${n===0?'Cantrip':'Lv '+n}</option>`).join("")}</select></label>
+        </div>
+        <div class="sheet-item-foot">
+          ${l>0 && prepMode ? `<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.spells.${sp.id}.prepared" ${sp.prepared?'checked':''}> Prepared</label>` : ""}
+          ${l>0 ? `<button type="button" class="chip save-log-btn" data-cast="${sp.id}">Cast</button>` : ""}
+          <button type="button" class="sheet-item-remove" data-del="spells:${sp.id}">Remove</button>
+        </div>
+      </div>`).join("") || `<div class="sheet-empty">${l===0?'No cantrips yet.':'No level '+l+' spells yet.'}</div>`;
+    out += `
+      <div class="${oc(`splv${l}`, false)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="splv${l}">
+          <span class="pc-section-label">${l===0?'Cantrips':'Level '+l}</span><span class="pc-collapsible-summary">${list.length} listed</span><span class="pc-collapsible-chevron">▾</span>
+        </button>
+        <div class="pc-collapsible-body">${rows}<button type="button" class="chip sheet-add-btn" data-add="spells:${l}">+ add ${l===0?'cantrip':'spell'}</button></div>
+      </div>`;
+  }
+  return out;
 }
 
-function resetPlayerForm(){
-  document.getElementById("pcFormError").style.display = "none";
-  ["pcName","pcPlayerName","pcClass","pcSubclass","pcSpeed",
-   "pcSenses","pcLanguages","pcNotes"].forEach(id=>{
-    document.getElementById(id).value = "";
-  });
-  document.getElementById("pcAC").value = "";
-  document.getElementById("pcHP").value = "";
-  document.getElementById("pcLevel").value = "1";
-  ["pcStr","pcDex","pcCon","pcInt","pcWis","pcCha"].forEach(id=>{
-    document.getElementById(id).value = "10";
-  });
-  document.querySelectorAll("#pcSavesGrid [data-save-prof], #pcSkillsGrid [data-skill-prof]").forEach(cb=>{
-    cb.checked = false;
-  });
-  document.querySelectorAll("#pcEquipmentGrid [data-equip-slot]").forEach(input=>{
-    input.value = "";
-  });
-  document.getElementById("pcFeaturesList").innerHTML = "";
-  document.getElementById("pcSavesSection").classList.remove("open");
-  document.getElementById("pcSkillsSection").classList.remove("open");
-  document.getElementById("pcEquipmentSection").classList.remove("open");
-  document.getElementById("pcFeaturesSection").classList.remove("open");
-  recomputePcDerived();
-  updatePcEquipmentSummary();
-  renderClassFeatures();
+/* ============================================================
+   RENDER: Inventory tab
+   ============================================================ */
+function buildInventoryTabHTML(p, D){
+  const s = ensureSheet(p);
+  ensureIds(s.weapons); ensureIds(s.armors); ensureIds(s.gear);
+
+  const weaponRows = s.weapons.map(w=>{
+    const c = weaponCalc(D, w);
+    return `<div class="sheet-item">
+      <div class="sheet-item-grid">
+        <label>Name<input type="text" data-fk="list.weapons.${w.id}.name" value="${fv(w.name)}" placeholder="Weapon"></label>
+        <label>Damage dice<input type="text" data-fk="list.weapons.${w.id}.dice" value="${fv(w.dice)}" placeholder="1d8"></label>
+        <label>Damage type<input type="text" data-fk="list.weapons.${w.id}.dtype" value="${fv(w.dtype)}" placeholder="slashing"></label>
+        <label>Ability<select data-fk="list.weapons.${w.id}.ability"><option value="auto" ${!w.ability||w.ability==='auto'?'selected':''}>Auto</option>${ABIL.map(a=>`<option value="${a}" ${w.ability===a?'selected':''}>${ABILITY_LABELS[a]}</option>`).join("")}</select></label>
+        <label>Magic bonus<input type="number" data-fk="list.weapons.${w.id}.magic" value="${w.magic||0}"></label>
+        <label>Properties<input type="text" data-fk="list.weapons.${w.id}.props" value="${fv(w.props)}" placeholder="Finesse, light"></label>
+      </div>
+      <div class="sheet-item-foot">
+        <button type="button" class="sheet-readout" data-roll="atk:${w.id}">${sgn(c.atk)} to hit</button>
+        <button type="button" class="sheet-readout" data-roll="dmg:${w.id}">${fv(w.dice)||'0'}${c.flat?sgn(c.flat):''} ${fv(w.dtype)}</button>
+        <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.weapons.${w.id}.prof" ${w.prof?'checked':''}> Proficient</label>
+        <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.weapons.${w.id}.ranged" ${w.ranged?'checked':''}> Ranged</label>
+        <button type="button" class="sheet-item-remove" data-del="weapons:${w.id}">Remove</button>
+      </div>
+    </div>`;
+  }).join("") || `<div class="sheet-empty">No weapons yet. Add one to get attack and damage rolls.</div>`;
+
+  const presetWeaponOpts = WEAPONS_CATALOG.map((x,i)=>`<option value="${i}">${x[0]} (${x[1]})</option>`).join("");
+
+  const armorRows = s.armors.map(a=>{
+    const base = num(a.ac)+num(a.magic);
+    const desc = a.type==="shield" ? `+${base} AC` : a.type==="light" ? `${base} + Dex` : a.type==="medium" ? `${base} + Dex (max 2)` : `${base}, no Dex`;
+    return `<div class="sheet-item">
+      <div class="sheet-item-grid">
+        <label>Name<input type="text" data-fk="list.armors.${a.id}.name" value="${fv(a.name)}" placeholder="Armor"></label>
+        <label>Type<select data-fk="list.armors.${a.id}.type">${Object.keys(ARMOR_TYPE_LABEL).map(t=>`<option value="${t}" ${a.type===t?'selected':''}>${ARMOR_TYPE_LABEL[t]}</option>`).join("")}</select></label>
+        <label>Base AC<input type="number" data-fk="list.armors.${a.id}.ac" value="${a.ac||0}"></label>
+        <label>Magic bonus<input type="number" data-fk="list.armors.${a.id}.magic" value="${a.magic||0}"></label>
+        <label>Str needed<input type="number" data-fk="list.armors.${a.id}.str" value="${a.str||0}"></label>
+      </div>
+      <div class="sheet-item-foot">
+        <span class="sheet-readout" style="cursor:default">${desc}</span>
+        <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.armors.${a.id}.equipped" ${a.equipped?'checked':''}> Equipped</label>
+        <button type="button" class="sheet-item-remove" data-del="armors:${a.id}">Remove</button>
+      </div>
+    </div>`;
+  }).join("") || `<div class="sheet-empty">No armor yet. Add armor or a shield and equip it to update your AC.</div>`;
+
+  const presetArmorOpts = ARMOR_CATALOG.map((x,i)=>`<option value="${i}">${x[0]} (${ARMOR_TYPE_LABEL[x[1]]})</option>`).join("");
+
+  const gearRows = s.gear.map(g=>`<div class="sheet-item">
+      <div class="sheet-item-grid">
+        <label>Item<input type="text" data-fk="list.gear.${g.id}.name" value="${fv(g.name)}" placeholder="Item name"></label>
+        <label>Notes<input type="text" data-fk="list.gear.${g.id}.notes" value="${fv(g.notes)}" placeholder="Notes"></label>
+      </div>
+      <div class="sheet-item-foot">
+        <div class="sheet-qty"><button type="button" data-qty="${g.id}:-1">−</button><b>${g.qty||0}</b><button type="button" data-qty="${g.id}:1">+</button></div>
+        <button type="button" class="sheet-item-remove" data-del="gear:${g.id}">Remove</button>
+      </div>
+    </div>`).join("") || `<div class="sheet-empty">Nothing carried yet.</div>`;
+
+  return `
+    <div class="${oc('weap', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="weap">
+        <span class="pc-section-label">Weapons</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <label style="display:block;margin-bottom:8px">Start from a standard weapon<select id="weaponPreset"><option value="">Custom weapon</option>${presetWeaponOpts}</select></label>
+        ${weaponRows}
+        <button type="button" class="chip sheet-add-btn" data-add="weapons">+ add weapon</button>
+      </div>
+    </div>
+    <div class="${oc('arm', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="arm">
+        <span class="pc-section-label">Armor &amp; Shields</span><span class="pc-collapsible-summary">AC ${D.ac}</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <label style="display:block;margin-bottom:8px">Start from standard armor<select id="armorPreset"><option value="">Custom</option>${presetArmorOpts}</select></label>
+        ${armorRows}
+        <button type="button" class="chip sheet-add-btn" data-add="armors">+ add armor or shield</button>
+      </div>
+    </div>
+    <div class="${oc('gear', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="gear">
+        <span class="pc-section-label">Gear &amp; Coins</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">
+        <div class="sheet-coins">${["cp","sp","ep","gp","pp"].map(c=>`<label>${c}<input type="number" min="0" data-fk="sheet.coins.${c}" value="${s.coins[c]||0}"></label>`).join("")}</div>
+        <div style="margin-top:14px;font-weight:800;font-size:0.85rem">Carried gear</div>
+        ${gearRows}
+        <button type="button" class="chip sheet-add-btn" data-add="gear">+ add item</button>
+      </div>
+    </div>`;
 }
 
-function openPlayerModal(){
-  resetPlayerForm();
-  document.getElementById("playerModalOverlay").classList.add("show");
+/* ============================================================
+   RENDER ORCHESTRATION
+   Full-rerender model: every edit rebuilds all four tab panels'
+   innerHTML from the player's data, then restores focus + cursor
+   position on whichever input the user was typing in (tracked via
+   its data-fk path) so live typing doesn't stutter.
+   ============================================================ */
+function renderSheet(p){
+  const root = document.getElementById("playerSheetView");
+  const active = document.activeElement;
+  let fk=null, selStart=null, selEnd=null;
+  if(active && root.contains(active) && active.dataset && active.dataset.fk){
+    fk = active.dataset.fk; selStart = active.selectionStart; selEnd = active.selectionEnd;
+  }
+  const D = syncCompatFields(p);
+  syncPlayerTrackerHP(p, D);
+
+  document.getElementById("sheetAvatar").textContent = (p.name||"?").trim().charAt(0).toUpperCase() || "?";
+  const s = ensureSheet(p);
+  const subParts = ["Level "+D.L, s.race, p.charClass].filter(Boolean);
+  document.getElementById("sheetSub").textContent = subParts.join(" ") + (p.playerName ? " (played by "+p.playerName+")" : "");
+  const nameInput = document.getElementById("sheetName");
+  if(document.activeElement !== nameInput) nameInput.value = p.name||"";
+
+  const activeTab = s.tab || "character";
+  document.querySelectorAll("#sheetTabs [data-sheet-tab]").forEach(b=>b.classList.toggle("active", b.dataset.sheetTab===activeTab));
+  ["character","features","spells","inventory"].forEach(t=>{ document.getElementById("sheetTab-"+t).hidden = t!==activeTab; });
+
+  document.getElementById("sheetTab-character").innerHTML = buildCharacterTabHTML(p, D);
+  document.getElementById("sheetTab-features").innerHTML = buildFeaturesTabHTML(p, D);
+  document.getElementById("sheetTab-spells").innerHTML = buildSpellsTabHTML(p, D);
+  document.getElementById("sheetTab-inventory").innerHTML = buildInventoryTabHTML(p, D);
+
+  if(fk){
+    const el = root.querySelector(`[data-fk="${CSS.escape(fk)}"]`);
+    if(el){ el.focus(); if(selStart!=null && el.setSelectionRange){ try{ el.setSelectionRange(selStart, selEnd); }catch(err){} } }
+  }
+  persistState();
 }
 
-function closePlayerModal(){
-  document.getElementById("playerModalOverlay").classList.remove("show");
+/* Defer (rather than call renderSheet directly) whenever a render might be
+   triggered mid-interaction -- e.g. blurring a changed text field fires a
+   synchronous "change" event as part of the browser's own mousedown/focus
+   handling for whatever the user clicked into next. Rebuilding the DOM
+   synchronously there destroys the very element the browser is in the
+   middle of focusing, so clicking from one field straight into another
+   silently fails to focus it. Deferring lets that focus shift finish
+   first; renderSheet's own focus-restore logic then picks up whichever
+   element ended up focused. */
+let sheetRenderTimer = null;
+function scheduleSheetRender(p){
+  clearTimeout(sheetRenderTimer);
+  sheetRenderTimer = setTimeout(()=>renderSheet(p), 0);
 }
 
-function showPcError(msg){
-  const el = document.getElementById("pcFormError");
-  el.textContent = msg;
-  el.style.display = "block";
+/* ============================================================
+   ACTIONS (HP / rest / XP / ability-set buttons)
+   ============================================================ */
+function doSheetAct(p, act){
+  const s = ensureSheet(p);
+  const D = deriveSheet(p);
+  if(act==="addxp"){
+    const inp = document.getElementById("sheetXpAdd"); const n = num(inp.value);
+    if(!n){ inp.focus(); return; }
+    setXP(p, s.xpTotal + n);
+    scheduleSheetRender(p); return;
+  }
+  if(act==="dmg" || act==="heal"){
+    const inp = document.getElementById("sheetHpAmt"); const n = num(inp.value);
+    if(!n){ inp.focus(); return; }
+    if(act==="dmg") applyDamage(p, n); else applyHeal(p, n);
+    scheduleSheetRender(p); return;
+  }
+  if(act==="spendhd"){
+    if(D.hdLeft<=0){ sheetToast("<b>No hit dice left</b><small>A long rest returns some of them.</small>"); return; }
+    const r = d(D.hd), heal = Math.max(0, r+D.mod.con);
+    s.hdUsed++; applyHeal(p, heal);
+    sheetToast(`<b>Hit die</b><span class="tr">+${heal} HP</span><small>d${D.hd} (${r}) ${sgn(D.mod.con)} Con</small>`);
+    scheduleSheetRender(p); return;
+  }
+  if(act==="short"){
+    if(D.sp.kind==="pact") s.slotsUsed=[0,0,0,0,0,0,0,0,0,0];
+    sheetToast(`<b>Short rest</b><small>Spend hit dice to heal.${D.sp.kind==="pact"?" Pact Magic slots restored.":""}</small>`);
+    scheduleSheetRender(p); return;
+  }
+  if(act==="long"){
+    if(!confirm("Take a long rest? You regain all HP, lose temporary HP, recover half your hit dice, and regain all spell slots.")) return;
+    s.hpCur=null; s.hpTemp=0; s.ds={s:0,f:0};
+    s.hdUsed=Math.max(0, s.hdUsed-Math.max(1,Math.floor(D.L/2)));
+    s.slotsUsed=[0,0,0,0,0,0,0,0,0,0];
+    sheetToast("<b>Long rest complete</b><small>HP, hit dice and spell slots restored</small>");
+    scheduleSheetRender(p); return;
+  }
+  if(act==="deathroll"){
+    if(D.hp>0){ sheetToast("<b>Not at 0 HP</b><small>Death saves only happen when you're down.</small>"); return; }
+    const r = d(20);
+    if(r===20){ s.hpCur=1; s.ds={s:0,f:0}; sheetToast('<b>Natural 20!</b><span class="tr">Back up</span><small>You regain 1 HP</small>',"crit"); }
+    else if(r===1){ s.ds.f=Math.min(3,s.ds.f+2); sheetToast(`<b>Natural 1</b><span class="tr">2 failures</span><small>${s.ds.f} of 3 failures</small>`,"fumble"); }
+    else if(r>=10){ s.ds.s=Math.min(3,s.ds.s+1); sheetToast(`<b>Death save</b><span class="tr">${r}</span><small>Success (${s.ds.s} of 3)${s.ds.s>=3?". You are stable.":""}</small>`); }
+    else{ s.ds.f=Math.min(3,s.ds.f+1); sheetToast(`<b>Death save</b><span class="tr">${r}</span><small>Failure (${s.ds.f} of 3)${s.ds.f>=3?". Your character has died.":""}</small>`,"fumble"); }
+    scheduleSheetRender(p); return;
+  }
+  if(act==="restoreSlots"){ s.slotsUsed=[0,0,0,0,0,0,0,0,0,0]; scheduleSheetRender(p); return; }
+  if(act==="std"){
+    keepHP(p, ()=>{ [15,14,13,12,10,8].forEach((n,i)=>{ s.abilBase[ABIL[i]]=n; }); });
+    sheetToast("<b>Standard array</b><small>15, 14, 13, 12, 10, 8 assigned in order. Edit the Base boxes to reassign.</small>");
+    scheduleSheetRender(p); return;
+  }
+  if(act==="rollabil"){
+    const out=[];
+    keepHP(p, ()=>{ ABIL.forEach(k=>{ const r=[d(6),d(6),d(6),d(6)].sort((x,y)=>x-y); s.abilBase[k]=r[1]+r[2]+r[3]; out.push(s.abilBase[k]); }); });
+    sheetToast(`<b>Rolled 4d6, drop lowest</b><small>${out.join(", ")} (in ability order)</small>`);
+    scheduleSheetRender(p); return;
+  }
 }
 
-function savePlayerCharacter(){
-  const name = document.getElementById("pcName").value.trim();
-  const ac = parseInt(document.getElementById("pcAC").value, 10);
-  const hp = parseInt(document.getElementById("pcHP").value, 10);
-  const speed = document.getElementById("pcSpeed").value.trim();
+/* ============================================================
+   EVENT WIRING (delegated, scoped to the open character sheet)
+   ============================================================ */
+const SHEET_CHANGE_ONLY_FIELDS = ["level","sheet.race","charClass","sheet.background","sheet.xpTotal","subclass"];
+function sheetFieldHandler(e){
+  const root = document.getElementById("playerSheetView");
+  if(!root || !root.classList.contains("show")) return;
+  const el = e.target.closest("[data-fk]");
+  if(!el) return;
+  const p = findCreature(openPlayerSheetId);
+  if(!p) return;
+  const path = el.dataset.fk;
+  const isChange = e.type==="change";
+  if(SHEET_CHANGE_ONLY_FIELDS.includes(path) && !isChange) return;
 
-  if(!name){ showPcError("Give this character a name."); return; }
-  if(!ac || ac <= 0){ showPcError("Enter a valid Armor Class."); return; }
-  if(!hp || hp <= 0){ showPcError("Enter valid max Hit Points."); return; }
-  if(!speed){ showPcError("Enter a speed, e.g. \"30 ft.\""); return; }
+  let val = el.value;
+  if(el.type==="checkbox") val = el.checked;
+  else if(el.type==="number") val = val===""?0:num(val);
 
-  const abilities = {
-    str: [parseInt(document.getElementById("pcStr").value,10) || 10, 0],
-    dex: [parseInt(document.getElementById("pcDex").value,10) || 10, 0],
-    con: [parseInt(document.getElementById("pcCon").value,10) || 10, 0],
-    int: [parseInt(document.getElementById("pcInt").value,10) || 10, 0],
-    wis: [parseInt(document.getElementById("pcWis").value,10) || 10, 0],
-    cha: [parseInt(document.getElementById("pcCha").value,10) || 10, 0]
-  };
-  Object.keys(abilities).forEach(k=>{ abilities[k][1] = abilityScoreMod(abilities[k][0]); });
+  if(path==="sheet.hpCurView"){
+    const D = deriveSheet(p);
+    const s = ensureSheet(p);
+    s.hpCur = Math.max(0, Math.min(D.maxHP, Math.floor(num(val))));
+    if(s.hpCur>0) s.ds = {s:0,f:0};
+    scheduleSheetRender(p); return;
+  }
+  if(path==="level"){ setLevel(p, val); scheduleSheetRender(p); return; }
+  if(path==="sheet.xpTotal"){ setXP(p, val); scheduleSheetRender(p); return; }
+  if(path==="charClass"){ setField(p,path,val); applyClass(p); scheduleSheetRender(p); return; }
+  if(path==="sheet.race"){ setField(p,path,val); applyRace(p); scheduleSheetRender(p); return; }
+  if(path==="sheet.background"){ setField(p,path,val); applyBackground(p); scheduleSheetRender(p); return; }
 
-  const charClass = document.getElementById("pcClass").value.trim();
-  const subclass = document.getElementById("pcSubclass").value.trim();
-  const level = Math.max(1, Math.min(20, parseInt(document.getElementById("pcLevel").value, 10) || 1));
-  const profBonus = proficiencyBonus(level);
+  keepHP(p, ()=> setField(p, path, val));
+  scheduleSheetRender(p);
+}
+document.addEventListener("input", sheetFieldHandler);
+document.addEventListener("change", sheetFieldHandler);
 
-  const savingThrowProfs = {};
-  document.querySelectorAll("#pcSavesGrid [data-save-prof]").forEach(cb=>{
-    savingThrowProfs[cb.dataset.saveProf] = cb.checked;
-  });
-  const skillProfs = {};
-  document.querySelectorAll("#pcSkillsGrid [data-skill-prof]").forEach(cb=>{
-    skillProfs[cb.dataset.skillProf] = cb.checked;
-  });
-  const equipment = {};
-  document.querySelectorAll("#pcEquipmentGrid [data-equip-slot]").forEach(input=>{
-    const v = input.value.trim();
-    if(v) equipment[input.dataset.equipSlot] = v;
-  });
+document.addEventListener("change", e=>{
+  const root = document.getElementById("playerSheetView");
+  if(!root || !root.classList.contains("show")) return;
+  const p = findCreature(openPlayerSheetId);
+  if(!p) return;
+  const s = ensureSheet(p);
+  if(e.target.id==="weaponPreset" && e.target.value!==""){
+    const x = WEAPONS_CATALOG[e.target.value];
+    s.weapons.push({ id:uid(), name:x[0], cat:x[1], ranged:x[2], dice:x[3], dtype:x[4], props:x[5], ability:"auto", magic:0, prof:true });
+    scheduleSheetRender(p);
+  }
+  if(e.target.id==="armorPreset" && e.target.value!==""){
+    const x = ARMOR_CATALOG[e.target.value];
+    s.armors.push({ id:uid(), name:x[0], type:x[1], ac:x[2], str:x[3], magic:0, equipped:false });
+    scheduleSheetRender(p);
+  }
+});
 
-  // Stat blocks conventionally only list saves/skills the character is
-  // actually proficient in (matching the 5e stat block format), even
-  // though the form itself shows and lets you toggle all of them.
-  const savingThrowsStr = Object.keys(savingThrowProfs)
-    .filter(ab=>savingThrowProfs[ab])
-    .map(ab=>`${ABILITY_LABELS[ab]} ${abilityMod(abilities[ab][1] + profBonus)}`)
-    .join(", ") || undefined;
-  const skillsStr = SKILLS_5E
-    .filter(s=>skillProfs[s.key])
-    .map(s=>`${s.label} ${abilityMod(abilities[s.ability][1] + profBonus)}`)
-    .join(", ") || undefined;
-  const classLevel = [
-    `Level ${level}`,
-    charClass ? (charClass + (subclass ? ` (${subclass})` : "")) : ""
-  ].filter(Boolean).join(" ");
+document.addEventListener("click", e=>{
+  const root = document.getElementById("playerSheetView");
+  if(!root || !root.classList.contains("show")) return;
+  const p = findCreature(openPlayerSheetId);
+  if(!p) return;
+  const s = ensureSheet(p);
 
+  const tabBtn = e.target.closest("[data-sheet-tab]");
+  if(tabBtn){ s.tab = tabBtn.dataset.sheetTab; scheduleSheetRender(p); return; }
+
+  const toggleBtn = e.target.closest("[data-pc-toggle-local]");
+  if(toggleBtn){
+    const key = toggleBtn.dataset.pcToggleLocal;
+    toggleSec(key, DEFAULT_OPEN_SECS.includes(key));
+    scheduleSheetRender(p); return;
+  }
+
+  const pf = e.target.closest("[data-pf]");
+  if(pf){
+    const [t,k] = pf.dataset.pf.split(":");
+    if(t==="save") s.saveProf[k] = s.saveProf[k] ? 0 : 1;
+    else s.skillProf[k] = ((s.skillProf[k]||0)+1)%3;
+    scheduleSheetRender(p); return;
+  }
+
+  const rollBtn = e.target.closest("[data-roll]");
+  if(rollBtn){
+    const D = deriveSheet(p);
+    const [t,k] = rollBtn.dataset.roll.split(":");
+    if(t==="check") rollD20(ABILITY_LABELS[k]+" check", D.mod[k], e);
+    else if(t==="save") rollD20(ABILITY_LABELS[k]+" save", D.save[k], e);
+    else if(t==="skill"){ const sk=SKILLS_5E.find(x=>x.key===k); rollD20(sk.label, D.skill[k], e); }
+    else if(t==="init") rollD20("Initiative", D.init, e);
+    else if(t==="spatk") rollD20("Spell attack", D.sp.atk, e);
+    else if(t==="atk"){ const w=s.weapons.find(x=>x.id===k); if(w) rollD20((w.name||"Weapon")+" attack", weaponCalc(D,w).atk, e); }
+    else if(t==="dmg"){
+      const w=s.weapons.find(x=>x.id===k); if(!w) return;
+      const c = weaponCalc(D,w), crit = e.shiftKey, r = rollDiceExpr(w.dice,crit), tot = r.sum + c.flat;
+      sheetToast(`<b>${w.name||"Weapon"} ${crit?"critical damage":"damage"}</b><span class="tr">${Math.max(0,tot)}</span><small>${r.rolls.length?"["+r.rolls.join(", ")+"]":""} ${c.flat?sgn(c.flat):""} ${w.dtype||""}</small>`, crit?"crit":"");
+    }
+    return;
+  }
+
+  const dsBtn = e.target.closest("[data-ds]");
+  if(dsBtn){
+    const [t,i] = dsBtn.dataset.ds.split(":"); const n = +i+1;
+    s.ds[t] = s.ds[t]===n ? n-1 : n;
+    scheduleSheetRender(p); return;
+  }
+
+  const pipBtn = e.target.closest("[data-pip]");
+  if(pipBtn){
+    const D = deriveSheet(p); const l = +pipBtn.dataset.pip; const t = D.sp.slots[l];
+    const idx = [...pipBtn.parentNode.children].indexOf(pipBtn);
+    const used = Math.min(t, s.slotsUsed[l]);
+    s.slotsUsed[l] = idx>=t-used ? Math.max(0,used-1) : Math.min(t,used+1);
+    scheduleSheetRender(p); return;
+  }
+
+  const qtyBtn = e.target.closest("[data-qty]");
+  if(qtyBtn){
+    const [id,delta] = qtyBtn.dataset.qty.split(":");
+    const g = s.gear.find(x=>x.id===id);
+    if(g) g.qty = Math.max(0, (g.qty||0) + (+delta));
+    scheduleSheetRender(p); return;
+  }
+
+  const addBtn = e.target.closest("[data-add]");
+  if(addBtn){
+    const [kind, arg] = addBtn.dataset.add.split(":");
+    if(kind==="actions") (p.actions = p.actions||[]).push({ id:uid(), name:"", text:"" });
+    else if(kind==="weapons") s.weapons.push({ id:uid(), name:"", cat:"Simple", ranged:false, dice:"1d6", dtype:"slashing", props:"", ability:"auto", magic:0, prof:true });
+    else if(kind==="armors") s.armors.push({ id:uid(), name:"", type:"light", ac:11, magic:0, str:0, equipped:false });
+    else if(kind==="gear") s.gear.push({ id:uid(), name:"", qty:1, notes:"" });
+    else if(kind==="spells") s.spells.push({ id:uid(), name:"", level:+arg||0, prepared:false });
+    scheduleSheetRender(p); return;
+  }
+
+  const delBtn = e.target.closest("[data-del]");
+  if(delBtn){
+    const [kind,id] = delBtn.dataset.del.split(":");
+    if(kind==="actions") p.actions = (p.actions||[]).filter(x=>x.id!==id);
+    else s[kind] = s[kind].filter(x=>x.id!==id);
+    scheduleSheetRender(p); return;
+  }
+
+  const castBtn = e.target.closest("[data-cast]");
+  if(castBtn){
+    const sp = s.spells.find(x=>x.id===castBtn.dataset.cast); if(!sp) return;
+    const D = deriveSheet(p); let lv = sp.level;
+    while(lv<=9 && (D.sp.slots[lv]||0)-s.slotsUsed[lv]<=0) lv++;
+    if(lv>9){ sheetToast(`<b>No slot available</b><small>No level ${sp.level}+ slots left.</small>`); return; }
+    s.slotsUsed[lv]++;
+    sheetToast(`<b>${sp.name||"Spell"}</b><small>Cast using a level ${lv} slot${lv>sp.level?" (upcast)":""}. ${D.sp.slots[lv]-s.slotsUsed[lv]} left.</small>`);
+    scheduleSheetRender(p); return;
+  }
+
+  const actBtn = e.target.closest("[data-act]");
+  if(actBtn){ doSheetAct(p, actBtn.dataset.act); return; }
+});
+
+/* ============================================================
+   NAVIGATION: character list <-> full sheet
+   ============================================================ */
+function openPlayerSheet(id){
+  openPlayerSheetId = id;
+  sheetOpenSecs = new Set(DEFAULT_OPEN_SECS);
+  lastFeatClassKey = "";
+  document.getElementById("playersListView").style.display = "none";
+  document.getElementById("playerSheetView").classList.add("show");
+  const p = findCreature(id);
+  if(p) renderSheet(p);
+}
+function closePlayerSheet(){
+  openPlayerSheetId = null;
+  document.getElementById("playerSheetView").classList.remove("show");
+  document.getElementById("playersListView").style.display = "";
+  renderPlayers();
+}
+function newCharacter(){
   playerCounter++;
-  const id = "player-" + playerCounter + "-" + name.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
-
+  const id = "player-"+playerCounter+"-"+Date.now().toString(36);
   const pc = {
-    id, name,
-    isPlayer: true,
-    playerName: document.getElementById("pcPlayerName").value.trim() || undefined,
-    charClass: charClass || undefined,
-    subclass: subclass || undefined,
-    level,
-    classLevel,
-    size: "Medium", type: "player character", alignment: "",
-    tag: "player",
-    ac, hp, hpFormula: "",
-    speed,
-    abilities,
-    proficiencyBonus: profBonus,
-    savingThrowProfs,
-    skillProfs,
-    savingThrows: savingThrowsStr,
-    skills: skillsStr,
-    equipment: Object.keys(equipment).length ? equipment : undefined,
-    senses: document.getElementById("pcSenses").value.trim() || undefined,
-    languages: document.getElementById("pcLanguages").value.trim() || undefined,
-    notes: document.getElementById("pcNotes").value.trim() || undefined,
-    cr: undefined, xp: 0,
-    traits: [],
-    actions: collectDynamicRows("pcFeaturesList"),
-    reactions: []
+    id, name:"New Character", isPlayer:true, tag:"player",
+    size:"Medium", type:"player character", alignment:"",
+    playerName: undefined, charClass:"", subclass:"", level:1,
+    classLevel:"", ac:10, hp:1, hpFormula:"", speed:"30 ft.",
+    abilities:{str:[10,0],dex:[10,0],con:[10,0],int:[10,0],wis:[10,0],cha:[10,0]},
+    proficiencyBonus:2, savingThrows:undefined, skills:undefined,
+    senses:undefined, languages:undefined, notes:undefined,
+    cr:undefined, xp:0, traits:[], actions:[], reactions:[],
+    sheet: blankSheet()
   };
-
   players.push(pc);
-  persistState();
-  closePlayerModal();
-  updatePlayersBadge();
-  renderPlayers();
-}
-
-function deletePlayer(id){
-  players = players.filter(p=>p.id!==id);
-  playerExpandedSet.delete(id);
-  trackerList = trackerList.filter(e=>e.monsterId!==id);
+  syncCompatFields(pc);
   persistState();
   updatePlayersBadge();
-  renderPlayers();
-  updateTrackerBadge();
+  openPlayerSheet(id);
 }
 
-function updatePlayersBadge(){
-  document.getElementById("playersBadge").textContent = players.length;
-}
-
+/* ============================================================
+   CARD LIST
+   ============================================================ */
 function renderPlayers(){
   const empty = document.getElementById("playersEmpty");
   const list = document.getElementById("playersList");
@@ -2831,17 +3735,16 @@ function renderPlayers(){
   empty.style.display = "none";
 
   players.forEach(m=>{
+    syncCompatFields(m);
     const card = document.createElement("div");
     card.className = "card";
     card.style.setProperty("--tag-color", "var(--accent)");
-
-    const isOpen = playerExpandedSet.has(m.id);
 
     card.innerHTML = `
       <div class="card-head" data-id="${m.id}">
         <div class="card-title-col">
           <div class="card-title-row">
-            <div class="card-name">${m.name}</div>
+            <div class="card-name">${m.name || "Unnamed"}</div>
             <div class="card-meta">${m.classLevel || "Player Character"}${m.playerName ? " · " + m.playerName : ""}</div>
           </div>
           <div class="stat-strip mono">
@@ -2853,16 +3756,12 @@ function renderPlayers(){
         <div class="card-actions">
           <button class="add-tracker-btn" data-add-tracker="${m.id}">+ tracker</button>
           <button class="homebrew-delete" data-delete-player="${m.id}">delete</button>
-          <span class="expand-hint">${isOpen ? "▲ collapse" : "▼ full sheet"}</span>
+          <span class="expand-hint">open sheet &rarr;</span>
         </div>
       </div>
-      <div class="detail ${isOpen ? "open":""}">${statBlockHTML(m)}</div>
     `;
 
-    card.querySelector(".card-head").addEventListener("click", ()=>{
-      if(playerExpandedSet.has(m.id)) playerExpandedSet.delete(m.id); else playerExpandedSet.add(m.id);
-      renderPlayers();
-    });
+    card.querySelector(".card-head").addEventListener("click", ()=> openPlayerSheet(m.id));
     card.querySelector("[data-add-tracker]").addEventListener("click", (e)=>{
       e.stopPropagation();
       addToTracker(m.id);
@@ -2876,7 +3775,18 @@ function renderPlayers(){
   });
 }
 
+function deletePlayer(id){
+  players = players.filter(p=>p.id!==id);
+  trackerList = trackerList.filter(e=>e.monsterId!==id);
+  persistState();
+  updatePlayersBadge();
+  renderPlayers();
+  updateTrackerBadge();
+}
 
+function updatePlayersBadge(){
+  document.getElementById("playersBadge").textContent = players.length;
+}
 /* ============================================================
    COMBAT TRACKER
    ============================================================ */
@@ -2904,17 +3814,22 @@ function addToTracker(monsterId){
   const m = findCreature(monsterId);
   if(!m) return;
   trackerCounter++;
+  let curHp = m.hp, maxHp = m.hp;
+  if(m.isPlayer && m.sheet){
+    const D = syncCompatFields(m);
+    curHp = D.hp; maxHp = D.maxHP;
+  }
   const entry = {
     instanceId: "t"+trackerCounter,
     monsterId: monsterId,
     initiative: 10,
-    currentHp: m.hp,
-    maxHp: m.hp,
+    currentHp: curHp,
+    maxHp: maxHp,
     conditions: [],
     deathSaves: {success:0, fail:0}
   };
   trackerList.push(entry);
-  logAction(`Added ${entryDisplayName(entry)} to the encounter (init 10, ${m.hp}/${m.hp} HP).`);
+  logAction(`Added ${entryDisplayName(entry)} to the encounter (init 10, ${curHp}/${maxHp} HP).`);
   updateTrackerBadge();
   renderTracker();
 }
@@ -3117,6 +4032,7 @@ function renderTracker(){
           logAction(`${entryDisplayName(entry)} has died.`);
         }
       }
+      if(m.isPlayer && m.sheet) ensureSheet(m).hpCur = entry.currentHp;
       renderTracker();
     });
     row.querySelector("[data-heal]").addEventListener("click", e=>{
@@ -3130,6 +4046,11 @@ function renderTracker(){
       if(wasAtZero && entry.currentHp > 0){
         entry.deathSaves = {success:0, fail:0};
         entry.conditions = entry.conditions.filter(c=>c!=="Unconscious" && c!=="Stable");
+      }
+      if(m.isPlayer && m.sheet){
+        const s = ensureSheet(m);
+        s.hpCur = entry.currentHp;
+        if(wasAtZero && entry.currentHp > 0) s.ds = {s:0,f:0};
       }
       renderTracker();
     });
@@ -3663,15 +4584,15 @@ document.getElementById("hbAddTrait").onclick = ()=> addDynamicRow("hbTraitsList
 document.getElementById("hbAddAction").onclick = ()=> addDynamicRow("hbActionsList");
 document.getElementById("hbAddReaction").onclick = ()=> addDynamicRow("hbReactionsList");
 
-/* ---- player modal wiring ---- */
-document.getElementById("addPlayerBtn").onclick = ()=> openPlayerModal();
-document.getElementById("playerModalClose").onclick = ()=> closePlayerModal();
-document.getElementById("pcCancelBtn").onclick = ()=> closePlayerModal();
-document.getElementById("pcSaveBtn").onclick = ()=> savePlayerCharacter();
-document.getElementById("playerModalOverlay").addEventListener("click", (e)=>{
-  if(e.target.id === "playerModalOverlay") closePlayerModal();
-});
-document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeaturesList");
+/* ---- character sheet wiring ---- */
+document.getElementById("addPlayerBtn").onclick = ()=> newCharacter();
+document.getElementById("sheetBackBtn").onclick = ()=> closePlayerSheet();
+document.getElementById("sheetDeleteBtn").onclick = ()=>{
+  if(!openPlayerSheetId) return;
+  const id = openPlayerSheetId;
+  closePlayerSheet();
+  deletePlayer(id);
+};
 
 /* ============================================================
    INIT
@@ -3683,7 +4604,6 @@ document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeatures
   setupDragScroll(document.getElementById("typeChips"));
   setupDragScroll(document.getElementById("sectionSwitch"));
   setupDragScroll(document.getElementById("tabSwitch"));
-  buildPlayerFormLists();
   renderGrid();
   updateTrackerBadge();
   updateHistoryBadge();
