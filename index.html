@@ -141,6 +141,9 @@
     font-family:'IBM Plex Mono', monospace;
   }
   .mode-switch button.active .badge{ background: var(--accent); color: #fff; }
+  .section-switch{ padding: 5px; margin-bottom: 12px; }
+  .section-switch button{ font-size: 0.95rem; padding: 11px 30px; }
+  .section-switch button.active{ background: var(--accent); color: #fff; }
 
   /* ---------- controls bar ---------- */
   .controls{
@@ -1177,12 +1180,17 @@
     </div>
   </header>
 
-  <div class="mode-switch">
-    <button id="btnBrowse" class="active">BROWSE</button>
-    <button id="btnPlayers">PLAYERS <span class="badge" id="playersBadge">0</span></button>
-    <button id="btnTracker">TRACKER <span class="badge" id="trackerBadge">0</span></button>
-    <button id="btnLoot">LOOT</button>
-    <button id="btnHistory">HISTORY <span class="badge" id="historyBadge">0</span></button>
+  <div class="mode-switch section-switch" id="sectionSwitch">
+    <button id="btnSectionCombat" class="active">COMBAT</button>
+    <button id="btnSectionCharacters">CHARACTERS</button>
+  </div>
+
+  <div class="mode-switch" id="tabSwitch">
+    <button id="btnBrowse" class="active" data-section="combat">BROWSE</button>
+    <button id="btnPlayers" data-section="characters">PLAYERS <span class="badge" id="playersBadge">0</span></button>
+    <button id="btnTracker" data-section="combat">TRACKER <span class="badge" id="trackerBadge">0</span></button>
+    <button id="btnLoot" data-section="characters">LOOT</button>
+    <button id="btnHistory" data-section="combat">HISTORY <span class="badge" id="historyBadge">0</span></button>
   </div>
 
   <!-- BROWSE MODE -->
@@ -3548,6 +3556,11 @@ function renderHistory(){
 /* ============================================================
    MODE SWITCHING
    ============================================================ */
+const MODE_SECTION = { browse:"combat", tracker:"combat", history:"combat", players:"characters", loot:"characters" };
+const SECTION_DEFAULT_MODE = { combat:"browse", characters:"players" };
+const lastModeBySection = { combat:"browse", characters:"players" };
+let currentSection = "combat";
+
 function setMode(mode){
   const browse = document.getElementById("browseWrap");
   const tracker = document.getElementById("trackerWrap");
@@ -3568,8 +3581,22 @@ function setMode(mode){
   if(mode==="tracker") renderTracker();
   if(mode==="loot") renderLootCatalog();
   if(mode==="history") renderHistory();
+
+  currentSection = MODE_SECTION[mode];
+  lastModeBySection[currentSection] = mode;
+  document.getElementById("btnSectionCombat").classList.toggle("active", currentSection==="combat");
+  document.getElementById("btnSectionCharacters").classList.toggle("active", currentSection==="characters");
+  document.querySelectorAll("#tabSwitch button[data-section]").forEach(btn=>{
+    btn.style.display = btn.dataset.section===currentSection ? "" : "none";
+  });
 }
 
+function setSection(section){
+  setMode(lastModeBySection[section] || SECTION_DEFAULT_MODE[section]);
+}
+
+document.getElementById("btnSectionCombat").onclick = ()=>setSection("combat");
+document.getElementById("btnSectionCharacters").onclick = ()=>setSection("characters");
 document.getElementById("btnBrowse").onclick = ()=>setMode("browse");
 document.getElementById("btnPlayers").onclick = ()=>setMode("players");
 document.getElementById("btnTracker").onclick = ()=>setMode("tracker");
@@ -3651,8 +3678,10 @@ document.getElementById("pcAddFeature").onclick = ()=> addDynamicRow("pcFeatures
 (async function init(){
   await loadState();
   renderChips();
+  setMode("browse");
   setupDragScroll(document.getElementById("typeChips"));
-  setupDragScroll(document.querySelector(".mode-switch"));
+  setupDragScroll(document.getElementById("sectionSwitch"));
+  setupDragScroll(document.getElementById("tabSwitch"));
   buildPlayerFormLists();
   renderGrid();
   updateTrackerBadge();
