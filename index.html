@@ -1273,11 +1273,10 @@
   .sheet-ab .nm{ font-size:0.7rem; font-weight:700; color:var(--text-soft); }
   .sheet-ab .md{ display:block; width:100%; background:none; border:0; cursor:pointer; font-family:'IBM Plex Mono', monospace; font-weight:800; font-size:1.7rem; padding:2px 0; color:var(--text); }
   .sheet-ab .md:hover{ color:var(--accent-ink); }
-  .sheet-ab .tt{ font-size:0.68rem; color:var(--text-faint); margin-bottom:6px; }
-  .sheet-ab .tt b{ color:var(--text); }
-  .sheet-ab .in{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:4px; text-align:left; }
-  .sheet-ab .in span{ font-size:0.6rem; color:var(--text-faint); }
-  .sheet-ab .in input{ padding:3px 4px; min-height:28px; text-align:center; font-size:0.78rem; }
+  .sheet-ab-score{ margin-top:4px; }
+  .sheet-ab-score span{ font-size:0.6rem; color:var(--text-faint); display:block; margin-bottom:2px; }
+  .sheet-ab-score input{ padding:4px 6px; min-height:30px; text-align:center; font-size:0.9rem; font-weight:700; }
+  .sheet-ab-racial{ font-size:0.6rem; color:var(--text-faint); margin-top:4px; }
 
   .sheet-cols{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.2fr); gap:16px; margin-top:12px; }
   @media (max-width:720px){ .sheet-cols{ grid-template-columns:1fr; } }
@@ -2737,7 +2736,15 @@ const ARMOR_TYPE_LABEL = { light:"Light", medium:"Medium", heavy:"Heavy", shield
 function blankSheet(){
   return {
     race:"", background:"", xpTotal:0,
-    abilBase:{str:10,dex:10,con:10,int:10,wis:10,cha:10}, bonus:{str:0,dex:0,con:0,int:0,wis:0,cha:0},
+    // abilBase is the single source of truth for each ability score --
+    // the same "one number per ability" a paper sheet uses. There is no
+    // separate always-added racial bonus field (that was the source of
+    // the double-counting bug: typing your final score into "Base" and
+    // then having a race's bonus added again on top of it). applyRace()
+    // instead edits abilBase directly, once, and remembers what it added
+    // via raceBonusApplied so switching races (or re-picking the same
+    // one) undoes the old amount before adding the new one.
+    abilBase:{str:10,dex:10,con:10,int:10,wis:10,cha:10}, raceBonusApplied:null,
     hpCur:null, hpTemp:0, hpOverride:0, hdUsed:0, ds:{s:0,f:0},
     initMisc:0, acMisc:0, speedNum:30,
     spAbil:"", slotsUsed:[0,0,0,0,0,0,0,0,0,0],
@@ -2759,7 +2766,20 @@ function ensureSheet(p){
   }
   const s = p.sheet;
   if(!s.abilBase) s.abilBase = {str:10,dex:10,con:10,int:10,wis:10,cha:10};
-  if(!s.bonus) s.bonus = {str:0,dex:0,con:0,int:0,wis:0,cha:0};
+  if(s.raceBonusApplied===undefined){
+    // One-time migration off the old always-added "bonus" overlay field.
+    // Fold whatever it held into abilBase directly (so totals don't
+    // change for characters where it was working correctly) and record
+    // it as already-applied, so applyRace() won't add it again.
+    const oldBonus = s.bonus;
+    if(oldBonus && ABIL.some(a=>num(oldBonus[a])!==0)){
+      ABIL.forEach(a=>{ s.abilBase[a] = num(s.abilBase[a]) + num(oldBonus[a]); });
+      s.raceBonusApplied = s.race ? { race:s.race, b:{...oldBonus} } : null;
+    } else {
+      s.raceBonusApplied = null;
+    }
+  }
+  delete s.bonus;
   if(!s.coins) s.coins = {cp:0,sp:0,ep:0,gp:0,pp:0};
   if(!s.ds) s.ds = {s:0,f:0};
   if(!Array.isArray(s.slotsUsed) || s.slotsUsed.length<10) s.slotsUsed = [0,0,0,0,0,0,0,0,0,0];
@@ -2813,7 +2833,7 @@ function deriveSheet(p){
   const D = { L, meta, prof: proficiencyBonus(L) };
   D.tot = {}; D.mod = {};
   ABIL.forEach(a=>{
-    const t = Math.max(1, Math.min(30, num(s.abilBase[a]) + num(s.bonus[a])));
+    const t = Math.max(1, Math.min(30, num(s.abilBase[a])));
     D.tot[a] = t; D.mod[a] = Math.floor((t-10)/2);
   });
   D.hd = meta ? meta.hd : 8;
@@ -3004,10 +3024,17 @@ function applyRace(p){
   const s = ensureSheet(p);
   const r = RACES[(s.race||"").trim().toLowerCase()];
   if(!r) return;
+  // Undo whatever this sheet last added for a race before adding the new
+  // one, so switching races -- or the field re-firing on the same race --
+  // never stacks bonuses on top of each other.
+  if(s.raceBonusApplied && s.raceBonusApplied.b){
+    ABIL.forEach(a=>{ s.abilBase[a] = num(s.abilBase[a]) - (s.raceBonusApplied.b[a]||0); });
+  }
   s.race = r.n;
-  ABIL.forEach(a=>{ s.bonus[a] = r.b[a]||0; });
+  ABIL.forEach(a=>{ if(r.b[a]) s.abilBase[a] = num(s.abilBase[a]) + r.b[a]; });
+  s.raceBonusApplied = { race:r.n, b:{...r.b} };
   s.speedNum = r.sp;
-  sheetToast(`<b>${r.n}</b><small>Speed ${r.sp} ft. Ability bonuses applied: ${Object.entries(r.b).map(([a,n])=>ABILITY_LABELS[a]+" +"+n).join(", ")}</small>`);
+  sheetToast(`<b>${r.n}</b><small>Speed ${r.sp} ft. Added directly to your ability scores: ${Object.entries(r.b).map(([a,n])=>ABILITY_LABELS[a]+" +"+n).join(", ")}. Edit the Score boxes above if that's not right.</small>`);
 }
 function applyBackground(p){
   const s = ensureSheet(p);
@@ -3094,16 +3121,16 @@ function fv(v){ return v==null ? "" : v; }
    ============================================================ */
 function buildCharacterTabHTML(p, D){
   const s = ensureSheet(p);
-  const abilTiles = ABIL.map(a=>`
+  const abilTiles = ABIL.map(a=>{
+    const racial = (s.raceBonusApplied && s.raceBonusApplied.b && s.raceBonusApplied.b[a]) ? s.raceBonusApplied.b[a] : 0;
+    return `
     <div class="sheet-ab">
       <div class="nm">${ABILITY_LABELS[a].toUpperCase()}</div>
       <button type="button" class="md" data-roll="check:${a}">${sgn(D.mod[a])}</button>
-      <div class="tt"><b>${D.tot[a]}</b> total</div>
-      <div class="in">
-        <label title="Score before racial bonus -- don't include the racial bonus here"><span>Base</span><input type="text" inputmode="numeric" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
-        <label title="Racial or other bonus -- filled in automatically when you set Race above"><span>Bonus</span><input type="text" inputmode="numeric" data-fk="sheet.bonus.${a}" value="${s.bonus[a]}"></label>
-      </div>
-    </div>`).join("");
+      <label class="sheet-ab-score" title="Your final ability score -- the same one number a paper sheet uses"><span>Score</span><input type="text" inputmode="numeric" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
+      ${racial ? `<div class="sheet-ab-racial">includes ${sgn(racial)} racial</div>` : ""}
+    </div>`;
+  }).join("");
 
   const saveRows = ABIL.map(a=>`
     <div class="sheet-lr">
@@ -3206,7 +3233,7 @@ function buildCharacterTabHTML(p, D){
         <span class="pc-section-label">Ability Scores</span><span class="pc-collapsible-chevron">▾</span>
       </button>
       <div class="pc-collapsible-body">
-        <div class="sheet-abil-hint">Each score is <b>Base + Bonus</b>. <b>Base</b> is the number before any racial bonus &mdash; if you already have your final total (e.g. from a printed sheet), put that in Base and leave Bonus at 0. Picking a Race above fills in Bonus for you automatically, so don't also add the racial bonus into Base or it'll be counted twice.</div>
+        <div class="sheet-abil-hint">Enter your final ability <b>Score</b> for each &mdash; the same single number a printed sheet uses. Picking a Race above adds its bonus directly into Score for you (and swaps it out cleanly if you change Race again), so there's nothing extra to add yourself.</div>
         <div class="sheet-abilities" id="sheetAbilities">${abilTiles}</div>
         <div class="row" style="margin-top:10px;gap:8px"><span class="small muted" style="color:var(--text-faint);font-size:0.78rem">Set scores:</span><button type="button" class="chip" data-act="std">Standard array</button><button type="button" class="chip" data-act="rollabil">Roll 4d6</button></div>
       </div>
