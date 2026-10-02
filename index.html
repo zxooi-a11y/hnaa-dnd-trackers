@@ -1351,9 +1351,15 @@
     .sheet-combat-tiles .sheet-tile .mini{ gap:3px; font-size:0.6rem; }
     .sheet-combat-tiles .sheet-tile .mini input{ width:34px; padding:2px 3px; }
 
-    /* Hit dice / Death saves: stack instead of squeezing two panels
-       side by side, which is what was overflowing the death-save dots. */
-    .sheet-hd-death{ grid-template-columns: 1fr; }
+    /* Hit dice / Death saves: keep the two panels side by side, but
+       shrink the death-save row (label, dots, gaps) and panel padding
+       so it fits its half-width column instead of overflowing it. */
+    .sheet-hd-death{ gap:8px; }
+    .sheet-hd-death .sheet-panel{ padding:8px; }
+    .sheet-dsrow{ gap:6px; margin:4px 0; }
+    .sheet-dsrow>span{ width:auto; font-size:0.66rem; }
+    .sheet-dots{ gap:5px; }
+    .sheet-dot{ width:19px; height:19px; }
 
     /* Passive Perception / Insight / Investigation: keep all three in
        one row by shrinking the tiles instead of wrapping. */
