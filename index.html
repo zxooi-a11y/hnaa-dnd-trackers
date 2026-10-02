@@ -1231,6 +1231,9 @@
   .sheet-g2{ grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); }
   .sheet-g3{ grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); }
   .sheet-g4{ grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); }
+  .sheet-combat-tiles{ grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); }
+  .sheet-view .pc-collapsible{ margin-bottom: 14px; }
+  .sheet-view .pc-collapsible:last-child{ margin-bottom: 0; }
 
   .sheet-tile{
     background: var(--surface-soft); border-radius: var(--radius-md); padding:12px; text-align:center;
@@ -1335,6 +1338,30 @@
   .sheet-add-btn{ margin-top:10px; }
   .sheet-empty{ color:var(--text-faint); padding:10px 0; font-size:0.85rem; }
   @media (max-width:520px){ .sheet-item-grid{ grid-template-columns:repeat(2,1fr); } }
+
+  @media (max-width:620px){
+    /* Armor Class / Initiative / Speed / Proficiency: keep all four in
+       one row instead of wrapping to 2x2, by shrinking the tiles
+       themselves (smaller padding/value size) rather than the grid. */
+    .sheet-combat-tiles{ grid-template-columns: repeat(4, minmax(0,1fr)); gap:6px; }
+    .sheet-combat-tiles .sheet-tile{ padding:8px 4px; }
+    .sheet-combat-tiles .sheet-tile .lab{ font-size:0.56rem; white-space:normal; line-height:1.2; }
+    .sheet-combat-tiles .sheet-tile .v{ font-size:1.15rem; }
+    .sheet-combat-tiles .sheet-tile input{ font-size:0.95rem !important; }
+    .sheet-combat-tiles .sheet-tile .mini{ gap:3px; font-size:0.6rem; }
+    .sheet-combat-tiles .sheet-tile .mini input{ width:34px; padding:2px 3px; }
+
+    /* Hit dice / Death saves: stack instead of squeezing two panels
+       side by side, which is what was overflowing the death-save dots. */
+    .sheet-hd-death{ grid-template-columns: 1fr; }
+
+    /* Passive Perception / Insight / Investigation: keep all three in
+       one row by shrinking the tiles instead of wrapping. */
+    .sheet-pass{ display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px; }
+    .sheet-pass .sheet-tile{ padding:8px 4px; }
+    .sheet-pass .sheet-tile .lab{ font-size:0.56rem; }
+    .sheet-pass .sheet-tile .v{ font-size:1.15rem; }
+  }
 </style>
 </head>
 <body>
@@ -3140,7 +3167,7 @@ function buildCharacterTabHTML(p, D){
         <span class="pc-collapsible-chevron">▾</span>
       </button>
       <div class="pc-collapsible-body">
-        <div class="sheet-g sheet-g4">
+        <div class="sheet-g sheet-combat-tiles">
           <div class="sheet-tile"><div class="lab">Armor Class</div><span class="v">${D.ac}</span><div class="mini"><span>Misc</span><input type="number" data-fk="sheet.acMisc" value="${s.acMisc}"></div></div>
           <div class="sheet-tile"><div class="lab">Initiative</div><button type="button" class="v roll" data-roll="init">${sgn(D.init)}</button><div class="mini"><span>Misc</span><input type="number" data-fk="sheet.initMisc" value="${s.initMisc}"></div></div>
           <div class="sheet-tile"><div class="lab">Speed (ft)</div><input type="number" min="0" step="5" style="font:800 1.5rem 'IBM Plex Mono',monospace;padding:4px;text-align:center" data-fk="sheet.speedNum" value="${s.speedNum}"><div class="sub">${D.speedEff!==num(s.speedNum)?"Effective "+D.speedEff+" ft (heavy armor)":""}</div></div>
@@ -3160,7 +3187,7 @@ function buildCharacterTabHTML(p, D){
             <label>Max HP override<input type="number" min="0" data-fk="sheet.hpOverride" value="${s.hpOverride||""}" placeholder="auto ${D.autoHP}"></label>
           </div>
         </div>
-        <div class="sheet-g sheet-g2" style="margin-top:12px">
+        <div class="sheet-g sheet-g2 sheet-hd-death" style="margin-top:12px">
           <div class="sheet-panel"><h4>Hit dice</h4><div class="sheet-big">${D.hdLeft} <span style="font-size:0.9rem;color:var(--text-soft)">of ${D.L} d${D.hd}</span></div>
             <div class="row" style="margin-top:8px"><button type="button" class="chip" data-act="spendhd">Spend a hit die</button></div>
             <div class="row" style="margin-top:8px;gap:8px"><button type="button" class="chip" data-act="short">Short rest</button><button type="button" class="chip" data-act="long">Long rest</button></div></div>
