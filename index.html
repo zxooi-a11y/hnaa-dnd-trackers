@@ -655,13 +655,6 @@
   }
   .tracker-remove:hover{ color: var(--worst); }
 
-  .tracker-conditions-row{
-    display:flex;
-    align-items:center;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 2px 18px 0 64px;
-  }
   .condition-pills{
     display:flex;
     flex-wrap: wrap;
@@ -4080,15 +4073,13 @@ function renderTracker(){
         </div>
         <button class="tracker-remove" data-remove-tracker="${entry.instanceId}" title="Remove from tracker">&times;</button>
       </div>
-      <div class="tracker-conditions-row">
+      ${deathSaveHTML}
+      <div class="tracker-foot">
         <div class="condition-pills">${pillsHTML}</div>
         <select class="condition-select" data-condition-select="${entry.instanceId}">
           <option value="">+ condition…</option>
           ${conditionOptionsHTML}
         </select>
-      </div>
-      ${deathSaveHTML}
-      <div class="tracker-foot">
         <input type="number" class="hp-log-input" placeholder="amount" min="0" data-hp-amount="${entry.instanceId}">
         <button class="hp-log-btn dmg" data-damage="${entry.instanceId}">− damage</button>
         <button class="hp-log-btn heal" data-heal="${entry.instanceId}">+ heal</button>
