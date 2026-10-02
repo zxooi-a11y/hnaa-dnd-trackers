@@ -3104,8 +3104,8 @@ function buildCharacterTabHTML(p, D){
       <button type="button" class="md" data-roll="check:${a}">${sgn(D.mod[a])}</button>
       <div class="tt"><b>${D.tot[a]}</b> total</div>
       <div class="in">
-        <label><span>Base</span><input type="number" min="1" max="30" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
-        <label><span>Bonus</span><input type="number" data-fk="sheet.bonus.${a}" value="${s.bonus[a]}"></label>
+        <label><span>Base</span><input type="text" inputmode="numeric" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
+        <label><span>Bonus</span><input type="text" inputmode="numeric" data-fk="sheet.bonus.${a}" value="${s.bonus[a]}"></label>
       </div>
     </div>`).join("");
 
@@ -3138,7 +3138,7 @@ function buildCharacterTabHTML(p, D){
       <div class="pc-collapsible-body">
         <div class="sheet-g sheet-g4">
           <label>Player name<input type="text" data-fk="playerName" value="${fv(p.playerName)}" placeholder="Your name"></label>
-          <label>Level<input type="number" min="1" max="20" data-fk="level" value="${D.L}"></label>
+          <label>Level<input type="text" inputmode="numeric" data-fk="level" value="${D.L}"></label>
           <label>Race<input type="text" list="dl-race" data-fk="sheet.race" value="${fv(s.race)}" placeholder="Pick or type"></label>
           <label>Class<input type="text" list="dl-class" data-fk="charClass" value="${fv(p.charClass)}" placeholder="e.g. Paladin"></label>
           <label>Subclass<input type="text" data-fk="subclass" value="${fv(p.subclass)}" placeholder="e.g. Oath of Devotion"></label>
@@ -3161,7 +3161,7 @@ function buildCharacterTabHTML(p, D){
         <div class="sheet-g sheet-g3">
           <label>Add XP<input type="number" id="sheetXpAdd" placeholder="e.g. 250"></label>
           <button type="button" class="chip" data-act="addxp" style="align-self:end">Add XP</button>
-          <label>Total XP<input type="number" min="0" data-fk="sheet.xpTotal" value="${s.xpTotal}"></label>
+          <label>Total XP<input type="text" inputmode="numeric" data-fk="sheet.xpTotal" value="${s.xpTotal}"></label>
         </div>
       </div>
     </div>
@@ -3174,9 +3174,9 @@ function buildCharacterTabHTML(p, D){
       </button>
       <div class="pc-collapsible-body">
         <div class="sheet-g sheet-combat-tiles">
-          <div class="sheet-tile"><div class="lab">Armor Class</div><span class="v">${D.ac}</span><div class="mini"><span>Misc</span><input type="number" data-fk="sheet.acMisc" value="${s.acMisc}"></div></div>
-          <div class="sheet-tile"><div class="lab">Initiative</div><button type="button" class="v roll" data-roll="init">${sgn(D.init)}</button><div class="mini"><span>Misc</span><input type="number" data-fk="sheet.initMisc" value="${s.initMisc}"></div></div>
-          <div class="sheet-tile"><div class="lab">Speed (ft)</div><input type="number" min="0" step="5" style="font:800 1.5rem 'IBM Plex Mono',monospace;padding:4px;text-align:center" data-fk="sheet.speedNum" value="${s.speedNum}"><div class="sub">${D.speedEff!==num(s.speedNum)?"Effective "+D.speedEff+" ft (heavy armor)":""}</div></div>
+          <div class="sheet-tile"><div class="lab">Armor Class</div><span class="v">${D.ac}</span><div class="mini"><span>Misc</span><input type="text" inputmode="numeric" data-fk="sheet.acMisc" value="${s.acMisc}"></div></div>
+          <div class="sheet-tile"><div class="lab">Initiative</div><button type="button" class="v roll" data-roll="init">${sgn(D.init)}</button><div class="mini"><span>Misc</span><input type="text" inputmode="numeric" data-fk="sheet.initMisc" value="${s.initMisc}"></div></div>
+          <div class="sheet-tile"><div class="lab">Speed (ft)</div><input type="text" inputmode="numeric" style="font:800 1.5rem 'IBM Plex Mono',monospace;padding:4px;text-align:center" data-fk="sheet.speedNum" value="${s.speedNum}"><div class="sub">${D.speedEff!==num(s.speedNum)?"Effective "+D.speedEff+" ft (heavy armor)":""}</div></div>
           <div class="sheet-tile"><div class="lab">Proficiency</div><span class="v">${sgn(D.prof)}</span></div>
         </div>
         <div class="sheet-hp">
@@ -3188,9 +3188,9 @@ function buildCharacterTabHTML(p, D){
             <button type="button" class="chip save-log-btn" data-act="heal">Heal</button>
           </div>
           <div class="sheet-g sheet-g3">
-            <label>Current HP<input type="number" min="0" data-fk="sheet.hpCurView" value="${D.hp}"></label>
-            <label>Temporary HP<input type="number" min="0" data-fk="sheet.hpTemp" value="${s.hpTemp}"></label>
-            <label>Max HP override<input type="number" min="0" data-fk="sheet.hpOverride" value="${s.hpOverride||""}" placeholder="auto ${D.autoHP}"></label>
+            <label>Current HP<input type="text" inputmode="numeric" data-fk="sheet.hpCurView" value="${D.hp}"></label>
+            <label>Temporary HP<input type="text" inputmode="numeric" data-fk="sheet.hpTemp" value="${s.hpTemp}"></label>
+            <label>Max HP override<input type="text" inputmode="numeric" data-fk="sheet.hpOverride" value="${s.hpOverride||""}" placeholder="auto ${D.autoHP}"></label>
           </div>
         </div>
         <div class="sheet-g sheet-g2 sheet-hd-death" style="margin-top:12px">
@@ -3396,7 +3396,7 @@ function buildInventoryTabHTML(p, D){
         <label>Damage dice<input type="text" data-fk="list.weapons.${w.id}.dice" value="${fv(w.dice)}" placeholder="1d8"></label>
         <label>Damage type<input type="text" data-fk="list.weapons.${w.id}.dtype" value="${fv(w.dtype)}" placeholder="slashing"></label>
         <label>Ability<select data-fk="list.weapons.${w.id}.ability"><option value="auto" ${!w.ability||w.ability==='auto'?'selected':''}>Auto</option>${ABIL.map(a=>`<option value="${a}" ${w.ability===a?'selected':''}>${ABILITY_LABELS[a]}</option>`).join("")}</select></label>
-        <label>Magic bonus<input type="number" data-fk="list.weapons.${w.id}.magic" value="${w.magic||0}"></label>
+        <label>Magic bonus<input type="text" inputmode="numeric" data-fk="list.weapons.${w.id}.magic" value="${w.magic||0}"></label>
         <label>Properties<input type="text" data-fk="list.weapons.${w.id}.props" value="${fv(w.props)}" placeholder="Finesse, light"></label>
       </div>
       <div class="sheet-item-foot">
@@ -3418,9 +3418,9 @@ function buildInventoryTabHTML(p, D){
       <div class="sheet-item-grid">
         <label>Name<input type="text" data-fk="list.armors.${a.id}.name" value="${fv(a.name)}" placeholder="Armor"></label>
         <label>Type<select data-fk="list.armors.${a.id}.type">${Object.keys(ARMOR_TYPE_LABEL).map(t=>`<option value="${t}" ${a.type===t?'selected':''}>${ARMOR_TYPE_LABEL[t]}</option>`).join("")}</select></label>
-        <label>Base AC<input type="number" data-fk="list.armors.${a.id}.ac" value="${a.ac||0}"></label>
-        <label>Magic bonus<input type="number" data-fk="list.armors.${a.id}.magic" value="${a.magic||0}"></label>
-        <label>Str needed<input type="number" data-fk="list.armors.${a.id}.str" value="${a.str||0}"></label>
+        <label>Base AC<input type="text" inputmode="numeric" data-fk="list.armors.${a.id}.ac" value="${a.ac||0}"></label>
+        <label>Magic bonus<input type="text" inputmode="numeric" data-fk="list.armors.${a.id}.magic" value="${a.magic||0}"></label>
+        <label>Str needed<input type="text" inputmode="numeric" data-fk="list.armors.${a.id}.str" value="${a.str||0}"></label>
       </div>
       <div class="sheet-item-foot">
         <span class="sheet-readout" style="cursor:default">${desc}</span>
@@ -3469,7 +3469,7 @@ function buildInventoryTabHTML(p, D){
         <span class="pc-section-label">Gear &amp; Coins</span><span class="pc-collapsible-chevron">▾</span>
       </button>
       <div class="pc-collapsible-body">
-        <div class="sheet-coins">${["cp","sp","ep","gp","pp"].map(c=>`<label>${c}<input type="number" min="0" data-fk="sheet.coins.${c}" value="${s.coins[c]||0}"></label>`).join("")}</div>
+        <div class="sheet-coins">${["cp","sp","ep","gp","pp"].map(c=>`<label>${c}<input type="text" inputmode="numeric" data-fk="sheet.coins.${c}" value="${s.coins[c]||0}"></label>`).join("")}</div>
         <div style="margin-top:14px;font-weight:800;font-size:0.85rem">Carried gear</div>
         ${gearRows}
         <button type="button" class="chip sheet-add-btn" data-add="gear">+ add item</button>
@@ -3610,7 +3610,7 @@ function sheetFieldHandler(e){
 
   let val = el.value;
   if(el.type==="checkbox") val = el.checked;
-  else if(el.type==="number") val = val===""?0:num(val);
+  else if(el.type==="number" || el.inputMode==="numeric") val = val===""?0:num(val);
 
   if(path==="sheet.hpCurView"){
     const D = deriveSheet(p);
