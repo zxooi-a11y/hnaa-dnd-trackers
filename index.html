@@ -1264,6 +1264,8 @@
   .sheet-panel h4{ margin:0 0 8px; font-size:0.85rem; font-weight:800; }
   .sheet-big{ font-family:'IBM Plex Mono', monospace; font-weight:800; font-size:1.4rem; }
 
+  .sheet-abil-hint{ font-size:0.78rem; color:var(--text-soft); background:var(--accent-soft); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:10px; }
+  .sheet-abil-hint b{ color:var(--accent-ink); }
   .sheet-abilities{ display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; cursor:grab; }
   .sheet-abilities::-webkit-scrollbar{ display:none; }
   .sheet-abilities.dragging{ cursor:grabbing; user-select:none; }
@@ -3098,8 +3100,8 @@ function buildCharacterTabHTML(p, D){
       <button type="button" class="md" data-roll="check:${a}">${sgn(D.mod[a])}</button>
       <div class="tt"><b>${D.tot[a]}</b> total</div>
       <div class="in">
-        <label><span>Base</span><input type="text" inputmode="numeric" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
-        <label><span>Bonus</span><input type="text" inputmode="numeric" data-fk="sheet.bonus.${a}" value="${s.bonus[a]}"></label>
+        <label title="Score before racial bonus -- don't include the racial bonus here"><span>Base</span><input type="text" inputmode="numeric" data-fk="sheet.abilBase.${a}" value="${s.abilBase[a]}"></label>
+        <label title="Racial or other bonus -- filled in automatically when you set Race above"><span>Bonus</span><input type="text" inputmode="numeric" data-fk="sheet.bonus.${a}" value="${s.bonus[a]}"></label>
       </div>
     </div>`).join("");
 
@@ -3204,6 +3206,7 @@ function buildCharacterTabHTML(p, D){
         <span class="pc-section-label">Ability Scores</span><span class="pc-collapsible-chevron">▾</span>
       </button>
       <div class="pc-collapsible-body">
+        <div class="sheet-abil-hint">Each score is <b>Base + Bonus</b>. <b>Base</b> is the number before any racial bonus &mdash; if you already have your final total (e.g. from a printed sheet), put that in Base and leave Bonus at 0. Picking a Race above fills in Bonus for you automatically, so don't also add the racial bonus into Base or it'll be counted twice.</div>
         <div class="sheet-abilities" id="sheetAbilities">${abilTiles}</div>
         <div class="row" style="margin-top:10px;gap:8px"><span class="small muted" style="color:var(--text-faint);font-size:0.78rem">Set scores:</span><button type="button" class="chip" data-act="std">Standard array</button><button type="button" class="chip" data-act="rollabil">Roll 4d6</button></div>
       </div>
