@@ -1171,6 +1171,42 @@
      ============================================================ */
   .sheet-view{ display:none; }
   .sheet-view.show{ display:block; }
+  /* Form controls don't inherit font-family from the page by default in
+     every browser, and labels can pick up a serif fallback if nothing
+     in the chain claims them explicitly -- so, matching the pattern
+     the rest of this app already uses (.hb-field input, .chip, etc),
+     set it explicitly here rather than relying on inheritance. */
+  .sheet-view, .sheet-view label, .sheet-view h4, .sheet-view button{
+    font-family:'Plus Jakarta Sans', sans-serif;
+  }
+  .sheet-view input, .sheet-view select, .sheet-view textarea{
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--text);
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    border-radius: var(--radius-sm);
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .sheet-view label{
+    display:block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 2px;
+  }
+  .sheet-view label > input, .sheet-view label > select, .sheet-view label > textarea{
+    margin-top: 5px;
+  }
+  .sheet-view input[type="checkbox"]{
+    width: auto; min-height: 0; margin: 0; accent-color: var(--accent); flex: 0 0 auto;
+  }
   .sheet-back{
     background: none; border: none; color: var(--text-soft); font-size: 0.82rem;
     font-weight: 700; cursor: pointer; padding: 6px 0 14px; display:flex; align-items:center; gap:4px;
