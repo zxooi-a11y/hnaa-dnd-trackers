@@ -2661,6 +2661,7 @@ function normClassKey(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "
 
 let openPlayerSheetId = null;
 let lastFeatClassKey = "";
+let suppressFieldEvents = false;
 const ABIL = ["str","dex","con","int","wis","cha"];
 
 /* ============================================================
@@ -3487,9 +3488,18 @@ function buildInventoryTabHTML(p, D){
 function renderSheet(p){
   const root = document.getElementById("playerSheetView");
   const active = document.activeElement;
-  let fk=null, selStart=null, selEnd=null;
+  let fk=null, selStart=null, selEnd=null, rawValue=null;
   if(active && root.contains(active) && active.dataset && active.dataset.fk){
     fk = active.dataset.fk; selStart = active.selectionStart; selEnd = active.selectionEnd;
+    // Numeric fields coerce blank/partial input ("", "-") to 0 in the data
+    // model so calculations keep working, but that coerced value is what
+    // gets baked into the HTML this function rebuilds -- so without this,
+    // clearing a field to type a new number snaps it back to "0" (with
+    // the cursor before that 0) on every keystroke. Restore literally
+    // what the user typed instead of what the rebuilt HTML says.
+    if((active.tagName==="INPUT" && active.type!=="checkbox") || active.tagName==="TEXTAREA"){
+      rawValue = active.value;
+    }
   }
   const D = syncCompatFields(p);
   syncPlayerTrackerHP(p, D);
@@ -3505,14 +3515,30 @@ function renderSheet(p){
   document.querySelectorAll("#sheetTabs [data-sheet-tab]").forEach(b=>b.classList.toggle("active", b.dataset.sheetTab===activeTab));
   ["character","features","spells","inventory"].forEach(t=>{ document.getElementById("sheetTab-"+t).hidden = t!==activeTab; });
 
+  // Replacing the HTML under the currently-focused field removes it from
+  // the document, which the browser treats as a real blur (and, since its
+  // value differs from its value-at-focus-time, a real "change") -- a
+  // change event our own rebuild caused, not the user. Left unguarded,
+  // that self-inflicted change event re-enters sheetFieldHandler, which
+  // schedules *another* render, whose own rebuild fires the same thing
+  // again; the cascade only stops once a render happens to land while
+  // nothing is focused, by which point the field can be left showing a
+  // stale value with nothing left to trigger a fix. Suppress field
+  // handling for the moment these four lines run.
+  suppressFieldEvents = true;
   document.getElementById("sheetTab-character").innerHTML = buildCharacterTabHTML(p, D);
   document.getElementById("sheetTab-features").innerHTML = buildFeaturesTabHTML(p, D);
   document.getElementById("sheetTab-spells").innerHTML = buildSpellsTabHTML(p, D);
   document.getElementById("sheetTab-inventory").innerHTML = buildInventoryTabHTML(p, D);
+  suppressFieldEvents = false;
 
   if(fk){
     const el = root.querySelector(`[data-fk="${CSS.escape(fk)}"]`);
-    if(el){ el.focus(); if(selStart!=null && el.setSelectionRange){ try{ el.setSelectionRange(selStart, selEnd); }catch(err){} } }
+    if(el){
+      el.focus();
+      if(rawValue!=null && ((el.tagName==="INPUT" && el.type!=="checkbox") || el.tagName==="TEXTAREA")) el.value = rawValue;
+      if(selStart!=null && el.setSelectionRange){ try{ el.setSelectionRange(selStart, selEnd); }catch(err){} }
+    }
   }
   persistState();
 }
@@ -3598,6 +3624,7 @@ function doSheetAct(p, act){
    ============================================================ */
 const SHEET_CHANGE_ONLY_FIELDS = ["level","sheet.race","charClass","sheet.background","sheet.xpTotal","subclass"];
 function sheetFieldHandler(e){
+  if(suppressFieldEvents) return;
   const root = document.getElementById("playerSheetView");
   if(!root || !root.classList.contains("show")) return;
   const el = e.target.closest("[data-fk]");
@@ -3630,8 +3657,28 @@ function sheetFieldHandler(e){
 }
 document.addEventListener("input", sheetFieldHandler);
 document.addEventListener("change", sheetFieldHandler);
+// A field we just rebuilt out from under the user (see suppressFieldEvents
+// above) can end up with its "value changed since focus" baseline quietly
+// reset by our own programmatic .value assignment -- so when the user
+// *genuinely* leaves that field afterwards, the browser has nothing left
+// to consider "changed" and never fires "change" at all, leaving the
+// field stuck showing the raw text it had mid-edit (e.g. a blank field
+// that should have settled back to "0"). Blur doesn't bubble, so this
+// needs the capture phase; it force a render on any real focus-out so
+// the field catches up to the data model's actual value.
+document.addEventListener("blur", e=>{
+  if(suppressFieldEvents) return;
+  const root = document.getElementById("playerSheetView");
+  if(!root || !root.classList.contains("show")) return;
+  const el = e.target.closest && e.target.closest("[data-fk]");
+  if(!el) return;
+  const p = findCreature(openPlayerSheetId);
+  if(!p) return;
+  scheduleSheetRender(p);
+}, true);
 
 document.addEventListener("change", e=>{
+  if(suppressFieldEvents) return;
   const root = document.getElementById("playerSheetView");
   if(!root || !root.classList.contains("show")) return;
   const p = findCreature(openPlayerSheetId);
