@@ -600,6 +600,9 @@
     cursor: pointer;
   }
   .init-roll-btn:hover{ background: var(--accent-ink); }
+  .init-roll-btn svg{ width:13px; height:13px; display:block; }
+  .roll-all-init-btn{ display:inline-flex; align-items:center; gap:6px; }
+  .roll-all-init-btn svg{ width:14px; height:14px; flex:none; }
   .init-badge input{
     width: 34px;
     text-align:center;
@@ -1446,6 +1449,7 @@
       <input type="text" id="encounterNameInput" class="encounter-name-input" placeholder="Name this encounter…">
       <button id="trackerSaveTemplate" class="chip">+ save as template</button>
       <button id="trackerSaveLog" class="chip save-log-btn">save encounter</button>
+      <button id="trackerRollAllInit" class="chip roll-all-init-btn" title="Roll d20 initiative for every monster in this encounter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12,2 21,8 21,16 12,22 3,16 3,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="3" y1="8" x2="21" y2="16"/><line x1="21" y1="8" x2="3" y2="16"/></svg> roll all monster initiative</button>
       <button id="trackerSort" class="chip">re-sort by initiative</button>
       <button id="trackerClearAll" class="chip">clear encounter</button>
     </div>
@@ -4010,6 +4014,8 @@ function sortedTracker(){
   return [...trackerList].sort((a,b)=> b.initiative - a.initiative);
 }
 
+const D20_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12,2 21,8 21,16 12,22 3,16 3,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="3" y1="8" x2="21" y2="16"/><line x1="21" y1="8" x2="3" y2="16"/></svg>';
+
 function monsterInitBonus(m){
   if(m.initiative !== undefined && m.initiative !== null && m.initiative !== ""){
     const n = parseInt(m.initiative, 10);
@@ -4017,11 +4023,15 @@ function monsterInitBonus(m){
   }
   return (m.abilities && m.abilities.dex) ? m.abilities.dex[1] : 0;
 }
+function rollInitiativeD20(adv, dis){
+  const a = d(20), b = (adv||dis) ? d(20) : null;
+  const r = b===null ? a : (adv ? Math.max(a,b) : Math.min(a,b));
+  return { r, a, b };
+}
 function rollTrackerInitiative(entry, m, displayName, ev){
   const bonus = monsterInitBonus(m);
   const adv = ev && ev.shiftKey, dis = ev && ev.altKey && !adv;
-  const a = d(20), b = (adv||dis) ? d(20) : null;
-  const r = b===null ? a : (adv ? Math.max(a,b) : Math.min(a,b));
+  const { r, a, b } = rollInitiativeD20(adv, dis);
   const total = r + bonus;
   entry.initiative = total;
   sheetToast(
@@ -4029,6 +4039,27 @@ function rollTrackerInitiative(entry, m, displayName, ev){
     r===20?"crit":r===1?"fumble":""
   );
   logAction(`Rolled initiative for ${displayName}: d20 (${r}) ${sgn(bonus)} = ${total}.`);
+  renderTracker();
+}
+function rollAllMonsterInitiative(ev){
+  const adv = ev && ev.shiftKey, dis = ev && ev.altKey && !adv;
+  const npcEntries = trackerList.filter(entry=>{
+    const m = findCreature(entry.monsterId);
+    return m && !m.isPlayer;
+  });
+  if(npcEntries.length === 0){
+    sheetToast(`<b>No monsters to roll</b><small>Add some non-player creatures to the tracker first.</small>`);
+    return;
+  }
+  const names = npcEntries.map(entry=>{
+    const m = findCreature(entry.monsterId);
+    const bonus = monsterInitBonus(m);
+    const { r } = rollInitiativeD20(adv, dis);
+    entry.initiative = r + bonus;
+    return entryDisplayName(entry);
+  });
+  sheetToast(`<b>Rolled Initiative</b><small>${npcEntries.length} monster${npcEntries.length>1?"s":""}${adv?" with advantage":dis?" with disadvantage":""}: ${names.join(", ")}</small>`);
+  logAction(`Rolled initiative for ${npcEntries.length} monster${npcEntries.length>1?"s":""}: ${names.join(", ")}.`);
   renderTracker();
 }
 
@@ -4131,7 +4162,7 @@ function renderTracker(){
         <div class="init-badge">
           <input type="number" class="mono" data-init="${entry.instanceId}" value="${entry.initiative}">
           <div class="init-lbl">INIT</div>
-          ${!m.isPlayer ? `<button type="button" class="init-roll-btn" data-roll-init="${entry.instanceId}" title="Roll d20 ${sgn(monsterInitBonus(m))} for initiative">🎲</button>` : ""}
+          ${!m.isPlayer ? `<button type="button" class="init-roll-btn" data-roll-init="${entry.instanceId}" title="Roll d20 ${sgn(monsterInitBonus(m))} for initiative">${D20_ICON_SVG}</button>` : ""}
         </div>
         <div class="tracker-line"></div>
         <div class="tracker-title-col">
@@ -4717,6 +4748,7 @@ document.getElementById("lootSearch").addEventListener("input", (e)=>{
   renderLootCatalog();
 });
 document.getElementById("trackerSort").onclick = ()=>renderTracker();
+document.getElementById("trackerRollAllInit").onclick = (e)=>rollAllMonsterInitiative(e);
 document.getElementById("trackerSaveLog").onclick = ()=>saveEncounterLog();
 document.getElementById("trackerSaveTemplate").onclick = ()=>saveAsTemplate();
 document.getElementById("trackerClearAll").onclick = ()=>{
