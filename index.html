@@ -1409,14 +1409,15 @@
     .tracker-btn-row::-webkit-scrollbar{ display:none; }
     .tracker-btn-row .chip{ flex:0 0 auto; font-size:0.7rem; padding:7px 9px; }
 
-    /* Tracker row: the fixed-width HP block was leaving almost no
-       room for the name/meta column, so long meta text (size, type,
-       CR) overflowed its column and visually bled into the HP bar.
-       Narrow the HP block and tighten the row so the name column has
-       enough space to wrap normally instead. */
-    .tracker-head{ gap:8px; padding:12px 10px 12px 6px; }
-    .hp-block{ width:112px; }
-    .hp-numbers{ font-size:0.64rem; }
+    /* Tracker row: put the name/meta and the HP bar on their own
+       rows instead of squeezing them side by side -- the fixed-width
+       HP block left almost no room for the name column, so long meta
+       text (size, type, CR) overflowed and visually bled into the HP
+       bar. The remove (x) button is reordered to stay on the name
+       row (top-right) instead of wrapping down with the HP bar. */
+    .tracker-head{ flex-wrap: wrap; gap:8px; padding:12px 10px 12px 6px; }
+    .tracker-remove{ order: 1; }
+    .hp-block{ order: 2; flex: 1 1 100%; width: auto; margin-left: 64px; }
     .tracker-name{ font-size:0.92rem; }
     .tracker-meta{ font-size:0.68rem; }
   }
