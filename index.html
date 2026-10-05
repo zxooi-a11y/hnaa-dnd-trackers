@@ -3928,6 +3928,7 @@ document.addEventListener("click", e=>{
    ============================================================ */
 function openPlayerSheet(id){
   openPlayerSheetId = id;
+  saveView();
   sheetOpenSecs = new Set(DEFAULT_OPEN_SECS);
   lastFeatClassKey = "";
   document.getElementById("playersListView").style.display = "none";
@@ -3937,6 +3938,7 @@ function openPlayerSheet(id){
 }
 function closePlayerSheet(){
   openPlayerSheetId = null;
+  saveView();
   document.getElementById("playerSheetView").classList.remove("show");
   document.getElementById("playersListView").style.display = "";
   renderPlayers();
@@ -4891,6 +4893,13 @@ function renderHistory(){
 const MODE_SECTION = { browse:"combat", tracker:"combat", history:"combat", players:"characters", loot:"characters" };
 const SECTION_DEFAULT_MODE = { combat:"browse", characters:"players" };
 const lastModeBySection = { combat:"browse", characters:"players" };
+const VIEW_KEY = "fieldCodexView";
+function saveView(){
+  try{
+    localStorage.setItem(VIEW_KEY, JSON.stringify({ mode: currentMode, last: lastModeBySection, sheet: openPlayerSheetId }));
+  }catch(e){}
+}
+let currentMode = "browse";
 let currentSection = "combat";
 
 function setMode(mode){
@@ -4915,7 +4924,9 @@ function setMode(mode){
   if(mode==="history") renderHistory();
 
   currentSection = MODE_SECTION[mode];
+  currentMode = mode;
   lastModeBySection[currentSection] = mode;
+  saveView();
   document.getElementById("btnSectionCombat").classList.toggle("active", currentSection==="combat");
   document.getElementById("btnSectionCharacters").classList.toggle("active", currentSection==="characters");
   document.querySelectorAll("#tabSwitch button[data-section]").forEach(btn=>{
@@ -5011,7 +5022,14 @@ document.getElementById("sheetDeleteBtn").onclick = ()=>{
 (async function init(){
   await loadState();
   renderChips();
-  setMode("browse");
+  let savedView = null;
+  try{ savedView = JSON.parse(localStorage.getItem(VIEW_KEY) || "null"); }catch(e){}
+  if(savedView && savedView.last){
+    ["combat","characters"].forEach(sec=>{
+      if(savedView.last[sec] && MODE_SECTION[savedView.last[sec]] === sec) lastModeBySection[sec] = savedView.last[sec];
+    });
+  }
+  setMode(savedView && MODE_SECTION[savedView.mode] ? savedView.mode : "browse");
   setupDragScroll(document.getElementById("typeChips"));
   setupDragScroll(document.getElementById("sectionSwitch"));
   setupDragScroll(document.getElementById("tabSwitch"));
@@ -5024,6 +5042,7 @@ document.getElementById("sheetDeleteBtn").onclick = ()=>{
   renderPlayers();
   renderSavedEncounters();
   renderLootCatalog();
+  if(savedView && savedView.sheet && currentMode==="players" && findCreature(savedView.sheet)) openPlayerSheet(savedView.sheet);
 })();
 </script>
 </body>
