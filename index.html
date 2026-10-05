@@ -520,6 +520,11 @@
   .history-detail.open{ display:block; }
   .history-notes{ white-space:pre-wrap; font-size:0.85rem; color:var(--text-soft); padding:2px 4px 6px; }
   .history-detail textarea{ width:100%; margin-top:3px; padding:8px 10px; font-size:0.85rem; font-family:inherit; border:1px solid var(--border); background:var(--surface-soft); color:var(--text); border-radius:var(--radius-sm); resize:vertical; }
+  .history-card{ flex-wrap: wrap; align-items: flex-start; gap: 10px 14px; }
+  .history-trash{ padding: 2px 4px; }
+  .history-trash svg{ width: 20px; height: 20px; display: block; }
+  .history-card-foot{ flex: 1 1 100%; display: flex; align-items: center; gap: 10px; }
+  .history-card-foot .history-edit-btn{ margin-left: auto; }
   .history-edit-btn{
     flex: 0 0 auto;
     background: var(--accent-soft);
@@ -4701,6 +4706,13 @@ function updateHistoryBadge(){
   document.getElementById("historyBadge").textContent = historyLog.length;
 }
 
+const TRASH_ICON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>';
+
+function confirmDeleteHistory(h){
+  if(!confirm(`Delete "${h.name}" from History?`)) return;
+  if(!confirm("This permanently deletes the record, its notes and its activity log, and can't be undone.\n\nReally delete it?")) return;
+  removeHistoryEntry(h.id);
+}
 function removeHistoryEntry(id){
   historyLog = historyLog.filter(h=>h.id!==id);
   historyExpandedSet.delete(id);
@@ -4819,15 +4831,17 @@ function renderHistory(){
       : `<div class="activity-row"><span class="activity-text" style="color:var(--text-faint)">No recorded events.</span></div>`;
 
     entry.innerHTML = `
-      <div class="history-head" data-history-toggle="${h.id}">
+      <div class="history-head history-card" data-history-toggle="${h.id}">
         <div class="history-title-col">
           <div class="history-name">${escAttr(h.name)}</div>
           <div class="history-meta">${escAttr(h.summary)} · saved ${h.savedAt}</div>
         </div>
-        <div class="history-xp mono">${((h.totalXP||0)+(h.bonusXP||0)).toLocaleString()} XP</div>
-        <span class="history-expand-hint">${isOpen ? "▲ collapse" : "▼ details"}</span>
-        <button class="history-edit-btn" data-edit-history="${h.id}" title="Edit this record">edit</button>
-        <button class="history-remove" data-remove-history="${h.id}" title="Delete this record">&times;</button>
+        <button class="history-remove history-trash" data-remove-history="${h.id}" title="Delete this record" aria-label="Delete this record">${TRASH_ICON_SVG}</button>
+        <div class="history-card-foot">
+          <div class="history-xp mono">${((h.totalXP||0)+(h.bonusXP||0)).toLocaleString()} XP</div>
+          <span class="history-expand-hint">${isOpen ? "▴ collapse" : "▾ details"}</span>
+          <button class="history-edit-btn" data-edit-history="${h.id}" title="Edit this record">edit</button>
+        </div>
       </div>
       <div class="history-detail ${isOpen ? "open":""}">
         ${editing ? historyEditFormHTML(historyDraft) : `${rewardsNotesHTML}<div class="history-section-label">CREATURES</div>
@@ -4846,7 +4860,7 @@ function renderHistory(){
     });
     entry.querySelector("[data-remove-history]").addEventListener("click", (e)=>{
       e.stopPropagation();
-      removeHistoryEntry(h.id);
+      confirmDeleteHistory(h);
     });
     entry.querySelector("[data-edit-history]").addEventListener("click", (e)=>{
       e.stopPropagation();
