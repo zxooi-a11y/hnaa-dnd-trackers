@@ -1420,6 +1420,20 @@
     .hp-block{ order: 2; flex: 1 1 100%; width: auto; margin-left: 64px; }
     .tracker-name{ font-size:0.92rem; }
     .tracker-meta{ font-size:0.68rem; }
+
+    /* Tracker row footer: drop the 64px left indent, keep condition /
+       amount / damage / heal on a single row (the condition select
+       absorbs the leftover width), and let the stat block span the
+       full card width with the same side margin on both sides. */
+    .tracker-foot{ gap:6px; padding:0 10px 12px 10px; }
+    .condition-pills{ flex:1 1 100%; }
+    .condition-pills:empty{ display:none; }
+    .tracker-foot .condition-select{ flex:1 1 0; min-width:0; width:0; }
+    .hp-log-input{ width:66px; flex:0 0 auto; padding:7px 6px; font-size:0.72rem; }
+    .hp-log-btn{ flex:0 0 auto; padding:7px 10px; font-size:0.74rem; }
+    .tracker-expand-hint{ flex:1 1 100%; text-align:right; }
+    .tracker-detail{ margin:0 10px 12px 10px; padding:14px 14px; }
+    .death-save-widget{ padding:8px 10px 0 10px; }
   }
 </style>
 </head>
