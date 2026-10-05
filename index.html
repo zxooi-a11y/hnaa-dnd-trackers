@@ -638,10 +638,11 @@
     gap: 10px;
     flex-wrap: wrap;
   }
-  .tracker-name{ font-size: 1.02rem; font-weight: 700; }
-  .tracker-meta{ font-size: 0.78rem; color: var(--text-faint); }
+  .tracker-name{ font-size: 1.02rem; font-weight: 700; overflow-wrap: anywhere; }
+  .tracker-meta{ font-size: 0.78rem; color: var(--text-faint); overflow-wrap: anywhere; }
 
   .hp-block{ flex: 0 0 auto; width: 190px; }
+  .tracker-btn-row{ display: contents; }
   .hp-numbers{
     display:flex;
     justify-content: space-between;
@@ -1384,6 +1385,40 @@
     .sheet-pass .sheet-tile{ padding:8px 4px; }
     .sheet-pass .sheet-tile .lab{ font-size:0.56rem; }
     .sheet-pass .sheet-tile .v{ font-size:1.15rem; }
+
+    /* Tracker: the "Build an encounter below" empty state had a huge
+       80px top/bottom padding, leaving a big dead gap above the
+       encounter controls -- shrink it on narrow screens. */
+    .compare-empty{ padding: 32px 16px; }
+
+    /* Tracker controls: group save encounter / save as template /
+       clear encounter onto one row, and roll all monster initiative /
+       re-sort by initiative onto another, instead of letting them
+       wrap wherever they happen to fit. Each row scrolls horizontally
+       (like the type-filter chip row) if it's still too tight to fit
+       at the smallest widths, rather than wrapping mid-row. */
+    .tracker-btn-row{
+      display:flex;
+      width:100%;
+      gap:5px;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      padding-bottom:2px;
+    }
+    .tracker-btn-row::-webkit-scrollbar{ display:none; }
+    .tracker-btn-row .chip{ flex:0 0 auto; font-size:0.7rem; padding:7px 9px; }
+
+    /* Tracker row: the fixed-width HP block was leaving almost no
+       room for the name/meta column, so long meta text (size, type,
+       CR) overflowed its column and visually bled into the HP bar.
+       Narrow the HP block and tighten the row so the name column has
+       enough space to wrap normally instead. */
+    .tracker-head{ gap:8px; padding:12px 10px 12px 6px; }
+    .hp-block{ width:112px; }
+    .hp-numbers{ font-size:0.64rem; }
+    .tracker-name{ font-size:0.92rem; }
+    .tracker-meta{ font-size:0.68rem; }
   }
 </style>
 </head>
@@ -1447,11 +1482,15 @@
     <div id="trackerControls" class="controls" style="display:none;">
       <div class="xp-total-badge">Total XP <strong id="trackerTotalXP">0</strong></div>
       <input type="text" id="encounterNameInput" class="encounter-name-input" placeholder="Name this encounter…">
-      <button id="trackerSaveTemplate" class="chip">+ save as template</button>
-      <button id="trackerSaveLog" class="chip save-log-btn">save encounter</button>
-      <button id="trackerRollAllInit" class="chip roll-all-init-btn" title="Roll d20 initiative for every monster in this encounter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12,2 21,8 21,16 12,22 3,16 3,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="3" y1="8" x2="21" y2="16"/><line x1="21" y1="8" x2="3" y2="16"/></svg> roll all monster initiative</button>
-      <button id="trackerSort" class="chip">re-sort by initiative</button>
-      <button id="trackerClearAll" class="chip">clear encounter</button>
+      <div class="tracker-btn-row">
+        <button id="trackerSaveLog" class="chip save-log-btn">save encounter</button>
+        <button id="trackerSaveTemplate" class="chip">+ save as template</button>
+        <button id="trackerClearAll" class="chip">clear encounter</button>
+      </div>
+      <div class="tracker-btn-row">
+        <button id="trackerRollAllInit" class="chip roll-all-init-btn" title="Roll d20 initiative for every monster in this encounter"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><polygon points="12,2 21,8 21,16 12,22 3,16 3,8"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="3" y1="8" x2="21" y2="16"/><line x1="21" y1="8" x2="3" y2="16"/></svg> roll all monster initiative</button>
+        <button id="trackerSort" class="chip">re-sort by initiative</button>
+      </div>
     </div>
     <div class="grid" id="trackerList"></div>
 
