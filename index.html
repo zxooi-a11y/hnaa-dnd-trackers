@@ -569,6 +569,7 @@
   }
   .tracker-head::before{ display:none; }
   .init-badge{
+    position: relative;
     flex: 0 0 auto;
     width: 44px;
     height: 44px;
@@ -580,6 +581,25 @@
     justify-content:center;
     line-height:1;
   }
+  .init-roll-btn{
+    position: absolute;
+    right: -8px;
+    bottom: -8px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    border: 2px solid var(--surface);
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .init-roll-btn:hover{ background: var(--accent-ink); }
   .init-badge input{
     width: 34px;
     text-align:center;
@@ -3990,6 +4010,28 @@ function sortedTracker(){
   return [...trackerList].sort((a,b)=> b.initiative - a.initiative);
 }
 
+function monsterInitBonus(m){
+  if(m.initiative !== undefined && m.initiative !== null && m.initiative !== ""){
+    const n = parseInt(m.initiative, 10);
+    if(!isNaN(n)) return n;
+  }
+  return (m.abilities && m.abilities.dex) ? m.abilities.dex[1] : 0;
+}
+function rollTrackerInitiative(entry, m, displayName, ev){
+  const bonus = monsterInitBonus(m);
+  const adv = ev && ev.shiftKey, dis = ev && ev.altKey && !adv;
+  const a = d(20), b = (adv||dis) ? d(20) : null;
+  const r = b===null ? a : (adv ? Math.max(a,b) : Math.min(a,b));
+  const total = r + bonus;
+  entry.initiative = total;
+  sheetToast(
+    `<b>${displayName} — Initiative</b><span class="tr">${total}</span><small>d20 ${b===null ? "("+r+")" : "("+a+", "+b+" → "+r+")"} ${sgn(bonus)}${adv?" with advantage":dis?" with disadvantage":""}${r===20?" • Natural 20!":r===1?" • Natural 1":""}</small>`,
+    r===20?"crit":r===1?"fumble":""
+  );
+  logAction(`Rolled initiative for ${displayName}: d20 (${r}) ${sgn(bonus)} = ${total}.`);
+  renderTracker();
+}
+
 function trackerDupeLabel(entry){
   const sameMonster = trackerList.filter(e=>e.monsterId===entry.monsterId);
   if(sameMonster.length < 2) return null;
@@ -4089,6 +4131,7 @@ function renderTracker(){
         <div class="init-badge">
           <input type="number" class="mono" data-init="${entry.instanceId}" value="${entry.initiative}">
           <div class="init-lbl">INIT</div>
+          ${!m.isPlayer ? `<button type="button" class="init-roll-btn" data-roll-init="${entry.instanceId}" title="Roll d20 ${sgn(monsterInitBonus(m))} for initiative">🎲</button>` : ""}
         </div>
         <div class="tracker-line"></div>
         <div class="tracker-title-col">
@@ -4139,6 +4182,14 @@ function renderTracker(){
       logAction(`Set ${entryDisplayName(entry)} initiative to ${entry.initiative}.`);
       renderTracker();
     });
+
+    const rollInitBtn = row.querySelector("[data-roll-init]");
+    if(rollInitBtn){
+      rollInitBtn.addEventListener("click", e=>{
+        e.stopPropagation();
+        rollTrackerInitiative(entry, m, displayName, e);
+      });
+    }
 
     const amountInput = row.querySelector("[data-hp-amount]");
     amountInput.addEventListener("click", e=>e.stopPropagation());
