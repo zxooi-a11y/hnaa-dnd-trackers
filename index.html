@@ -518,6 +518,34 @@
     padding: 4px 18px 18px;
   }
   .history-detail.open{ display:block; }
+  .history-edit-btn{
+    flex: 0 0 auto;
+    background: var(--accent-soft);
+    color: var(--accent-ink);
+    border: none;
+    font-family:'Plus Jakarta Sans', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 5px 11px;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+  }
+  .history-edit-btn:hover{ background: var(--accent); color:#fff; }
+  .history-edit-grid{ display:grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap:8px; margin-bottom:6px; }
+  .history-edit-grid label, .history-edit-creature label{ display:block; font-size:0.62rem; font-weight:700; color:var(--text-faint); text-transform:uppercase; }
+  .history-detail input[type="text"], .history-detail input[type="number"]{
+    width:100%; margin-top:3px; padding:7px 10px; font-size:0.82rem;
+    border:1px solid var(--border); background:var(--surface-soft); color:var(--text); border-radius:var(--radius-sm);
+  }
+  .history-edit-creature{ background:var(--surface-soft); border-radius:var(--radius-md); padding:10px; margin-bottom:8px; }
+  .history-edit-creature .history-edit-grid{ grid-template-columns: repeat(3, minmax(0,1fr)); }
+  .history-edit-creature .wide{ grid-column: 1 / -1; }
+  .history-edit-event{ display:flex; gap:8px; align-items:center; margin-bottom:6px; }
+  .history-edit-event .activity-time{ flex:0 0 auto; width:84px; }
+  .history-edit-event input{ margin-top:0 !important; }
+  .history-mini-remove{ flex:0 0 auto; background:none; border:none; color:var(--text-faint); cursor:pointer; font-size:1rem; line-height:1; padding:2px 6px; }
+  .history-mini-remove:hover{ color:var(--worst); }
+  .history-edit-actions{ display:flex; gap:8px; margin-top:12px; justify-content:flex-end; }
   .history-section-label{
     font-family:'IBM Plex Mono', monospace;
     font-size: 0.68rem;
@@ -1824,6 +1852,8 @@ let savedEncounterExpandedSet = new Set();
 let trackerLoot = [];
 let trackerLootCounter = 0;
 let historyExpandedSet = new Set();
+let historyEditingId = null;
+let historyDraft = null;
 let homebrew = [];
 let homebrewCounter = 0;
 let players = [];
@@ -4672,9 +4702,93 @@ function updateHistoryBadge(){
 function removeHistoryEntry(id){
   historyLog = historyLog.filter(h=>h.id!==id);
   historyExpandedSet.delete(id);
+  if(historyEditingId===id){ historyEditingId = null; historyDraft = null; }
   updateHistoryBadge();
   renderHistory();
   persistState();
+}
+
+
+/* ---- edit a saved History record after the fact ---- */
+const escAttr = v => String(v==null ? "" : v).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function startHistoryEdit(id){
+  const h = historyLog.find(x=>x.id===id);
+  if(!h) return;
+  historyEditingId = id;
+  historyDraft = JSON.parse(JSON.stringify(h));
+  historyExpandedSet.add(id);
+  renderHistory();
+}
+function cancelHistoryEdit(){
+  historyEditingId = null;
+  historyDraft = null;
+  renderHistory();
+}
+function saveHistoryEdit(){
+  const idx = historyLog.findIndex(x=>x.id===historyEditingId);
+  if(idx === -1 || !historyDraft){ cancelHistoryEdit(); return; }
+  const d = historyDraft;
+  d.name = (d.name || "").trim() || historyLog[idx].name;
+  d.totalXP = Math.max(0, parseInt(d.totalXP,10) || 0);
+  d.creatures = d.creatures.map(c=>({
+    name: (c.name||"").trim() || "Unnamed",
+    initiative: parseInt(c.initiative,10) || 0,
+    currentHp: Math.max(0, parseInt(c.currentHp,10) || 0),
+    maxHp: Math.max(0, parseInt(c.maxHp,10) || 0),
+    conditions: Array.isArray(c.conditions) ? c.conditions : String(c.conditions||"").split(",").map(x=>x.trim()).filter(Boolean)
+  }));
+  d.events = d.events.filter(e=>(e.text||"").trim());
+  historyLog[idx] = d;
+  historyEditingId = null;
+  historyDraft = null;
+  renderHistory();
+  persistState();
+}
+function historyEditFormHTML(d){
+  const creatures = d.creatures.map((c,i)=>`
+    <div class="history-edit-creature">
+      <div class="history-edit-grid" style="grid-template-columns:minmax(0,1fr) auto">
+        <label>Name<input type="text" data-hf="creatures.${i}.name" value="${escAttr(c.name)}"></label>
+        <button type="button" class="history-mini-remove" data-hdel-creature="${i}" title="Remove creature" style="align-self:end">&times;</button>
+      </div>
+      <div class="history-edit-grid">
+        <label>Init<input type="number" data-hf="creatures.${i}.initiative" value="${escAttr(c.initiative)}"></label>
+        <label>HP<input type="number" data-hf="creatures.${i}.currentHp" value="${escAttr(c.currentHp)}"></label>
+        <label>Max HP<input type="number" data-hf="creatures.${i}.maxHp" value="${escAttr(c.maxHp)}"></label>
+        <label class="wide">Conditions (comma separated)<input type="text" data-hf="creatures.${i}.conditions" value="${escAttr((c.conditions||[]).join(", "))}"></label>
+      </div>
+    </div>`).join("");
+  const events = d.events.map((e,i)=>`
+    <div class="history-edit-event">
+      <input type="text" class="activity-time mono" data-hf="events.${i}.time" value="${escAttr(e.time)}">
+      <input type="text" data-hf="events.${i}.text" value="${escAttr(e.text)}">
+      <button type="button" class="history-mini-remove" data-hdel-event="${i}" title="Remove event">&times;</button>
+    </div>`).join("");
+  return `
+    <div class="history-section-label">DETAILS</div>
+    <div class="history-edit-grid">
+      <label>Encounter name<input type="text" data-hf="name" value="${escAttr(d.name)}"></label>
+      <label>Total XP<input type="number" data-hf="totalXP" value="${escAttr(d.totalXP)}"></label>
+      <label style="grid-column:1/-1">Summary<input type="text" data-hf="summary" value="${escAttr(d.summary)}"></label>
+    </div>
+    <div class="history-section-label">CREATURES</div>
+    ${creatures || `<div class="activity-row"><span class="activity-text" style="color:var(--text-faint)">No creatures.</span></div>`}
+    <button type="button" class="chip" data-hadd-creature>+ add creature</button>
+    <div class="history-section-label">ACTIVITY LOG</div>
+    ${events}
+    <button type="button" class="chip" data-hadd-event>+ add event</button>
+    <div class="history-edit-actions">
+      <button type="button" class="chip" data-hcancel>cancel</button>
+      <button type="button" class="chip save-log-btn" data-hsave>save changes</button>
+    </div>`;
+}
+function setHistoryDraftField(path, value){
+  const parts = path.split(".");
+  let o = historyDraft;
+  for(let i=0;i<parts.length-1;i++) o = o[parts[i]];
+  const key = parts[parts.length-1];
+  o[key] = (key==="conditions") ? value.split(",").map(x=>x.trim()).filter(Boolean) : value;
 }
 
 function renderHistory(){
@@ -4689,38 +4803,41 @@ function renderHistory(){
   empty.style.display = "none";
 
   historyLog.forEach(h=>{
-    const isOpen = historyExpandedSet.has(h.id);
+    const editing = historyEditingId === h.id && historyDraft;
+    const isOpen = historyExpandedSet.has(h.id) || editing;
     const entry = document.createElement("div");
     entry.className = "history-entry";
 
     const creaturesHTML = h.creatures.map(c=>
-      `<div class="history-creature-row"><span>${c.name} <span style="color:var(--text-faint)">· init ${c.initiative}</span>${c.conditions && c.conditions.length ? ` <span style="color:var(--worst)">[${c.conditions.join(", ")}]</span>` : ""}</span><span class="history-creature-hp">${c.currentHp}/${c.maxHp} HP</span></div>`
+      `<div class="history-creature-row"><span>${escAttr(c.name)} <span style="color:var(--text-faint)">· init ${c.initiative}</span>${c.conditions && c.conditions.length ? ` <span style="color:var(--worst)">[${escAttr(c.conditions.join(", "))}]</span>` : ""}</span><span class="history-creature-hp">${c.currentHp}/${c.maxHp} HP</span></div>`
     ).join("");
 
     const eventsHTML = h.events.length
-      ? h.events.map(e=>`<div class="activity-row"><span class="activity-time mono">${e.time}</span><span class="activity-text">${e.text}</span></div>`).join("")
+      ? h.events.map(e=>`<div class="activity-row"><span class="activity-time mono">${e.time}</span><span class="activity-text">${escAttr(e.text)}</span></div>`).join("")
       : `<div class="activity-row"><span class="activity-text" style="color:var(--text-faint)">No recorded events.</span></div>`;
 
     entry.innerHTML = `
       <div class="history-head" data-history-toggle="${h.id}">
         <div class="history-title-col">
-          <div class="history-name">${h.name}</div>
-          <div class="history-meta">${h.summary} · saved ${h.savedAt}</div>
+          <div class="history-name">${escAttr(h.name)}</div>
+          <div class="history-meta">${escAttr(h.summary)} · saved ${h.savedAt}</div>
         </div>
         <div class="history-xp mono">${h.totalXP.toLocaleString()} XP</div>
         <span class="history-expand-hint">${isOpen ? "▲ collapse" : "▼ details"}</span>
+        <button class="history-edit-btn" data-edit-history="${h.id}" title="Edit this record">edit</button>
         <button class="history-remove" data-remove-history="${h.id}" title="Delete this record">&times;</button>
       </div>
       <div class="history-detail ${isOpen ? "open":""}">
-        <div class="history-section-label">CREATURES</div>
+        ${editing ? historyEditFormHTML(historyDraft) : `<div class="history-section-label">CREATURES</div>
         ${creaturesHTML}
         <div class="history-section-label">ACTIVITY LOG</div>
-        <div class="activity-list">${eventsHTML}</div>
+        <div class="activity-list">${eventsHTML}</div>`}
       </div>
     `;
 
     entry.querySelector("[data-history-toggle]").addEventListener("click", (e)=>{
-      if(e.target.closest("[data-remove-history]")) return;
+      if(e.target.closest("[data-remove-history], [data-edit-history]")) return;
+      if(editing) return;
       if(historyExpandedSet.has(h.id)) historyExpandedSet.delete(h.id);
       else historyExpandedSet.add(h.id);
       renderHistory();
@@ -4729,6 +4846,29 @@ function renderHistory(){
       e.stopPropagation();
       removeHistoryEntry(h.id);
     });
+    entry.querySelector("[data-edit-history]").addEventListener("click", (e)=>{
+      e.stopPropagation();
+      if(editing) cancelHistoryEdit(); else startHistoryEdit(h.id);
+    });
+    if(editing){
+      entry.querySelectorAll("[data-hf]").forEach(inp=>{
+        inp.addEventListener("input", ()=>setHistoryDraftField(inp.dataset.hf, inp.value));
+      });
+      entry.querySelectorAll("[data-hdel-creature]").forEach(b=>b.addEventListener("click", ()=>{
+        historyDraft.creatures.splice(+b.dataset.hdelCreature,1); renderHistory();
+      }));
+      entry.querySelectorAll("[data-hdel-event]").forEach(b=>b.addEventListener("click", ()=>{
+        historyDraft.events.splice(+b.dataset.hdelEvent,1); renderHistory();
+      }));
+      entry.querySelector("[data-hadd-creature]").addEventListener("click", ()=>{
+        historyDraft.creatures.push({name:"New creature", initiative:0, currentHp:0, maxHp:0, conditions:[]}); renderHistory();
+      });
+      entry.querySelector("[data-hadd-event]").addEventListener("click", ()=>{
+        historyDraft.events.push({id:"act"+Date.now(), time:new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"}), text:""}); renderHistory();
+      });
+      entry.querySelector("[data-hcancel]").addEventListener("click", cancelHistoryEdit);
+      entry.querySelector("[data-hsave]").addEventListener("click", saveHistoryEdit);
+    }
 
     list.appendChild(entry);
   });
