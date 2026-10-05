@@ -518,6 +518,8 @@
     padding: 4px 18px 18px;
   }
   .history-detail.open{ display:block; }
+  .history-notes{ white-space:pre-wrap; font-size:0.85rem; color:var(--text-soft); padding:2px 4px 6px; }
+  .history-detail textarea{ width:100%; margin-top:3px; padding:8px 10px; font-size:0.85rem; font-family:inherit; border:1px solid var(--border); background:var(--surface-soft); color:var(--text); border-radius:var(--radius-sm); resize:vertical; }
   .history-edit-btn{
     flex: 0 0 auto;
     background: var(--accent-soft);
@@ -4738,7 +4740,9 @@ function saveHistoryEdit(){
     maxHp: Math.max(0, parseInt(c.maxHp,10) || 0),
     conditions: Array.isArray(c.conditions) ? c.conditions : String(c.conditions||"").split(",").map(x=>x.trim()).filter(Boolean)
   }));
-  d.events = d.events.filter(e=>(e.text||"").trim());
+  d.bonusXP = Math.max(0, parseInt(d.bonusXP,10) || 0);
+  d.gold = Math.max(0, parseInt(d.gold,10) || 0);
+  d.notes = (d.notes||"").trim();
   historyLog[idx] = d;
   historyEditingId = null;
   historyDraft = null;
@@ -4759,25 +4763,20 @@ function historyEditFormHTML(d){
         <label class="wide">Conditions (comma separated)<input type="text" data-hf="creatures.${i}.conditions" value="${escAttr((c.conditions||[]).join(", "))}"></label>
       </div>
     </div>`).join("");
-  const events = d.events.map((e,i)=>`
-    <div class="history-edit-event">
-      <input type="text" class="activity-time mono" data-hf="events.${i}.time" value="${escAttr(e.time)}">
-      <input type="text" data-hf="events.${i}.text" value="${escAttr(e.text)}">
-      <button type="button" class="history-mini-remove" data-hdel-event="${i}" title="Remove event">&times;</button>
-    </div>`).join("");
   return `
     <div class="history-section-label">DETAILS</div>
     <div class="history-edit-grid">
       <label>Encounter name<input type="text" data-hf="name" value="${escAttr(d.name)}"></label>
       <label>Total XP<input type="number" data-hf="totalXP" value="${escAttr(d.totalXP)}"></label>
+      <label>Additional XP<input type="number" data-hf="bonusXP" value="${escAttr(d.bonusXP||0)}"></label>
+      <label>Gold (gp)<input type="number" data-hf="gold" value="${escAttr(d.gold||0)}"></label>
       <label style="grid-column:1/-1">Summary<input type="text" data-hf="summary" value="${escAttr(d.summary)}"></label>
     </div>
     <div class="history-section-label">CREATURES</div>
     ${creatures || `<div class="activity-row"><span class="activity-text" style="color:var(--text-faint)">No creatures.</span></div>`}
     <button type="button" class="chip" data-hadd-creature>+ add creature</button>
-    <div class="history-section-label">ACTIVITY LOG</div>
-    ${events}
-    <button type="button" class="chip" data-hadd-event>+ add event</button>
+    <div class="history-section-label">NOTES</div>
+    <textarea data-hf="notes" rows="4" placeholder="Details about the fight…">${escAttr(d.notes||"")}</textarea>
     <div class="history-edit-actions">
       <button type="button" class="chip" data-hcancel>cancel</button>
       <button type="button" class="chip save-log-btn" data-hsave>save changes</button>
@@ -4812,6 +4811,9 @@ function renderHistory(){
       `<div class="history-creature-row"><span>${escAttr(c.name)} <span style="color:var(--text-faint)">· init ${c.initiative}</span>${c.conditions && c.conditions.length ? ` <span style="color:var(--worst)">[${escAttr(c.conditions.join(", "))}]</span>` : ""}</span><span class="history-creature-hp">${c.currentHp}/${c.maxHp} HP</span></div>`
     ).join("");
 
+    const rewardsNotesHTML = ((h.bonusXP||h.gold) ? `<div class="history-section-label">REWARDS</div><div class="history-creature-row"><span>Encounter XP ${(h.totalXP||0).toLocaleString()}${h.bonusXP ? ` + ${h.bonusXP.toLocaleString()} additional` : ""}</span><span class="history-creature-hp">${h.gold ? h.gold.toLocaleString()+" gp" : ""}</span></div>` : "")
+      + (h.notes ? `<div class="history-section-label">NOTES</div><div class="history-notes">${escAttr(h.notes)}</div>` : "");
+
     const eventsHTML = h.events.length
       ? h.events.map(e=>`<div class="activity-row"><span class="activity-time mono">${e.time}</span><span class="activity-text">${escAttr(e.text)}</span></div>`).join("")
       : `<div class="activity-row"><span class="activity-text" style="color:var(--text-faint)">No recorded events.</span></div>`;
@@ -4822,13 +4824,13 @@ function renderHistory(){
           <div class="history-name">${escAttr(h.name)}</div>
           <div class="history-meta">${escAttr(h.summary)} · saved ${h.savedAt}</div>
         </div>
-        <div class="history-xp mono">${h.totalXP.toLocaleString()} XP</div>
+        <div class="history-xp mono">${((h.totalXP||0)+(h.bonusXP||0)).toLocaleString()} XP</div>
         <span class="history-expand-hint">${isOpen ? "▲ collapse" : "▼ details"}</span>
         <button class="history-edit-btn" data-edit-history="${h.id}" title="Edit this record">edit</button>
         <button class="history-remove" data-remove-history="${h.id}" title="Delete this record">&times;</button>
       </div>
       <div class="history-detail ${isOpen ? "open":""}">
-        ${editing ? historyEditFormHTML(historyDraft) : `<div class="history-section-label">CREATURES</div>
+        ${editing ? historyEditFormHTML(historyDraft) : `${rewardsNotesHTML}<div class="history-section-label">CREATURES</div>
         ${creaturesHTML}
         <div class="history-section-label">ACTIVITY LOG</div>
         <div class="activity-list">${eventsHTML}</div>`}
@@ -4857,14 +4859,8 @@ function renderHistory(){
       entry.querySelectorAll("[data-hdel-creature]").forEach(b=>b.addEventListener("click", ()=>{
         historyDraft.creatures.splice(+b.dataset.hdelCreature,1); renderHistory();
       }));
-      entry.querySelectorAll("[data-hdel-event]").forEach(b=>b.addEventListener("click", ()=>{
-        historyDraft.events.splice(+b.dataset.hdelEvent,1); renderHistory();
-      }));
       entry.querySelector("[data-hadd-creature]").addEventListener("click", ()=>{
         historyDraft.creatures.push({name:"New creature", initiative:0, currentHp:0, maxHp:0, conditions:[]}); renderHistory();
-      });
-      entry.querySelector("[data-hadd-event]").addEventListener("click", ()=>{
-        historyDraft.events.push({id:"act"+Date.now(), time:new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit", second:"2-digit"}), text:""}); renderHistory();
       });
       entry.querySelector("[data-hcancel]").addEventListener("click", cancelHistoryEdit);
       entry.querySelector("[data-hsave]").addEventListener("click", saveHistoryEdit);
