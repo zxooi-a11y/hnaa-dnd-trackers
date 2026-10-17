@@ -1373,6 +1373,11 @@
   .sheet-toast.crit .tr{ color:#9BE8B8; }
   .sheet-toast.fumble .tr{ color:#F0A8A0; }
 
+
+  .suggest-pop{ position:fixed; z-index:70; display:none; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); max-height:220px; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px; }
+  .suggest-pop.show{ display:block; }
+  .suggest-pop button{ display:block; width:100%; text-align:left; background:none; border:none; padding:10px 12px; font:inherit; font-size:0.9rem; color:var(--text); border-radius:var(--radius-sm); cursor:pointer; }
+  .suggest-pop button:hover, .suggest-pop button:active{ background:var(--accent-soft); }
   .sheet-add-btn{ margin-top:10px; }
   .sheet-spell-summary{ font-size:0.74rem; color:var(--text-faint); margin:-2px 0 8px; }
   .sheet-spell-details{ margin-top:10px; padding-top:10px; border-top:1px solid var(--border-soft); }
@@ -3294,10 +3299,10 @@ function buildCharacterTabHTML(p, D){
         <div class="sheet-g sheet-g4">
           <label>Player name<input type="text" data-fk="playerName" value="${fv(p.playerName)}" placeholder="Your name"></label>
           <label>Level<input type="text" inputmode="numeric" data-fk="level" value="${D.L}"></label>
-          <label>Race<input type="text" list="dl-race" data-fk="sheet.race" value="${fv(s.race)}" placeholder="Pick or type"></label>
-          <label>Class<input type="text" list="dl-class" data-fk="charClass" value="${fv(p.charClass)}" placeholder="e.g. Paladin"></label>
+          <label>Race<input type="text" data-suggest="dl-race" autocomplete="off" data-fk="sheet.race" value="${fv(s.race)}" placeholder="Pick or type"></label>
+          <label>Class<input type="text" data-suggest="dl-class" autocomplete="off" data-fk="charClass" value="${fv(p.charClass)}" placeholder="e.g. Paladin"></label>
           <label>Subclass<input type="text" data-fk="subclass" value="${fv(p.subclass)}" placeholder="e.g. Oath of Devotion"></label>
-          <label>Background<input type="text" list="dl-bg" data-fk="sheet.background" value="${fv(s.background)}" placeholder="Pick or type"></label>
+          <label>Background<input type="text" data-suggest="dl-bg" autocomplete="off" data-fk="sheet.background" value="${fv(s.background)}" placeholder="Pick or type"></label>
         </div>
         <datalist id="dl-race">${Object.values(RACES).map(r=>`<option value="${r.n}">`).join("")}</datalist>
         <datalist id="dl-class">${Object.keys(CLASS_META).map(k=>`<option value="${k[0].toUpperCase()+k.slice(1)}">`).join("")}</datalist>
@@ -4001,7 +4006,7 @@ document.addEventListener("blur", e=>{
   // Picking from a datalist (Race / Class / Background) on mobile blurs the
   // input before the chosen value is committed; rebuilding the DOM right then
   // throws the selection away, so give the pick time to land first.
-  if(el.hasAttribute("list")){ setTimeout(()=>{ if(!suppressFieldEvents) scheduleSheetRender(p); }, 700); return; }
+  if(el.hasAttribute("data-suggest")){ setTimeout(()=>{ if(!suppressFieldEvents) scheduleSheetRender(p); }, 700); return; }
   scheduleSheetRender(p);
 }, true);
 
@@ -5232,6 +5237,52 @@ document.getElementById("sheetDeleteBtn").onclick = ()=>{
   closePlayerSheet();
   deletePlayer(id);
 };
+
+/* Custom suggestion dropdown for Race / Class / Background. The native
+   <datalist> popup is unreliable on touch devices (taps get lost, and it
+   can open centred on screen), so this anchors a list directly under the
+   field instead. Options are read from the matching <datalist> element. */
+(function(){
+  const pop = document.createElement("div");
+  pop.className = "suggest-pop";
+  document.body.appendChild(pop);
+  let target = null, hideT = null;
+  function options(el){
+    const dl = document.getElementById(el.dataset.suggest);
+    return dl ? [...dl.querySelectorAll("option")].map(o=>o.value) : [];
+  }
+  function hide(){ pop.classList.remove("show"); target = null; }
+  function show(el){
+    clearTimeout(hideT);
+    target = el;
+    const q = el.value.trim().toLowerCase();
+    const list = options(el).filter(v=>!q || v.toLowerCase().includes(q) );
+    if(!list.length){ pop.classList.remove("show"); return; }
+    pop.innerHTML = list.map(v=>`<button type="button" data-suggest-val="${escAttr(v)}">${escAttr(v)}</button>`).join("");
+    const r = el.getBoundingClientRect();
+    const below = window.innerHeight - r.bottom;
+    pop.style.left = r.left + "px";
+    pop.style.width = r.width + "px";
+    if(below < 160 && r.top > below){ pop.style.top = "auto"; pop.style.bottom = (window.innerHeight - r.top + 4) + "px"; pop.style.maxHeight = Math.min(220, r.top - 12) + "px"; }
+    else { pop.style.bottom = "auto"; pop.style.top = (r.bottom + 4) + "px"; pop.style.maxHeight = Math.min(220, below - 12) + "px"; }
+    pop.classList.add("show");
+  }
+  document.addEventListener("focusin", e=>{ const el = e.target.closest && e.target.closest("[data-suggest]"); if(el) show(el); });
+  document.addEventListener("input", e=>{ const el = e.target.closest && e.target.closest("[data-suggest]"); if(el) show(el); });
+  document.addEventListener("focusout", e=>{ if(e.target.closest && e.target.closest("[data-suggest]")){ clearTimeout(hideT); hideT = setTimeout(hide, 250); } });
+  pop.addEventListener("mousedown", e=>e.preventDefault());
+  pop.addEventListener("click", e=>{
+    const b = e.target.closest("[data-suggest-val]"); if(!b || !target) return;
+    const el = target;
+    el.value = b.dataset.suggestVal;
+    hide();
+    el.dispatchEvent(new Event("input", {bubbles:true}));
+    el.dispatchEvent(new Event("change", {bubbles:true}));
+    el.blur();
+  });
+  window.addEventListener("resize", hide);
+  window.addEventListener("scroll", e=>{ if(target && e.target!==pop) show(target); }, true);
+})();
 
 /* ============================================================
    INIT
