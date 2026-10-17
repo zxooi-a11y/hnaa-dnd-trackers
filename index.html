@@ -2931,11 +2931,11 @@ const d = n => 1 + Math.floor(Math.random()*n);
    ============================================================ */
 function casterKindFor(p){
   const meta = CLASS_META[normClassKey(p.charClass||"")];
+  if((p.charClass==="Fighter"||p.charClass==="Rogue") && THIRD_CASTER_SUBCLASS.test(p.subclass||"")) return "third";
   if(!meta || !meta.caster) return null;
   if(meta.caster==="third"){
     return THIRD_CASTER_SUBCLASS.test(p.subclass||"") ? "third" : null;
   }
-  if((p.charClass==="Fighter"||p.charClass==="Rogue") && THIRD_CASTER_SUBCLASS.test(p.subclass||"")) return "third";
   return meta.caster;
 }
 function slotsForKind(kind, L){
@@ -3018,11 +3018,12 @@ function deriveSheet(p){
   const sa = s.spAbil || (meta && meta.spAbil) || "int";
   const sp = { kind, slots:[0,0,0,0,0,0,0,0,0,0], mode:null, cant:0, limit:0, abil:sa, mod:D.mod[sa], dc: 8+D.prof+D.mod[sa], atk: D.prof+D.mod[sa] };
   if(kind){
+    const tm = kind==="third" ? { cantrips:[[3,2],[10,3]], known:[0,0,3,4,4,4,5,6,6,7,8,8,9,10,10,11,11,11,12,13] } : meta;
     sp.slots = slotsForKind(kind, L);
-    sp.cant = stepVal(meta && meta.cantrips, L);
+    sp.cant = stepVal(tm && tm.cantrips, L);
     sp.mode = kind==="third" ? "known" : (meta ? meta.prep : "known");
     const any = sp.slots.some(n=>n>0);
-    if(sp.mode==="known") sp.limit = ((meta && meta.known)||[])[L-1] || 0;
+    if(sp.mode==="known") sp.limit = ((tm && tm.known)||[])[L-1] || 0;
     else sp.limit = any ? Math.max(1, sp.mod + L) : 0;
   }
   sp.maxLv = 0; for(let i=1;i<=9;i++) if(sp.slots[i]>0) sp.maxLv=i;
@@ -3591,16 +3592,61 @@ function renderSpellLibrary(){
     `<div class="spell-lib-note">${all.length} spell${all.length===1?"":"s"}${all.length>60?" (showing first 60 — refine your search)":""}. SRD spells only; use “add custom spell” for anything else.</div>` +
     (html || `<div class="sheet-empty">No spells match.</div>`);
 }
-function addLibrarySpell(key){
-  const p = findCreature(spellLib.pid); if(!p) return;
+function addLibrarySpell(key, pid){
+  const p = findCreature(pid || spellLib.pid); if(!p) return;
   const s = ensureSheet(p);
   const sp = SPELL_LIBRARY.find(x=>libSpellKey(x)===key); if(!sp) return;
   if(s.spells.some(x=>x.lib===key)) return;
   s.spells.push({ id:uid(), lib:key, name:sp.n, level:sp.l, prepared:false, school:sp.s, time:sp.t, range:sp.r,
     comp:sp.c, mat:sp.m, dur:sp.d, conc:sp.k, ritual:sp.ri, classes:sp.cl, desc:sp.x, higher:sp.h, src:`SRD ${sp.v}` });
   sheetToast(`<b>${sp.n}</b><small>Added to ${sp.l===0?"cantrips":"level "+sp.l+" spells"}.</small>`);
-  renderSpellLibrary();
+  if(document.getElementById("spellLibModal")?.classList.contains("show")) renderSpellLibrary();
   scheduleSheetRender(p);
+}
+
+/* spells this character could choose, from the SRD library, based on class (or
+   Eldritch Knight / Arcane Trickster -> Wizard list), level (highest slot) and ruleset */
+function availableSpellsHTML(p, D){
+  const s = ensureSheet(p), sp = D.sp;
+  const head = (summary, body)=>`
+    <div class="${oc('avail', true)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="avail">
+        <span class="pc-section-label">Available Spells</span><span class="pc-collapsible-summary">${summary}</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">${body}</div>
+    </div>`;
+  if(!sp.kind) return head("", `<div class="sheet-empty">${!p.charClass ? "Choose a class on the Character tab to see the spells you can pick." : "This class/subclass has no spell list to choose from yet."}</div>`);
+  const listClass = sp.kind==="third" ? "Wizard" : (p.charClass||"").trim();
+  const cls = listClass.charAt(0).toUpperCase() + listClass.slice(1).toLowerCase();
+  const have = new Set(s.spells.map(x=>x.lib).filter(Boolean));
+  const ver = spellLib.ver;
+  const pool = SPELL_LIBRARY.filter(x=>x.v===ver && x.cl.split(", ").includes(cls));
+  const prepared = s.spells.filter(x=>x.level>0 && (sp.mode!=="prepared" || x.prepared)).length;
+  const cantrips = s.spells.filter(x=>x.level===0).length;
+  const info = `<div class="spell-lib-note">${cls} list · up to level ${sp.maxLv} spells${sp.cant?` · ${cantrips} of ${sp.cant} cantrips`:""}${sp.limit?` · ${prepared} of ${sp.limit} ${sp.mode==="prepared"?"prepared":"known"}`:""}</div>`;
+  const verBtns = ["2024","2014"].map(v=>`<button type="button" class="chip ${v===ver?'active':''}" data-avail-ver="${v}">${v} rules</button>`).join("");
+  let groups = "";
+  for(let l=(sp.cant?0:1); l<=sp.maxLv; l++){
+    const list = pool.filter(x=>x.l===l).sort((a,b)=>a.n.localeCompare(b.n));
+    if(!list.length) continue;
+    const items = list.map(x=>{
+      const key = libSpellKey(x), added = have.has(key), open = spellLib.open.has(key);
+      return `<div class="spell-lib-item">
+        <div class="spell-lib-row">
+          <div class="spell-lib-title"><b>${escAttr(x.n)}</b><span>${x.s} · ${escAttr(x.t)} · ${escAttr(x.r)}${x.k?" · Concentration":""}${x.ri?" · Ritual":""}</span></div>
+          <button type="button" class="chip" data-avail-toggle="${key}">${open?"Hide":"Details"}</button>
+          <button type="button" class="chip save-log-btn" data-avail-add="${key}" ${added?"disabled":""}>${added?"Added":"Add"}</button>
+        </div>
+        ${open ? `<div class="spell-lib-detail"><dl><dt>Components</dt><dd>${escAttr(x.c)}${x.m?` (${escAttr(x.m)})`:""}</dd><dt>Duration</dt><dd>${escAttr(x.d)}</dd></dl>${escAttr(x.x)}${x.h?`\n\n<b>At higher levels.</b> ${escAttr(x.h)}`:""}</div>` : ""}
+      </div>`;
+    }).join("");
+    groups += `<div class="${oc('avl'+l, false)}">
+      <button type="button" class="pc-collapsible-header" data-pc-toggle-local="avl${l}">
+        <span class="pc-section-label">${l===0?'Cantrips':'Level '+l}</span><span class="pc-collapsible-summary">${list.length} available</span><span class="pc-collapsible-chevron">▾</span>
+      </button>
+      <div class="pc-collapsible-body">${items}</div></div>`;
+  }
+  return head(`${pool.filter(x=>x.l<=sp.maxLv).length} spells`, `<div class="row" style="gap:6px;margin-bottom:6px">${verBtns}</div>${info}${groups || `<div class="sheet-empty">No ${cls} spells in the ${ver} SRD.</div>`}`);
 }
 
 let openSpellIds = new Set();
@@ -3608,7 +3654,7 @@ function buildSpellLevelSections(p, D, hiLevel){
   const s = ensureSheet(p);
   ensureIds(s.spells);
   const prepMode = D.sp.mode==="prepared";
-  let out = "";
+  let out = availableSpellsHTML(p, D);
   for(let l=0; l<=Math.max(hiLevel, ...s.spells.map(x=>x.level), 0); l++){
     const list = s.spells.filter(x=>x.level===l);
     const rows = list.map(sp=>{
@@ -4047,6 +4093,12 @@ document.addEventListener("click", e=>{
     if(openSpellIds.has(id)) openSpellIds.delete(id); else openSpellIds.add(id);
     scheduleSheetRender(p); return;
   }
+  const avAdd = e.target.closest("[data-avail-add]");
+  if(avAdd){ addLibrarySpell(avAdd.dataset.availAdd, p.id); return; }
+  const avTg = e.target.closest("[data-avail-toggle]");
+  if(avTg){ const k = avTg.dataset.availToggle; spellLib.open.has(k) ? spellLib.open.delete(k) : spellLib.open.add(k); scheduleSheetRender(p); return; }
+  const avVer = e.target.closest("[data-avail-ver]");
+  if(avVer){ spellLib.ver = avVer.dataset.availVer; scheduleSheetRender(p); return; }
   const spLib = e.target.closest("[data-spell-lib]");
   if(spLib){ openSpellLibrary(p, +spLib.dataset.spellLib); return; }
 
