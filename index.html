@@ -2786,7 +2786,164 @@ const SUBCLASS_FEATURES = {
     {level:14, features:[f("Deflecting Shroud","When you use Arcane Deflection, you can also deal force damage equal to your Intelligence modifier to the triggering creature, or to a number of creatures within 10 ft of you equal to that modifier.")]}
   ],
 };
+/* Additional subclasses (PHB / XGtE core set). Short mechanical summaries,
+   not verbatim rules text. Format: key -> [ [level, [name, text], ...], ... ] */
+(function(){
+  const S = (key, levels)=>{ SUBCLASS_FEATURES[key] = levels.map(([level, ...fs])=>({level, features: fs.map(([n,t])=>f(n,t))})); };
+
+  S("barbarian|path of the totem warrior", [
+    [3, ["Spirit Seeker","You can cast Beast Sense and Speak with Animals as rituals."], ["Totem Spirit","Choose Bear (resistance to all damage but psychic while raging), Eagle (Dash as a bonus action and enemies' Opportunity Attacks have disadvantage while raging), or Wolf (allies have advantage on attacks against enemies within 5 ft of you while raging)."]],
+    [6, ["Aspect of the Beast","Gain a lasting animal benefit: Bear (double carrying capacity, advantage on Strength checks to push/lift), Eagle (see up to 1 mile clearly, no disadvantage from dim light on Perception), or Wolf (track at fast pace, move stealthily at normal pace)."]],
+    [10, ["Spirit Walker","You can cast Commune with Nature as a ritual; a spiritual copy of a beast aids your insight."]],
+    [14, ["Totemic Attunement","Bear: enemies within 5 ft have disadvantage attacking others; Eagle: gain a fly speed while raging; Wolf: knock Large or smaller creatures prone with melee hits while raging."]]]);
+  S("barbarian|path of the brawler", [
+    [3, ["Fists of Fury","Gain proficiency with improvised weapons; your unarmed strikes and improvised weapon hits deal bludgeoning damage with a die that grows as you gain Barbarian levels."], ["Knuckle Down","While raging and not using a shield, you can forgo your Rage damage bonus on a hit to add an extra effect, such as a Haymaker that grants you temporary hit points."]]]);
+  S("bard|college of valor", [
+    [3, ["Bonus Proficiencies","Gain proficiency with medium armor, shields, and martial weapons."], ["Combat Inspiration","A creature with your Bardic Inspiration can add the die to a weapon damage roll or to its AC against one attack."]],
+    [6, ["Extra Attack","You can attack twice, instead of once, when you take the Attack action."]],
+    [14, ["Battle Magic","After casting a bard spell with an action, you can make one weapon attack as a bonus action."]]]);
+  S("bard|college of swords", [
+    [3, ["Bonus Proficiencies","Gain proficiency with medium armor and the scimitar; a melee weapon can serve as a spellcasting focus."], ["Fighting Style","Choose Dueling or Two-Weapon Fighting."], ["Blade Flourish","Gain Defensive, Slashing, and Mobile flourishes by spending a Bardic Inspiration die when you attack."]],
+    [6, ["Extra Attack","You can attack twice, instead of once, when you take the Attack action."]],
+    [14, ["Master's Flourish","You can roll a d6 instead of expending a Bardic Inspiration die for a Blade Flourish."]]]);
+  S("bard|college of whispers", [
+    [3, ["Psychic Blades","Expend a Bardic Inspiration die for extra psychic damage on a weapon hit (2d6, scaling to 8d6)."], ["Words of Terror","Speak to a creature for 1 minute to frighten it."]],
+    [6, ["Mantle of Whispers","Capture a dying humanoid's shadow and adopt its persona."]],
+    [14, ["Shadow Lore","Gain a creature's secret and charm it for 8 hours."]]]);
+  S("bard|college of eloquence", [
+    [3, ["Silver Tongue","Treat Persuasion and Deception rolls of 9 or lower as 10."], ["Unsettling Words","Spend a Bardic Inspiration die to reduce a creature's next saving throw."]],
+    [6, ["Unfailing Inspiration","A used Bardic Inspiration die is kept if the target fails the roll."], ["Universal Speech","Make creatures understand you regardless of language."]],
+    [14, ["Infectious Inspiration","Pass a Bardic Inspiration die to others when it succeeds."]]]);
+  S("cleric|forge domain", [
+    [1, ["Bonus Proficiencies","Gain proficiency with heavy armor and smith's tools."], ["Blessing of the Forge","At the end of a long rest, touch a nonmagical weapon or armor to give it a +1 bonus to attack/damage or AC until your next long rest."]],
+    [2, ["Channel Divinity: Artisan's Blessing","Over a 1-hour ritual, create a metal item worth up to 100 gp that you have seen or can picture."]],
+    [6, ["Soul of the Forge","Gain +1 AC while wearing heavy armor and resistance to fire damage."]],
+    [8, ["Divine Strike","Once per turn, deal extra fire damage with a weapon hit: 1d8, increasing to 2d8 at level 14."]],
+    [17, ["Saint of Forge and Fire","Immunity to fire damage; while wearing heavy armor, resistance to nonmagical bludgeoning, piercing, and slashing damage."]]]);
+  S("cleric|knowledge domain", [
+    [1, ["Blessings of Knowledge","Learn two languages and gain proficiency (doubled) in two of Arcana, History, Nature, or Religion."]],
+    [2, ["Channel Divinity: Knowledge of the Ages","Gain proficiency in a skill or tool for 10 minutes."]],
+    [6, ["Channel Divinity: Read Thoughts","Read a creature's surface thoughts and cast Suggestion on it."]],
+    [8, ["Potent Spellcasting","Add your Wisdom modifier to the damage of cleric cantrips."]],
+    [17, ["Visions of the Past","Meditate to see the history of an object or location."]]]);
+  S("cleric|light domain", [
+    [1, ["Bonus Cantrip","Learn the Light cantrip."], ["Warding Flare","Reaction: impose disadvantage on an attack against you by a creature you can see (Wisdom modifier uses per long rest)."]],
+    [2, ["Channel Divinity: Radiance of the Dawn","Dispel magical darkness and deal radiant damage to hostile creatures within 30 ft."]],
+    [6, ["Improved Flare","Warding Flare can also protect allies within range."]],
+    [8, ["Potent Spellcasting","Add your Wisdom modifier to the damage of cleric cantrips."]],
+    [17, ["Corona of Light","Emit sunlight for 1 minute; enemies have disadvantage on saves against fire and radiant spells."]]]);
+  S("cleric|nature domain", [
+    [1, ["Acolyte of Nature","Learn a druid cantrip and gain proficiency in a nature-related skill."], ["Bonus Proficiency","Gain proficiency with heavy armor."]],
+    [2, ["Channel Divinity: Charm Animals and Plants","Charm beasts and plant creatures within 30 ft."]],
+    [6, ["Dampen Elements","Reaction: grant resistance to acid, cold, fire, lightning, or thunder damage."]],
+    [8, ["Divine Strike","Deal extra cold, fire, or lightning damage on a weapon hit (1d8, 2d8 at 14)."]],
+    [17, ["Master of Nature","Command creatures charmed by Charm Animals and Plants."]]]);
+  S("cleric|tempest domain", [
+    [1, ["Bonus Proficiencies","Gain proficiency with martial weapons and heavy armor."], ["Wrath of the Storm","Reaction: deal lightning or thunder damage to a creature that hits you (Wisdom modifier uses per long rest)."]],
+    [2, ["Channel Divinity: Destructive Wrath","Maximize lightning or thunder damage you roll."]],
+    [6, ["Thunderbolt Strike","Push Large or smaller creatures 10 ft when you deal lightning damage."]],
+    [8, ["Divine Strike","Deal extra thunder damage on a weapon hit (1d8, 2d8 at 14)."]],
+    [17, ["Stormborn","Gain a fly speed equal to your walking speed outdoors."]]]);
+  S("cleric|trickery domain", [
+    [1, ["Blessing of the Trickster","Give a creature advantage on Dexterity (Stealth) checks for 1 hour."]],
+    [2, ["Channel Divinity: Invoke Duplicity","Create an illusory duplicate of yourself for 1 minute."]],
+    [6, ["Channel Divinity: Cloak of Shadows","Become invisible until the end of your next turn."]],
+    [8, ["Divine Strike","Deal extra poison damage on a weapon hit (1d8, 2d8 at 14)."]],
+    [17, ["Improved Duplicity","Create up to four duplicates."]]]);
+  S("cleric|war domain", [
+    [1, ["Bonus Proficiencies","Gain proficiency with martial weapons and heavy armor."], ["War Priest","Bonus action: make a weapon attack (Wisdom modifier uses per long rest)."]],
+    [2, ["Channel Divinity: Guided Strike","Add +10 to an attack roll you make."]],
+    [6, ["Channel Divinity: War God's Blessing","Reaction: grant +10 to an ally's attack roll within 30 ft."]],
+    [8, ["Divine Strike","Deal extra weapon-type damage on a hit (1d8, 2d8 at 14)."]],
+    [17, ["Avatar of Battle","Gain resistance to nonmagical bludgeoning, piercing, and slashing damage."]]]);
+  S("druid|circle of the moon", [
+    [2, ["Combat Wild Shape","Wild Shape as a bonus action and spend spell slots to heal in beast form."], ["Circle Forms","Wild Shape into beasts of a higher CR (1 at level 2, scaling with level)."]],
+    [6, ["Primal Strike","Your beast-form attacks count as magical."]],
+    [10, ["Elemental Wild Shape","Spend two Wild Shape uses to become an elemental."]],
+    [14, ["Thousand Forms","Cast Alter Self at will."]]]);
+  S("fighter|battle master", [
+    [3, ["Combat Superiority","Learn maneuvers and gain superiority dice (d8) that fuel them."], ["Student of War","Gain proficiency with one type of artisan's tools."]],
+    [7, ["Know Your Enemy","Study a creature to learn how it compares to you."]],
+    [10, ["Improved Combat Superiority","Superiority dice become d10."]],
+    [15, ["Relentless","Regain a superiority die when you roll initiative with none left."]]]);
+  S("fighter|eldritch knight", [
+    [3, ["Spellcasting","Cast wizard spells using Intelligence; learn cantrips and spells known from the abjuration and evocation schools."], ["Weapon Bond","Bond with up to two weapons and summon them to your hand."]],
+    [7, ["War Magic","After casting a cantrip, make one weapon attack as a bonus action."]],
+    [10, ["Eldritch Strike","A weapon hit gives the target disadvantage on its next save against your spells."]],
+    [15, ["Arcane Charge","Teleport 30 ft when you use Action Surge."]]]);
+  S("monk|way of shadow", [
+    [3, ["Shadow Arts","Spend 2 ki to cast Darkness, Darkvision, Pass without Trace, or Silence; learn Minor Illusion."]],
+    [6, ["Shadow Step","Teleport up to 60 ft between dim or dark areas and gain advantage on your next melee attack."]],
+    [11, ["Cloak of Shadows","Become invisible while in dim light or darkness."]],
+    [17, ["Opportunist","Reaction: attack a creature that was hit by another creature."]]]);
+  S("monk|way of the four elements", [
+    [3, ["Disciple of the Elements","Learn the Elemental Attunement discipline and one other elemental discipline; spend ki to cast elemental spells."]],
+    [6, ["Elemental Discipline","Learn another elemental discipline."]],
+    [11, ["Elemental Discipline","Learn another elemental discipline."]],
+    [17, ["Elemental Discipline","Learn another elemental discipline."]]]);
+  S("paladin|oath of the ancients", [
+    [3, ["Channel Divinity: Nature's Wrath","Restrain a creature with spectral vines."], ["Channel Divinity: Turn the Faithless","Turn fey and fiends within 30 ft."]],
+    [7, ["Aura of Warding","You and allies within 10 ft have resistance to spell damage."]],
+    [15, ["Undying Sentinel","Drop to 1 HP instead of 0 once per long rest."]],
+    [20, ["Elder Champion","Transform for 1 minute: regain HP each turn, spells cast as bonus actions, enemies have disadvantage on saves."]]]);
+  S("paladin|oath of vengeance", [
+    [3, ["Channel Divinity: Abjure Enemy","Frighten a creature and reduce its speed to 0."], ["Channel Divinity: Vow of Enmity","Gain advantage on attacks against a creature for 1 minute."]],
+    [7, ["Relentless Avenger","After an opportunity attack hit, move up to half your speed without provoking."]],
+    [15, ["Soul of Vengeance","Reaction: attack a creature under your Vow of Enmity when it attacks."]],
+    [20, ["Avenging Angel","Gain wings and a frightful aura for 1 hour."]]]);
+  S("ranger|beast master", [
+    [3, ["Ranger's Companion","Gain a beast companion (CR 1/4 or lower, Medium or smaller). It adds your proficiency bonus to AC, attacks, damage, and saves; its HP is the higher of its normal HP or 4 × your Ranger level. It acts on your initiative and takes the Attack action when you command it as a bonus action."]],
+    [7, ["Exceptional Training","As a bonus action you can command the companion to Dash, Disengage, Dodge, or Help; its attacks count as magical."]],
+    [11, ["Bestial Fury","Your companion can make two attacks, or use its Multiattack, when you command it."]],
+    [15, ["Share Spells","Spells you cast on yourself also affect your companion if it's within 30 ft."]]]);
+  S("rogue|assassin", [
+    [3, ["Bonus Proficiencies","Gain proficiency with the disguise kit and poisoner's kit."], ["Assassinate","Advantage on attacks against creatures that haven't acted; hits against surprised creatures are critical hits."]],
+    [9, ["Infiltration Expertise","Create false identities and mimic speech and writing."]],
+    [13, ["Impostor","Mimic another person's speech, writing, and behavior."]],
+    [17, ["Death Strike","Surprised targets must pass a Constitution save or take double Sneak Attack damage."]]]);
+  S("rogue|arcane trickster", [
+    [3, ["Spellcasting","Cast wizard spells using Intelligence, focused on enchantment and illusion; learn Mage Hand."], ["Mage Hand Legerdemain","Mage Hand is invisible and can pick pockets and disarm traps."]],
+    [9, ["Magical Ambush","Targets have disadvantage on saves against spells you cast while hidden."]],
+    [13, ["Versatile Trickster","Use Mage Hand to gain advantage on attacks."]],
+    [17, ["Spell Thief","Steal a spell from a creature that targets you."]]]);
+  S("sorcerer|wild magic", [
+    [1, ["Wild Magic Surge","After casting a leveled spell, the DM may have you roll on the Wild Magic table."], ["Tides of Chaos","Gain advantage on one roll; the DM can then trigger a surge to recharge it."]],
+    [6, ["Bend Luck","Spend 2 sorcery points to add or subtract 1d4 from another creature's roll."]],
+    [14, ["Controlled Chaos","Roll twice on the Wild Magic table and choose either result."]],
+    [18, ["Spell Bombardment","Roll one extra damage die when you roll maximum on a spell's damage."]]]);
+  S("warlock|the archfey", [
+    [1, ["Fey Presence","Charm or frighten creatures in a 10-ft cube."]],
+    [6, ["Misty Escape","Reaction: turn invisible and teleport 60 ft when you take damage."]],
+    [10, ["Beguiling Defenses","Immune to charm; reflect charm back at the caster."]],
+    [14, ["Dark Delirium","Charm or frighten a creature within a pocket of illusion."]]]);
+  S("warlock|the great old one", [
+    [1, ["Awakened Mind","Telepathically speak to creatures within 30 ft."]],
+    [6, ["Entropic Ward","Reaction: impose disadvantage on an attack and gain advantage on your next attack if it misses."]],
+    [10, ["Thought Shield","Gain resistance to psychic damage and reflect it."]],
+    [14, ["Create Thrall","Charm an incapacitated humanoid permanently."]]]);
+  [["abjuration","Abjurer","Arcane Ward","Create a ward with HP equal to twice your wizard level plus Intelligence modifier that absorbs damage.",["Projected Ward","Reaction: use your Arcane Ward to absorb damage dealt to a creature within 30 ft."],["Improved Abjuration","Add your proficiency bonus to ability checks made for Counterspell and Dispel Magic."],["Spell Resistance","Advantage on saves against spells and resistance to spell damage."]],
+   ["conjuration","Conjurer","Minor Conjuration","Conjure a nonmagical object up to 3 ft in any dimension for 1 hour.",["Benign Transposition","Teleport up to 30 ft or swap places with a willing creature."],["Focused Conjuration","Your concentration on conjuration spells can't be broken by damage."],["Durable Summons","Creatures you summon gain 30 temporary hit points."]],
+   ["divination","Diviner","Portent","After each long rest, roll two d20s and replace attack rolls, saves, or checks with them.",["Expert Divination","Regain a lower-level spell slot when you cast a divination spell of 2nd level or higher."],["The Third Eye","Gain darkvision, ethereal sight, greater comprehension, or see invisibility."],["Greater Portent","Roll three d20s for Portent."]],
+   ["enchantment","Enchanter","Hypnotic Gaze","Charm and incapacitate a creature within 5 ft until the end of your next turn.",["Instinctive Charm","Reaction: redirect an attack against you to a creature near the attacker."],["Split Enchantment","Target a second creature with single-target enchantment spells."],["Alter Memories","Make charmed creatures forget being charmed."]],
+   ["illusion","Illusionist","Improved Minor Illusion","Learn Minor Illusion and create both sound and image with one casting.",["Malleable Illusions","Change the nature of an illusion you cast while it lasts."],["Illusory Self","Reaction: an illusion causes an attack against you to miss (once per rest)."],["Illusory Reality","Make one object in an illusion real for 1 minute."]],
+   ["necromancy","Necromancer","Grim Harvest","Regain HP when you kill a creature with a spell.",["Undead Thralls","Animate Dead gives an extra corpse and your undead gain extra HP and damage."],["Inured to Undeath","Gain resistance to necrotic damage; your maximum HP can't be reduced."],["Command Undead","Take control of an undead creature."]],
+   ["transmutation","Transmuter","Minor Alchemy","Temporarily transform one material into another.",["Transmuter's Stone","Create a stone that grants a benefit such as darkvision, speed, or resistance."],["Shapechanger","Cast Polymorph on yourself without a slot."],["Master Transmuter","Consume the stone for a powerful transformative effect."]]].forEach(([sch,name,ft,tx,f6,f10,f14])=>{
+    S("wizard|school of "+sch, [
+      [2, [ft,tx], [name+" Savant","Halve the gold and time to copy "+sch+" spells into your spellbook."]],
+      [6, f6], [10, f10], [14, f14]]);
+  });
+})();
 function normClassKey(s){ return (s||"").toLowerCase().trim().replace(/\s+/g," "); }
+const SUB_SMALL = new Set(["of","the","and"]);
+function subclassDisplayName(key){
+  return key.split("|")[1].split(" ").map((w,i)=>(i>0 && SUB_SMALL.has(w)) ? w : w.charAt(0).toUpperCase()+w.slice(1)).join(" ");
+}
+function subclassOptionsFor(className){
+  const ck = normClassKey(className||"");
+  if(!ck) return [];
+  return Object.keys(SUBCLASS_FEATURES).filter(k=>k.startsWith(ck+"|")).map(subclassDisplayName).sort((a,b)=>a.localeCompare(b));
+}
+
 
 
 let openPlayerSheetId = null;
@@ -3188,6 +3345,7 @@ function applyBackground(p){
 function applyClass(p){
   const meta = CLASS_META[normClassKey(p.charClass||"")];
   if(!meta) return;
+  if(p.subclass && !subclassOptionsFor(p.charClass).some(n=>normClassKey(n)===normClassKey(p.subclass)) && !THIRD_CASTER_SUBCLASS.test(p.subclass)) p.subclass = "";
   const s = ensureSheet(p);
   s.saveProf = {}; meta.saves.forEach(a=>{ s.saveProf[a]=1; });
   s.spAbil = "";
@@ -3301,7 +3459,7 @@ function buildCharacterTabHTML(p, D){
           <label>Level<input type="text" inputmode="numeric" data-fk="level" value="${D.L}"></label>
           <label>Race<input type="text" data-suggest="dl-race" autocomplete="off" data-fk="sheet.race" value="${fv(s.race)}" placeholder="Pick or type"></label>
           <label>Class<input type="text" data-suggest="dl-class" autocomplete="off" data-fk="charClass" value="${fv(p.charClass)}" placeholder="e.g. Paladin"></label>
-          <label>Subclass<input type="text" data-fk="subclass" value="${fv(p.subclass)}" placeholder="e.g. Oath of Devotion"></label>
+          <label>Subclass<input type="text" data-suggest="dl-sub" autocomplete="off" data-fk="subclass" value="${fv(p.subclass)}" placeholder="${p.charClass ? 'Pick or type' : 'Choose a class first'}"></label>
           <label>Background<input type="text" data-suggest="dl-bg" autocomplete="off" data-fk="sheet.background" value="${fv(s.background)}" placeholder="Pick or type"></label>
         </div>
         <datalist id="dl-race">${Object.values(RACES).map(r=>`<option value="${r.n}">`).join("")}</datalist>
@@ -5248,14 +5406,18 @@ document.getElementById("sheetDeleteBtn").onclick = ()=>{
   document.body.appendChild(pop);
   let target = null, hideT = null;
   function options(el){
+    if(el.dataset.suggest==="dl-sub"){
+      const pc = findCreature(openPlayerSheetId);
+      return pc ? subclassOptionsFor(pc.charClass) : [];
+    }
     const dl = document.getElementById(el.dataset.suggest);
     return dl ? [...dl.querySelectorAll("option")].map(o=>o.value) : [];
   }
   function hide(){ pop.classList.remove("show"); target = null; }
-  function show(el){
+  function show(el, all){
     clearTimeout(hideT);
     target = el;
-    const q = el.value.trim().toLowerCase();
+    const q = all ? "" : el.value.trim().toLowerCase();
     const list = options(el).filter(v=>!q || v.toLowerCase().includes(q) );
     if(!list.length){ pop.classList.remove("show"); return; }
     pop.innerHTML = list.map(v=>`<button type="button" data-suggest-val="${escAttr(v)}">${escAttr(v)}</button>`).join("");
@@ -5267,7 +5429,7 @@ document.getElementById("sheetDeleteBtn").onclick = ()=>{
     else { pop.style.bottom = "auto"; pop.style.top = (r.bottom + 4) + "px"; pop.style.maxHeight = Math.min(220, below - 12) + "px"; }
     pop.classList.add("show");
   }
-  document.addEventListener("focusin", e=>{ const el = e.target.closest && e.target.closest("[data-suggest]"); if(el) show(el); });
+  document.addEventListener("focusin", e=>{ const el = e.target.closest && e.target.closest("[data-suggest]"); if(el) show(el, true); });
   document.addEventListener("input", e=>{ const el = e.target.closest && e.target.closest("[data-suggest]"); if(el) show(el); });
   document.addEventListener("focusout", e=>{ if(e.target.closest && e.target.closest("[data-suggest]")){ clearTimeout(hideT); hideT = setTimeout(hide, 250); } });
   pop.addEventListener("mousedown", e=>e.preventDefault());
