@@ -3998,6 +3998,10 @@ document.addEventListener("blur", e=>{
   if(!el) return;
   const p = findCreature(openPlayerSheetId);
   if(!p) return;
+  // Picking from a datalist (Race / Class / Background) on mobile blurs the
+  // input before the chosen value is committed; rebuilding the DOM right then
+  // throws the selection away, so give the pick time to land first.
+  if(el.hasAttribute("list")){ setTimeout(()=>{ if(!suppressFieldEvents) scheduleSheetRender(p); }, 700); return; }
   scheduleSheetRender(p);
 }, true);
 
