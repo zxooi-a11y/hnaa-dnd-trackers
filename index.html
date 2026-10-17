@@ -1374,6 +1374,33 @@
   .sheet-toast.fumble .tr{ color:#F0A8A0; }
 
   .sheet-add-btn{ margin-top:10px; }
+  .sheet-spell-summary{ font-size:0.74rem; color:var(--text-faint); margin:-2px 0 8px; }
+  .sheet-spell-details{ margin-top:10px; padding-top:10px; border-top:1px solid var(--border-soft); }
+  .sheet-spell-wide{ display:block; font-size:0.62rem; font-weight:700; color:var(--text-faint); text-transform:uppercase; margin-top:8px; }
+  .sheet-spell-wide input, .sheet-spell-wide textarea{ width:100%; margin-top:3px; padding:6px 8px; font-size:0.82rem; font-family:inherit; text-transform:none; font-weight:400; }
+  .sheet-spell-src{ margin-left:auto; font-size:0.68rem; color:var(--text-faint); }
+
+  /* spell library modal */
+  .spell-lib-backdrop{ position:fixed; inset:0; background:rgba(40,30,20,.45); z-index:55; display:none; align-items:flex-end; justify-content:center; }
+  .spell-lib-backdrop.show{ display:flex; }
+  .spell-lib{ background:var(--surface); width:100%; max-width:720px; max-height:90vh; border-radius:var(--radius-lg) var(--radius-lg) 0 0; display:flex; flex-direction:column; box-shadow:var(--shadow-lg); }
+  @media (min-width:721px){ .spell-lib-backdrop{ align-items:center; } .spell-lib{ border-radius:var(--radius-lg); } }
+  .spell-lib-head{ display:flex; align-items:center; gap:10px; padding:14px 16px 8px; }
+  .spell-lib-head h3{ margin:0; font-size:1rem; flex:1; }
+  .spell-lib-close{ background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--text-faint); line-height:1; }
+  .spell-lib-filters{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding:0 16px 10px; }
+  .spell-lib-filters input{ grid-column:1/-1; }
+  .spell-lib-filters input, .spell-lib-filters select{ width:100%; padding:8px 10px; font-size:0.85rem; border:1px solid var(--border); background:var(--surface-soft); color:var(--text); border-radius:var(--radius-sm); font-family:inherit; }
+  .spell-lib-list{ overflow-y:auto; padding:0 16px 16px; flex:1; }
+  .spell-lib-item{ background:var(--surface-soft); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:8px; }
+  .spell-lib-row{ display:flex; align-items:center; gap:8px; }
+  .spell-lib-title{ flex:1; min-width:0; }
+  .spell-lib-title b{ display:block; font-size:0.92rem; }
+  .spell-lib-title span{ font-size:0.72rem; color:var(--text-faint); }
+  .spell-lib-detail{ margin-top:8px; font-size:0.8rem; color:var(--text-soft); white-space:pre-wrap; }
+  .spell-lib-detail dl{ margin:0 0 8px; display:grid; grid-template-columns:auto 1fr; gap:2px 10px; }
+  .spell-lib-detail dt{ font-weight:700; color:var(--text-faint); } .spell-lib-detail dd{ margin:0; }
+  .spell-lib-note{ font-size:0.72rem; color:var(--text-faint); padding:4px 2px 10px; }
   .sheet-empty{ color:var(--text-faint); padding:10px 0; font-size:0.85rem; }
   @media (max-width:520px){ .sheet-item-grid{ grid-template-columns:repeat(2,1fr); } }
 
@@ -1690,6 +1717,7 @@
 
 <script src="monsters.js"></script>
 <script src="loot-items.js"></script>
+<script src="spells.js"></script>
 <script>
 
 /* ============================================================
@@ -3478,6 +3506,104 @@ function buildSpellsTabHTML(p, D){
     </div>
     ${buildSpellLevelSections(p, D, Math.max(1, sp.maxLv))}`;
 }
+/* ============================================================
+   SPELL LIBRARY (spells.js -- SRD spells, 2014 + 2024 rules)
+   ============================================================ */
+const spellLib = { pid:null, level:"all", cls:"all", ver:"2024", q:"", open:new Set() };
+function spellLibEl(){
+  let el = document.getElementById("spellLibModal");
+  if(el) return el;
+  el = document.createElement("div");
+  el.id = "spellLibModal"; el.className = "spell-lib-backdrop";
+  el.innerHTML = `<div class="spell-lib" role="dialog" aria-label="Spell library">
+    <div class="spell-lib-head"><h3 id="spellLibTitle">Spell library</h3><button type="button" class="spell-lib-close" aria-label="Close">&times;</button></div>
+    <div class="spell-lib-filters">
+      <input type="search" id="spellLibQ" placeholder="Search spells by name…">
+      <select id="spellLibLevel"><option value="all">All levels</option><option value="0">Cantrips</option>${[1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}">Level ${n}</option>`).join("")}</select>
+      <select id="spellLibClass"></select>
+      <select id="spellLibVer"><option value="2024">2024 rules</option><option value="2014">2014 rules</option></select>
+    </div>
+    <div class="spell-lib-list" id="spellLibList"></div>
+  </div>`;
+  document.body.appendChild(el);
+  const close = ()=>{ el.classList.remove("show"); };
+  el.addEventListener("click", e=>{ if(e.target===el) close(); });
+  el.querySelector(".spell-lib-close").onclick = close;
+  document.addEventListener("keydown", e=>{ if(e.key==="Escape") close(); });
+  el.querySelector("#spellLibQ").addEventListener("input", e=>{ spellLib.q = e.target.value; renderSpellLibrary(); });
+  [["Level","level"],["Class","cls"],["Ver","ver"]].forEach(([id,key])=>{
+    el.querySelector("#spellLib"+id).addEventListener("change", e=>{ spellLib[key] = e.target.value; renderSpellLibrary(); });
+  });
+  el.querySelector("#spellLibList").addEventListener("click", e=>{
+    const add = e.target.closest("[data-lib-add]");
+    if(add){ addLibrarySpell(add.dataset.libAdd); return; }
+    const tg = e.target.closest("[data-lib-toggle]");
+    if(tg){ const k = tg.dataset.libToggle; spellLib.open.has(k) ? spellLib.open.delete(k) : spellLib.open.add(k); renderSpellLibrary(); }
+  });
+  return el;
+}
+function openSpellLibrary(p, level){
+  const el = spellLibEl();
+  const meta = CLASS_META[normClassKey(p.charClass||"")];
+  const cls = p.charClass ? p.charClass.trim() : "";
+  const classes = [...new Set(SPELL_LIBRARY.flatMap(sp=>sp.cl.split(", ").filter(Boolean)))].sort();
+  const match = classes.find(c=>c.toLowerCase()===cls.toLowerCase());
+  spellLib.pid = p.id;
+  spellLib.cls = match || "all";
+  spellLib.level = level>0 ? String(level) : (level===0 ? "0" : "all");
+  spellLib.q = ""; spellLib.open = new Set();
+  el.querySelector("#spellLibClass").innerHTML = `<option value="all">All classes</option>` + classes.map(c=>`<option value="${c}">${c}</option>`).join("");
+  el.querySelector("#spellLibQ").value = "";
+  el.querySelector("#spellLibLevel").value = spellLib.level;
+  el.querySelector("#spellLibClass").value = spellLib.cls;
+  el.querySelector("#spellLibVer").value = spellLib.ver;
+  el.querySelector("#spellLibTitle").textContent = `Add spells${p.name ? " — "+p.name : ""}`;
+  el.classList.add("show");
+  renderSpellLibrary();
+  el.querySelector("#spellLibQ").focus();
+}
+function libSpellKey(sp){ return sp.v+":"+sp.id; }
+function renderSpellLibrary(){
+  const p = findCreature(spellLib.pid); if(!p) return;
+  const s = ensureSheet(p);
+  const have = new Set(s.spells.map(x=>x.lib).filter(Boolean));
+  const q = spellLib.q.trim().toLowerCase();
+  const all = SPELL_LIBRARY.filter(sp=>sp.v===spellLib.ver
+    && (spellLib.level==="all" || sp.l===+spellLib.level)
+    && (spellLib.cls==="all" || sp.cl.split(", ").includes(spellLib.cls))
+    && (!q || sp.n.toLowerCase().includes(q)))
+    .sort((a,b)=>a.l-b.l || a.n.localeCompare(b.n));
+  const shown = all.slice(0,60);
+  const html = shown.map(sp=>{
+    const key = libSpellKey(sp), open = spellLib.open.has(key), added = have.has(key);
+    const lv = sp.l===0 ? `${sp.s} cantrip` : `Level ${sp.l} ${sp.s}`;
+    const tags = (sp.k?" · Concentration":"") + (sp.ri?" · Ritual":"");
+    return `<div class="spell-lib-item">
+      <div class="spell-lib-row">
+        <div class="spell-lib-title"><b>${escAttr(sp.n)}</b><span>${lv}${tags} · ${escAttr(sp.cl)}</span></div>
+        <button type="button" class="chip" data-lib-toggle="${key}">${open?"Hide":"Details"}</button>
+        <button type="button" class="chip save-log-btn" data-lib-add="${key}" ${added?"disabled":""}>${added?"Added":"Add"}</button>
+      </div>
+      ${open ? `<div class="spell-lib-detail"><dl><dt>Casting time</dt><dd>${escAttr(sp.t)}</dd><dt>Range</dt><dd>${escAttr(sp.r)}</dd><dt>Components</dt><dd>${escAttr(sp.c)}${sp.m?` (${escAttr(sp.m)})`:""}</dd><dt>Duration</dt><dd>${escAttr(sp.d)}</dd></dl>${escAttr(sp.x)}${sp.h?`\n\n<b>At higher levels.</b> ${escAttr(sp.h)}`:""}</div>` : ""}
+    </div>`;
+  }).join("");
+  document.getElementById("spellLibList").innerHTML =
+    `<div class="spell-lib-note">${all.length} spell${all.length===1?"":"s"}${all.length>60?" (showing first 60 — refine your search)":""}. SRD spells only; use “add custom spell” for anything else.</div>` +
+    (html || `<div class="sheet-empty">No spells match.</div>`);
+}
+function addLibrarySpell(key){
+  const p = findCreature(spellLib.pid); if(!p) return;
+  const s = ensureSheet(p);
+  const sp = SPELL_LIBRARY.find(x=>libSpellKey(x)===key); if(!sp) return;
+  if(s.spells.some(x=>x.lib===key)) return;
+  s.spells.push({ id:uid(), lib:key, name:sp.n, level:sp.l, prepared:false, school:sp.s, time:sp.t, range:sp.r,
+    comp:sp.c, mat:sp.m, dur:sp.d, conc:sp.k, ritual:sp.ri, classes:sp.cl, desc:sp.x, higher:sp.h, src:`SRD ${sp.v}` });
+  sheetToast(`<b>${sp.n}</b><small>Added to ${sp.l===0?"cantrips":"level "+sp.l+" spells"}.</small>`);
+  renderSpellLibrary();
+  scheduleSheetRender(p);
+}
+
+let openSpellIds = new Set();
 function buildSpellLevelSections(p, D, hiLevel){
   const s = ensureSheet(p);
   ensureIds(s.spells);
@@ -3485,24 +3611,50 @@ function buildSpellLevelSections(p, D, hiLevel){
   let out = "";
   for(let l=0; l<=Math.max(hiLevel, ...s.spells.map(x=>x.level), 0); l++){
     const list = s.spells.filter(x=>x.level===l);
-    const rows = list.map(sp=>`
+    const rows = list.map(sp=>{
+      const open = openSpellIds.has(sp.id);
+      const bits = [sp.school, sp.time, sp.range, sp.comp, sp.dur].map(x=>(x||"").toString().trim()).filter(Boolean);
+      const summary = bits.join(" · ") + (sp.conc ? " · Concentration" : "") + (sp.ritual ? " · Ritual" : "");
+      return `
       <div class="sheet-item">
         <div class="sheet-item-grid">
           <label>Name<input type="text" data-fk="list.spells.${sp.id}.name" value="${fv(sp.name)}" placeholder="Spell name"></label>
           <label>Level<select data-fk="list.spells.${sp.id}.level">${[0,1,2,3,4,5,6,7,8,9].map(n=>`<option value="${n}" ${sp.level===n?'selected':''}>${n===0?'Cantrip':'Lv '+n}</option>`).join("")}</select></label>
         </div>
+        ${summary ? `<div class="sheet-spell-summary">${escAttr(summary)}</div>` : ""}
         <div class="sheet-item-foot">
           ${l>0 && prepMode ? `<label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.spells.${sp.id}.prepared" ${sp.prepared?'checked':''}> Prepared</label>` : ""}
           ${l>0 ? `<button type="button" class="chip save-log-btn" data-cast="${sp.id}">Cast</button>` : ""}
+          <button type="button" class="chip" data-spell-toggle="${sp.id}">${open ? "Hide details" : "Details"}</button>
           <button type="button" class="sheet-item-remove" data-del="spells:${sp.id}">Remove</button>
         </div>
-      </div>`).join("") || `<div class="sheet-empty">${l===0?'No cantrips yet.':'No level '+l+' spells yet.'}</div>`;
+        ${open ? `
+        <div class="sheet-spell-details">
+          <div class="sheet-item-grid">
+            <label>School<input type="text" data-fk="list.spells.${sp.id}.school" value="${fv(sp.school)}"></label>
+            <label>Casting time<input type="text" data-fk="list.spells.${sp.id}.time" value="${fv(sp.time)}"></label>
+            <label>Range<input type="text" data-fk="list.spells.${sp.id}.range" value="${fv(sp.range)}"></label>
+            <label>Components<input type="text" data-fk="list.spells.${sp.id}.comp" value="${fv(sp.comp)}" placeholder="V, S, M"></label>
+            <label>Duration<input type="text" data-fk="list.spells.${sp.id}.dur" value="${fv(sp.dur)}"></label>
+            <label>Classes<input type="text" data-fk="list.spells.${sp.id}.classes" value="${fv(sp.classes)}"></label>
+          </div>
+          <label class="sheet-spell-wide">Material<input type="text" data-fk="list.spells.${sp.id}.mat" value="${fv(sp.mat)}"></label>
+          <div class="sheet-item-foot" style="margin:6px 0">
+            <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.spells.${sp.id}.conc" ${sp.conc?'checked':''}> Concentration</label>
+            <label style="display:flex;gap:6px;align-items:center"><input type="checkbox" data-fk="list.spells.${sp.id}.ritual" ${sp.ritual?'checked':''}> Ritual</label>
+            ${sp.src ? `<span class="sheet-spell-src">${escAttr(sp.src)}</span>` : ""}
+          </div>
+          <label class="sheet-spell-wide">Description<textarea rows="6" data-fk="list.spells.${sp.id}.desc">${escAttr(sp.desc||"")}</textarea></label>
+          <label class="sheet-spell-wide">At higher levels<textarea rows="3" data-fk="list.spells.${sp.id}.higher">${escAttr(sp.higher||"")}</textarea></label>
+        </div>` : ""}
+      </div>`;
+    }).join("") || `<div class="sheet-empty">${l===0?'No cantrips yet.':'No level '+l+' spells yet.'}</div>`;
     out += `
       <div class="${oc(`splv${l}`, false)}">
       <button type="button" class="pc-collapsible-header" data-pc-toggle-local="splv${l}">
           <span class="pc-section-label">${l===0?'Cantrips':'Level '+l}</span><span class="pc-collapsible-summary">${list.length} listed</span><span class="pc-collapsible-chevron">▾</span>
         </button>
-        <div class="pc-collapsible-body">${rows}<button type="button" class="chip sheet-add-btn" data-add="spells:${l}">+ add ${l===0?'cantrip':'spell'}</button></div>
+        <div class="pc-collapsible-body">${rows}<div class="row" style="gap:8px"><button type="button" class="chip sheet-add-btn save-log-btn" data-spell-lib="${l}">Browse spell library</button><button type="button" class="chip sheet-add-btn" data-add="spells:${l}">+ add custom ${l===0?'cantrip':'spell'}</button></div></div>
       </div>`;
   }
   return out;
@@ -3888,6 +4040,15 @@ document.addEventListener("click", e=>{
     if(g) g.qty = Math.max(0, (g.qty||0) + (+delta));
     scheduleSheetRender(p); return;
   }
+
+  const spToggle = e.target.closest("[data-spell-toggle]");
+  if(spToggle){
+    const id = spToggle.dataset.spellToggle;
+    if(openSpellIds.has(id)) openSpellIds.delete(id); else openSpellIds.add(id);
+    scheduleSheetRender(p); return;
+  }
+  const spLib = e.target.closest("[data-spell-lib]");
+  if(spLib){ openSpellLibrary(p, +spLib.dataset.spellLib); return; }
 
   const addBtn = e.target.closest("[data-add]");
   if(addBtn){
